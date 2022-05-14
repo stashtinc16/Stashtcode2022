@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:stasht/forget_password.dart';
+import 'package:stasht/sign_in.dart';
 import 'package:stasht/step_1.dart';
 
 import 'authentication.dart';
@@ -61,7 +63,12 @@ class _SignUp extends State<SignUp> {
                     const SizedBox(
                       height: 60,
                     ),
-                    const Center(
+                    InkWell(onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> Sign_In()));
+                    },
+                      child:
+
+                      Center(
                       child: Text(
                         "Sign-up",
                         style: TextStyle(
@@ -73,6 +80,7 @@ class _SignUp extends State<SignUp> {
                         ),
                       ),
                     ),
+            ),
                     const SizedBox(height:15),
                     MaterialButton(
                       onPressed: (){
@@ -238,12 +246,12 @@ class _SignUp extends State<SignUp> {
 
 
                     const SizedBox(height:50),
-              GestureDetector(
-               onTap: () {
-                 if (_formkey.currentState?.validate() ?? true) {
-                   signInUser();
-                 }
-               },
+                    GestureDetector(
+                      onTap: () {
+                        if(_formkey.currentState?.validate()??true) {
+                          signInUser();
+                        }
+                      },
                       child:
                       Center(
                         child: Container(
@@ -271,7 +279,12 @@ class _SignUp extends State<SignUp> {
                       ),
                     ),
                     const SizedBox(height: 15,),
-                    Center(
+            InkWell(onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> Forget_Password()));
+            },
+                child:
+
+                Center(
                       child: Text(
                         "Forgot your password? ",
                         textAlign: TextAlign.center,
@@ -282,6 +295,7 @@ class _SignUp extends State<SignUp> {
                         ),
                       ),
                     ),
+            )
                   ]
               )
           ),

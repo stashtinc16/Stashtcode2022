@@ -78,7 +78,7 @@ class _Step1 extends State<Step1> {
                       const SizedBox(height: 20,),
                       InkWell(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> Step_2()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> Memories_Empty()));
                         },
                         child:
                         Center(
@@ -98,7 +98,7 @@ class _Step1 extends State<Step1> {
                       ),
                       const SizedBox(height:10,),
                       InkWell(onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const Memories_Empty()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const Step_2()));
                       },
                         child: const Center(
                           child:  Text("Skip This Step",textAlign:TextAlign.center,
