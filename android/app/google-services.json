@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "16799328277",
+    "project_id": "stasht-212a1",
+    "storage_bucket": "stasht-212a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16799328277:android:8f4b32cf7f94de83ab061c",
+        "android_client_info": {
+          "package_name": "com.example.stasht"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "16799328277-9t94kumsl0joruvctket14t9g2s95vru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeVQfBnJ2yZHhMoIH_FTdMASsMwX1AIik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "16799328277-9t94kumsl0joruvctket14t9g2s95vru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16799328277:android:0c0b336564c3fc82ab061c",
+        "android_client_info": {
+          "package_name": "com.example.wfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "16799328277-9t94kumsl0joruvctket14t9g2s95vru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeVQfBnJ2yZHhMoIH_FTdMASsMwX1AIik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "16799328277-9t94kumsl0joruvctket14t9g2s95vru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stasht/sign_up.dart';
+import 'package:stasht/step_1.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

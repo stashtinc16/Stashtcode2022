@@ -29,6 +29,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_login_facebook: ^1.4.1
+
+  http: ^0.13.4
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -37,6 +40,12 @@ dependencies:
   persistent_bottom_nav_bar: ^4.0.2
   image_picker:
   flutter_switch: ^0.3.2
+  firebase_auth: ^3.3.17
+  firebase_core: ^1.16.0
+  firebase_storage: ^10.2.15
+  flutter_svg: ^1.0.3
+
+
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +88,15 @@ flutter:
     - family: adobe-clean-cufonfonts
       fonts:
         - asset: assets/fonts/adobecleanbold.otf
+
+    - family: gibsonbold
+      fonts:
+        - asset: assets/fonts/gibsonbold.ttf
+
+    - family: gibsonsemibold
+      fonts:
+        - asset: assets/fonts/Gibson-SemiBold.otf
+
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

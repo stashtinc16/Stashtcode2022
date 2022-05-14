@@ -1,7 +1,15 @@
+<!--<manifest xmlns:android="http://schemas.android.com/apk/res/android" -->
+<!--    package="com.example.stasht">-->
+<!--    &lt;!&ndash; Flutter needs it to communicate with the running application-->
+<!--         to allow setting breakpoints, to provide hot reload, etc.-->
+<!--    &ndash;&gt;-->
+<!--    <uses-permission android:name="android.permission.INTERNET"/>-->
+<!--</manifest>-->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.stasht">
-    <!-- Flutter needs it to communicate with the running application
-         to allow setting breakpoints, to provide hot reload, etc.
-    -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+package="com.example.stasht">
+<!-- Flutter needs it to communicate with the running application
+     to allow setting breakpoints, to provide hot reload, etc.
+-->
+<uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

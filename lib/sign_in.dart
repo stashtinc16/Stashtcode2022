@@ -1,6 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:stasht/profile.dart';
+import 'package:stasht/step_1.dart';
 import 'package:stasht/step_2.dart';
+
+import 'authentication.dart';
 
 class Sign_In extends StatefulWidget{
   @override
@@ -16,6 +21,9 @@ class _Sign_In extends State<Sign_In>{
   bool isEmail=false;
   var passwordcontroller=TextEditingController();
   var namecontroller=TextEditingController();
+  var Emailcontroller = TextEditingController();
+  final _formkey= GlobalKey<FormState>();
+  AuthenticationService _auth = AuthenticationService();
 
   @override
   Widget build(BuildContext context) {
@@ -25,18 +33,19 @@ class _Sign_In extends State<Sign_In>{
              child:Column(crossAxisAlignment: CrossAxisAlignment.start,
                  children: [
                    const Center(
-                     child: Text("stasht.",
-                       style: TextStyle(fontSize:70,color: Colors.deepPurple, fontWeight: FontWeight.w900,
-                           fontFamily: "adobe-clean-cufonfonts",
-
-                           fontStyle: FontStyle.italic),),
+                     child:Text("stasht.",
+                       style: TextStyle(
+                           fontSize: 53,
+                           color: Color.fromRGBO(108, 96, 255, 1),
+                           fontWeight: FontWeight.w800,
+                           fontFamily: "gibsonsemibold"
+                       ),),
                    ),
                    const SizedBox(height: 30,),
                    const Center(
                      child: Text("Sign-in",
-                       style: TextStyle(fontSize:20,color: Colors.deepPurple, fontWeight: FontWeight.w600,
-
-                           fontFamily: "adobe-clean-cufonfonts"),),
+                       style: TextStyle(fontSize:21,color:Color.fromRGBO(108, 96, 255, 1),
+                         fontFamily: "gibsonsemibold",),),
                    ),
                    const SizedBox(height:15),
                    MaterialButton(
@@ -48,19 +57,20 @@ class _Sign_In extends State<Sign_In>{
                      shape: RoundedRectangleBorder(
                        borderRadius: BorderRadius.circular(50),
                      ),
-                     child:  Row(
+                     child:
+                     Row(
                        mainAxisAlignment: MainAxisAlignment.center,
-                       children: const [
-                         Text(
-                           'f',
-                           textAlign: TextAlign.center,
-                           style: TextStyle(
-                               fontSize: 20,
-                               fontFamily: "adobe-clean-cufonfonts",
-                               fontWeight: FontWeight.w800,
-                               color:  Color.fromRGBO(255, 255, 255, 1)),
+                       children: [
+                         SvgPicture.asset(
+                           "assets/images/fb.svg",
+                           height: 16,
+                           width: 8,
+                           color: Colors.white,
                          ),
-                         SizedBox(width: 10),
+                         const SizedBox(
+                           width: 10,
+                           height: 2,
+                         ),
                          Text(
                            'Sign-in with Facebook',
                            textAlign: TextAlign.center,
@@ -72,6 +82,9 @@ class _Sign_In extends State<Sign_In>{
                          ),
                        ],
                      ),
+
+
+
                    ),
                    const SizedBox(height:20),
                    Row(
@@ -96,16 +109,15 @@ class _Sign_In extends State<Sign_In>{
                      height: 50,
                      width: MediaQuery.of(context).size.width,
                      decoration: BoxDecoration(
-                       border: Border.all(color: Colors.grey),
+                       border: Border.all(color: Color.fromRGBO(169, 165, 218, 1)),
                        borderRadius: BorderRadius.circular(50),
                        color:  Colors.white,
                      ),
                      child:
                      TextFormField(
-
                        decoration: const InputDecoration( labelText: "Username",
                            labelStyle:
-                           TextStyle(color: Colors.blue,
+                           TextStyle(color: Color.fromRGBO(108, 96, 255, 1),
                              fontSize: 15,
                              fontWeight: FontWeight.w400,),
                            border: InputBorder.none,
@@ -130,7 +142,7 @@ class _Sign_In extends State<Sign_In>{
                      height: 50,
                      width: MediaQuery.of(context).size.width,
                      decoration: BoxDecoration(
-                       border: Border.all(color: Colors.grey),
+                       border: Border.all(color: Color.fromRGBO(169, 165, 218, 1)),
                        borderRadius: BorderRadius.circular(50),
                        color:  Colors.white,
                      ),
@@ -139,7 +151,7 @@ class _Sign_In extends State<Sign_In>{
 
                        decoration: const InputDecoration( labelText: "E-mail",
                            labelStyle:
-                           TextStyle(color: Colors.blue,
+                           TextStyle(color: Color.fromRGBO(108, 96, 255, 1),
                              fontSize: 15,
                              fontWeight: FontWeight.w400,),
                            border: InputBorder.none,
@@ -164,7 +176,7 @@ class _Sign_In extends State<Sign_In>{
                      height: 50,
                      width: MediaQuery.of(context).size.width,
                      decoration: BoxDecoration(
-                       border: Border.all(color: Colors.grey),
+                       border: Border.all(color: Color.fromRGBO(169, 165, 218, 1)),
                        borderRadius: BorderRadius.circular(50),
                        color:  Colors.white,
                      ),
@@ -176,7 +188,7 @@ class _Sign_In extends State<Sign_In>{
                          decoration: InputDecoration( labelText: "Password",
 
                              labelStyle:
-                             const TextStyle(color: Colors.blue,
+                             const TextStyle(color: Color.fromRGBO(108, 96, 255, 1),
                                fontSize: 15,
                                fontWeight: FontWeight.w400,),
                              border: InputBorder.none,
@@ -203,7 +215,12 @@ class _Sign_In extends State<Sign_In>{
                    const SizedBox(height:50),
                    GestureDetector(
                      onTap: () {
-                       Navigator.push(context, MaterialPageRoute(builder: (context) => Step_2()));
+                       if(_formkey.currentState?.validate()??true) {
+                         createUser();
+                         //Navigator.push(context,MaterialPageRoute(builder: (context) => Step1()));
+
+                       }
+                       //  Navigator.push(context, MaterialPageRoute(builder: (context) => Step1()));
                      },
                      child:
                      Center(
@@ -211,8 +228,7 @@ class _Sign_In extends State<Sign_In>{
                          height: 40,
                          width: 150,
                          alignment: Alignment.center,
-                         decoration: BoxDecoration(color: const Color.fromRGBO(
-                             91, 69, 175, 0.8862745098039215),borderRadius: BorderRadius.circular(20)),
+                         decoration: BoxDecoration(color: const Color.fromRGBO(108, 96, 255, 1),borderRadius: BorderRadius.circular(20)),
                          child: Row(mainAxisAlignment: MainAxisAlignment.center,
                            children: const [
                              Text("Create Account",textAlign:TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w900),),
@@ -233,4 +249,23 @@ class _Sign_In extends State<Sign_In>{
 
    );
   }
+  void createUser() async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email:  Emailcontroller.text, password: passwordcontroller.text,).then((value){
+        print("FirebaseAuthExceptionValue $value");
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Step_2()));
+      }).onError((error, stackTrace){
+        print("FirebaseAuthExceptionError $error");
+
+      });
+    } on FirebaseAuthException catch(e){
+      print("FirebaseAuthException $e");
+      return;
+    }
+
+  }
 }
+
+

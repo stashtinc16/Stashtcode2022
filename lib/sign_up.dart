@@ -1,5 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:stasht/step_1.dart';
+
+import 'authentication.dart';
+
+
+
 
 
 class SignUp extends StatefulWidget {
@@ -13,11 +21,26 @@ class _SignUp extends State<SignUp> {
   bool _iisObscure=true;
   int val = -1;
   bool isEmail=false;
-  // NetworkUtil _networkUtil = new NetworkUtil();
-
+  var Emailcontroller=TextEditingController();
   var passwordcontroller=TextEditingController();
   var namecontroller=TextEditingController();
-  @override
+  bool isLoggedIn = false;
+  var profileData;
+  var facebookLogin = FacebookLogin();
+  AuthenticationService _auth = AuthenticationService();
+
+  final _formkey = GlobalKey<FormState>();
+
+  void onLoginStatusChanged(bool isLoggedIn, {profileData}) {
+    setState(() {
+      this.isLoggedIn = isLoggedIn;
+      this.profileData = profileData;
+    });
+  }
+
+
+
+@override
   Widget build(BuildContext context) {
     return Scaffold(
         body:SingleChildScrollView(
@@ -25,50 +48,66 @@ class _SignUp extends State<SignUp> {
               child:Column(crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Center(
-                      child: Text("stasht.",
-                        style: TextStyle(fontSize:70,color: Colors.deepPurple, fontWeight: FontWeight.w900,
-                            fontFamily: "adobe-clean-cufonfonts",
-
-                            fontStyle: FontStyle.italic),),
+                      child: Text(
+                        "stasht.",
+                        style: TextStyle(
+                            fontSize: 53,
+                            color: Color.fromRGBO(108, 96, 255, 1),
+                            fontWeight: FontWeight.w800,
+                            fontFamily: "gibsonsemibold"
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 30,),
+                    const SizedBox(
+                      height: 60,
+                    ),
                     const Center(
-                      child: Text("Sign-up",
-                        style: TextStyle(fontSize:20,color: Colors.deepPurple, fontWeight: FontWeight.w600,
+                      child: Text(
+                        "Sign-up",
+                        style: TextStyle(
+                          fontSize: 21,
+                          fontFamily: "gibsonsemibold",
+                          color:Color.fromRGBO(108, 96, 255, 1),
+                          fontWeight: FontWeight.w100,
 
-                            fontFamily: "adobe-clean-cufonfonts"),),
+                        ),
+                      ),
                     ),
                     const SizedBox(height:15),
                     MaterialButton(
                       onPressed: (){
-                        // _trySubmitForm();
+                        // _displayLoginButton();
+                        signInFb(context);
                       },
+                      // onPressed: () => facebookLogin.isLoggedIn
+                      //     .then((isLoggedIn) => isLoggedIn ? signInFb(context):_logout()),
                       height: 50,
                       color: const Color.fromRGBO(2, 152, 216, 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
                       ),
-                      child:  Row(
+                      child:
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Text(
-                            'f',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: "adobe-clean-cufonfonts",
-                                fontWeight: FontWeight.w800,
-                                color:  Color.fromRGBO(255, 255, 255, 1)),
+                        children: [
+                          SvgPicture.asset(
+                            "assets/images/fb.svg",
+                            height: 16,
+                            width: 8,
+                            color: Colors.white,
                           ),
-                          SizedBox(width: 10),
-                          Text(
+                          const SizedBox(
+                            width: 10,
+                            height: 2,
+                          ),
+                          const Text(
                             'Sign-in with Facebook',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: 15,
-                                //fontFamily: "adobe-clean-cufonfonts",
+                                fontSize: 14,
+                                fontFamily: "adobe-clean-cufonfonts",
                                 fontWeight: FontWeight.w400,
-                                color:  Color.fromRGBO(255, 255, 255, 1)),
+                                color: Color.fromRGBO(255, 255, 255, 1)),
                           ),
                         ],
                       ),
@@ -96,134 +135,152 @@ class _SignUp extends State<SignUp> {
                       height: 50,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: const Color.fromRGBO(169, 165, 218, 1)),
                         borderRadius: BorderRadius.circular(50),
-                        color:  Colors.white,
+                        color: Colors.white,
                       ),
-                      child:
-                      TextFormField(
-
-                        decoration: const InputDecoration( labelText: "Username",
-                            labelStyle:
-                            TextStyle(color: Colors.blue,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(bottom:10,left: 15,top:5)
-                        ),
-                        style:const TextStyle(color: Colors.black),
-                        validator: (v){
-                          if(v!.isEmpty ||
-                              !RegExp(
-                                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                  .hasMatch(v)) {
-                            return 'Enter a valid email!';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 20,),
-
-
-                    Container(
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(50),
-                        color:  Colors.white,
-                      ),
-                      child:
-                      TextFormField(
-
-                        decoration: const InputDecoration( labelText: "E-mail",
-                            labelStyle:
-                            TextStyle(color: Colors.blue,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(bottom:10,left: 15,top:5)
-                        ),
-                        style:const TextStyle(color: Colors.black),
-                        validator: (v){
-                          if(v!.isEmpty ||
-                              !RegExp(
-                                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                  .hasMatch(v)) {
-                            return 'Enter a valid email!';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(height: 20,),
-
-                    Container(
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(50),
-                        color:  Colors.white,
-                      ),
-                      child: Center(
-                        child: TextFormField(
-                          obscureText: _iisObscure,
-                          autovalidateMode:AutovalidateMode.onUserInteraction,
-                          controller: passwordcontroller,
-                          decoration: InputDecoration( labelText: "Password",
-
-                              labelStyle:
-                              const TextStyle(color: Colors.blue,
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: "Username",
+                            labelStyle: TextStyle(
+                                color: Color.fromRGBO(108, 96, 255, 1),
                                 fontSize: 15,
-                                fontWeight: FontWeight.w400,),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.only(bottom:10,left: 15,top:5),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                    _iisObscure
-                                        ? Icons.visibility_outlined
-                                        : Icons.visibility_off),
-                                onPressed: () {
-                                  setState(() {
-                                    _iisObscure = !_iisObscure;
-                                  });
-                                },
-                              )),
-
-                          style:const TextStyle(color: Colors.black),
-
-                        ),
+                                fontWeight: FontWeight.w400,
+                                fontFamily: "assets/fonts/roboto_regular.ttf"
+                            ),
+                            border: InputBorder.none,
+                            contentPadding:
+                            EdgeInsets.only(bottom: 10, left: 15, top: 5)),
+                        style: const TextStyle(color: Colors.black),
+                        validator: (v) {
+                          if (v!.isEmpty ||
+                              !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                  .hasMatch(v)) {
+                            return 'Enter a valid email!';
+                          }
+                          return null;
+                        },
                       ),
                     ),
+                    const SizedBox(height: 20,),
+
+
+                    Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        border: Border.all(color:const Color.fromRGBO(169, 165, 218, 1)),
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.white,
+                      ),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: "E-mail",
+                            labelStyle: TextStyle(
+                              color:  Color.fromRGBO(108, 96, 255, 1),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding:
+                            EdgeInsets.only(bottom: 10, left: 15, top: 5)),
+                        style: const TextStyle(color: Colors.black),
+                        validator: (v) {
+                          if (v!.isEmpty ||
+                              !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                  .hasMatch(v)) {
+                            return 'Enter a valid email!';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(height: 20,),
+
+            Container(
+              height: 50,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color.fromRGBO(169, 165, 218, 1)),
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.white,
+              ),
+              child: Center(
+                child: TextFormField(
+                  obscureText: _iisObscure,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  controller: passwordcontroller,
+                  decoration: InputDecoration(
+                      labelText: "Password",
+                      labelStyle: const TextStyle(
+                        color:  Color.fromRGBO(108, 96, 255, 1),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding:
+                      const EdgeInsets.only(bottom: 10, left: 15, top: 5),
+                      suffixIcon: IconButton(
+                        icon: Icon(_iisObscure
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _iisObscure = !_iisObscure;
+                          });
+                        },
+                      )),
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
+            ),
 
 
                     const SizedBox(height:50),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Step1()));
-                      },
+              GestureDetector(
+               onTap: () {
+                 if (_formkey.currentState?.validate() ?? true) {
+                   signInUser();
+                 }
+               },
                       child:
                       Center(
                         child: Container(
-                          height: 40,
-                          width: 100,
+                          height: 35,
+                          width: 90,
                           alignment: Alignment.center,
-                          decoration: BoxDecoration(color: const Color.fromRGBO(
-                              91, 69, 175, 0.8862745098039215),borderRadius: BorderRadius.circular(20)),
-                          child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                          decoration: BoxDecoration(
+                              color:
+                              const Color.fromRGBO(108, 96, 255, 1),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
-                              Text("Login",textAlign:TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w900),),
-                            ],),
+                              Text(
+                                "Login",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 15,),
-                    const Center(
-                      child: Text("Forgot your password? ",textAlign:TextAlign.center,
-                        style: TextStyle(color: Colors.deepPurpleAccent,fontSize: 13,decoration:TextDecoration.underline, ),),
+                    Center(
+                      child: Text(
+                        "Forgot your password? ",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color.fromRGBO(108, 96, 255, 1),
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
                     ),
                   ]
               )
@@ -231,4 +288,75 @@ class _SignUp extends State<SignUp> {
         )
     );
   }
+
+  void signInFb(BuildContext context) async {
+    print("Asdas");
+    final fbLogin = FacebookLogin();
+    final FacebookLoginResult result = await fbLogin.logIn(permissions: [
+      FacebookPermission.publicProfile,
+      FacebookPermission.email,
+      // FacebookPermission.userFriends
+    ]);
+    print("Email : ${FacebookPermission.email}");
+
+    print('Facebook Error= $result');
+    print('Facebook Error>>= ${result.error}');
+    print('Facebook Error ${result.error!.developerMessage}');
+
+    // Send access token to server for validation and auth
+    print('Status ${result.status.name}');
+    final FacebookAccessToken? accessToken = result.accessToken;
+    print('Access token: ${accessToken!.token}');
+
+    // Get profile data
+    final profile = await fbLogin.getUserProfile();
+    print('Hello, ${profile!.name}! You ID: ${profile.userId}');
+
+    // Get user profile image url
+  }
+
+
+
+
+// _displayLoginButton() {
+//   return RaisedButton(
+//     child: Text("Login with Facebook"),
+//     onPressed: () => initiateFacebookLogin(),
+//   );
+// }
+//
+// _logout() async {
+//   await facebookLogin.logOut();
+//   onLoginStatusChanged(false);
+//   print("Logged out");
+// }
+  void signInUser() async {
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+          email: Emailcontroller.text, password: passwordcontroller.text).then((value){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>Step1()));
+      });
+    }on FirebaseAuthException catch(e){
+      if (e.code == 'user-not-found') {
+        print("User not found");
+        return Future.error(
+            "User Not Found", StackTrace.fromString("User Not Found"));
+      } else if (e.code == 'wrong-password') {
+        print("Incorrect password");
+
+        return Future.error(
+            "Incorrect password", StackTrace.fromString("Incorrect password"));
+      } else {
+        print("Login Failed");
+        return Future.error(
+            "Login Failed", StackTrace.fromString("Unknown error"));
+
+      }
+    }
+  }
 }
+
+
+
+
