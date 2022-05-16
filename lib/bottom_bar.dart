@@ -32,7 +32,7 @@ class _Bottom_bar extends State<Bottom_bar> {
           : Container(),
       bottomNavigationBar: Container(
         height: 90,
-        decoration: BoxDecoration(boxShadow: [
+        decoration: const BoxDecoration(boxShadow: [
           BoxShadow(
               color: Color.fromRGBO(85, 85, 85, 0.2),
               blurRadius: 100,
@@ -43,7 +43,7 @@ class _Bottom_bar extends State<Bottom_bar> {
             currentIndex: tabClick,
             type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.white,
-            selectedItemColor: Color.fromRGBO(2, 152, 216, 1),
+            selectedItemColor: const Color.fromRGBO(2, 152, 216, 1),
             unselectedItemColor: Colors.grey,
             selectedFontSize: 12,
             unselectedFontSize: 12,

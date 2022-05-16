@@ -1,63 +1,41 @@
 {
   "project_info": {
-    "project_number": "16799328277",
-    "project_id": "stasht-212a1",
-    "storage_bucket": "stasht-212a1.appspot.com"
+    "project_number": "66437154598",
+    "project_id": "mvpstasht",
+    "storage_bucket": "mvpstasht.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:16799328277:android:8f4b32cf7f94de83ab061c",
+        "mobilesdk_app_id": "1:66437154598:android:f25ebf200683270cf563e7",
         "android_client_info": {
-          "package_name": "com.example.stasht"
+          "package_name": "com.app.stasht"
         }
       },
       "oauth_client": [
         {
-          "client_id": "16799328277-9t94kumsl0joruvctket14t9g2s95vru.apps.googleusercontent.com",
+          "client_id": "66437154598-o28j1ea4f9i1vg4hl4a9bh220uvsmem8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBeVQfBnJ2yZHhMoIH_FTdMASsMwX1AIik"
+          "current_key": "AIzaSyB-iJ7sESNM-uZPztbegDppabJNVOcXU2c"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "16799328277-9t94kumsl0joruvctket14t9g2s95vru.apps.googleusercontent.com",
+              "client_id": "66437154598-o28j1ea4f9i1vg4hl4a9bh220uvsmem8.apps.googleusercontent.com",
               "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:16799328277:android:0c0b336564c3fc82ab061c",
-        "android_client_info": {
-          "package_name": "com.example.wfirebase"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "16799328277-9t94kumsl0joruvctket14t9g2s95vru.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBeVQfBnJ2yZHhMoIH_FTdMASsMwX1AIik"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
+            },
             {
-              "client_id": "16799328277-9t94kumsl0joruvctket14t9g2s95vru.apps.googleusercontent.com",
-              "client_type": 3
+              "client_id": "66437154598-i7vg9e8pj2lrb6biceq4pdgljrir9ju6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.stasht"
+              }
             }
           ]
         }

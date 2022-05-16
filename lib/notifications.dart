@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stasht/models/notification_model.dart';
 
-import 'app_bar.dart';
 
 class Notifications extends StatefulWidget{
   @override
@@ -32,7 +31,7 @@ class _Notifications extends State<Notifications> {
         body: SingleChildScrollView(child:
         Padding(padding: const EdgeInsets.all(15),child:
         Column(children: [
-          Container(height: MediaQuery.of(context).size.height,
+          SizedBox(height: MediaQuery.of(context).size.height,
               width:MediaQuery.of(context).size.width ,
               child: ListView.builder(
                 itemCount:5,
@@ -96,7 +95,7 @@ class _Notifications extends State<Notifications> {
                       Container(
                         width: MediaQuery.of(context).size.width,
                         height: 1,
-                        color: Color.fromRGBO(108, 96, 255, 1),
+                        color: const Color.fromRGBO(108, 96, 255, 1),
                       )
                     ],
                   );

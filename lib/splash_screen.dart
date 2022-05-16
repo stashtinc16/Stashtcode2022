@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
 import 'package:stasht/sign_up.dart';
-import 'package:stasht/step_1.dart';
+import 'package:stasht/utils/assets_images.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -21,22 +23,23 @@ class _SplashScreen extends State<StatefulWidget> {
   hundling() async{
     Future.delayed(const Duration(milliseconds:3000),(){
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (cotext) => SignUp()));
+          context, MaterialPageRoute(builder: (cotext) => const SignUp()));
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             decoration: const BoxDecoration(
-                image: DecorationImage(
+                image:  DecorationImage(
                     fit: BoxFit.cover,
                     image: AssetImage(
-                      'assets/images/preloader.png',
+                      preLoader,
                     ))),
-            child: Image.asset("assets/images/logo.png",height: 40,width: 40,)
+            child: Image.asset(logo,height: 40,width: 40,)
         ));
   }
 }

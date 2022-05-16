@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class AuthenticationService{
-  FirebaseAuth _auth=FirebaseAuth.instance;
+  final FirebaseAuth _auth=FirebaseAuth.instance;
   Future createuser(String email, String password,String  name) async{
     UserCredential credential;
     try {
@@ -29,6 +28,6 @@ class AuthenticationService{
     } catch(e){
       return print(e.toString());
     }
-    return null;
+    return;
   }
 }

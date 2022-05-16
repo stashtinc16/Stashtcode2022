@@ -44,6 +44,9 @@ dependencies:
   firebase_core: ^1.16.0
   firebase_storage: ^10.2.15
   flutter_svg: ^1.0.3
+  get: ^4.6.3
+  cloud_firestore: ^3.1.15
+  
 
 
 

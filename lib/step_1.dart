@@ -78,7 +78,7 @@ class _Step1 extends State<Step1> {
                       const SizedBox(height: 20,),
                       InkWell(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> Memories_Empty()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const Memories_Empty()));
                         },
                         child:
                         Center(

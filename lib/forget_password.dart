@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:stasht/sign_in.dart';
-import 'package:stasht/sign_up.dart';
 import 'package:stasht/splash_screen.dart';
 
 
@@ -16,10 +14,10 @@ class _Forget_PasswordState extends State<Forget_Password> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(child:
-        Padding(padding: EdgeInsets.only(top: 50,left: 25,right: 25),child:
+        Padding(padding: const EdgeInsets.only(top: 50,left: 25,right: 25),child:
         Column(
           children: [
-            Center(
+            const Center(
               child: Text(
                 "stasht.",
                 style: TextStyle(
@@ -88,7 +86,7 @@ class _Forget_PasswordState extends State<Forget_Password> {
             ),
             const SizedBox(height:20,),
             InkWell(onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> SplashScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const SplashScreen()));
             },
               child: const Center(
                 child:  Text("Back to login",textAlign:TextAlign.center,

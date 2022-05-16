@@ -17,7 +17,7 @@ class _Memories extends State<Memories> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-          padding: EdgeInsets.all(15),
+          padding: const EdgeInsets.all(15),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -30,17 +30,17 @@ class _Memories extends State<Memories> {
                   child: Row(
                     children: [
                       isTap
-                          ? Icon(
+                          ? const Icon(
                         Icons.arrow_drop_down,
                         color: Colors.black,
                         size: 30,
                       )
-                          : Icon(
+                          : const Icon(
                         Icons.arrow_right,
                         color: Colors.black,
                         size: 30,
                       ),
-                      Text(
+                      const Text(
                         "My Memories (1) ",
                         style: TextStyle(
                             color: Colors.black,
@@ -72,14 +72,14 @@ class _Memories extends State<Memories> {
                             height: 45,
                             width: 45,
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 color: Colors.lightBlueAccent,
                                 shape: BoxShape.circle),
                           ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: const [
                               Text(
                                 "Baniff Trip 2021",
                                 style: TextStyle(
@@ -98,10 +98,10 @@ class _Memories extends State<Memories> {
                             height: 35,
                             width: 35,
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 color: Colors.greenAccent,
                                 shape: BoxShape.circle),
-                            child: Text(
+                            child: const Text(
                               "34",
                               style: TextStyle(
                                   color: Colors.blue, fontSize: 14),
@@ -111,7 +111,7 @@ class _Memories extends State<Memories> {
                       ),
                     ))
                     : Container(),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
@@ -119,7 +119,7 @@ class _Memories extends State<Memories> {
                   width: MediaQuery.of(context).size.width,
                   color: Colors.grey,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 InkWell(
@@ -131,17 +131,17 @@ class _Memories extends State<Memories> {
                   child: Row(
                     children: [
                       isClick
-                          ? Icon(
+                          ? const Icon(
                         Icons.arrow_drop_down,
                         color: Colors.black,
                         size: 30,
                       )
-                          : Icon(
+                          : const Icon(
                         Icons.arrow_right,
                         color: Colors.black,
                         size: 30,
                       ),
-                      Text(
+                      const Text(
                         "Shared Memories (0) ",
                         style: TextStyle(
                             color: Colors.black,
@@ -151,7 +151,7 @@ class _Memories extends State<Memories> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
@@ -159,7 +159,7 @@ class _Memories extends State<Memories> {
                   width: MediaQuery.of(context).size.width,
                   color: Colors.grey,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 InkWell(
@@ -171,17 +171,17 @@ class _Memories extends State<Memories> {
                   child: Row(
                     children: [
                       isCheck
-                          ? Icon(
+                          ? const Icon(
                         Icons.arrow_drop_down,
                         color: Colors.black,
                         size: 30,
                       )
-                          : Icon(
+                          : const Icon(
                         Icons.arrow_right,
                         color: Colors.black,
                         size: 30,
                       ),
-                      Text(
+                      const Text(
                         "My Published (0) ",
                         style: TextStyle(
                             color: Colors.black,
@@ -191,7 +191,7 @@ class _Memories extends State<Memories> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
@@ -199,13 +199,13 @@ class _Memories extends State<Memories> {
                   width: MediaQuery.of(context).size.width,
                   color: Colors.grey,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
               ],
             ),
           )),
-      floatingActionButton: Container(
+      floatingActionButton: SizedBox(
           height: 70,
           width: 70,
           child: FittedBox(
@@ -214,7 +214,7 @@ class _Memories extends State<Memories> {
                 //  Navigator.push(context,
                 //  MaterialPageRoute(builder: (context) => Sign_In()));
               },
-              child: Icon(
+              child: const Icon(
                 Icons.add,
                 color: Colors.white,
                 size: 25,

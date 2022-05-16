@@ -66,7 +66,7 @@ class _Step_2 extends State<Step_2> {
                         fontWeight: FontWeight.w800,
                         fontFamily: "gibsonsemibold"
                     ),),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   const Text("Step 2",
                     style: TextStyle(fontSize:21,color:Color.fromRGBO(108, 96, 255, 1),
                       fontFamily: "gibsonsemibold",),),
@@ -108,7 +108,7 @@ class _Step_2 extends State<Step_2> {
 
                 ],
               ),)),)),
-        bottomSheet:Container(
+        bottomSheet:SizedBox(
           height: 50,
           child:   Padding(padding: const EdgeInsets.only(top: 5,right: 10),child:
           InkWell(onTap: (){
@@ -117,7 +117,7 @@ class _Step_2 extends State<Step_2> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children:const [
-                  Text("Done",style: const TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.bold),),
+                  Text("Done",style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.bold),),
                   SizedBox(width: 5,),
                   Icon(Icons.arrow_forward_ios_outlined,color: Colors.black,)
                 ],

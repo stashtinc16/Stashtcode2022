@@ -28,14 +28,14 @@ class _Memory_Lane extends State<Memory_Lane> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children:  [
-                            Icon(
+                            const Icon(
                               Icons.arrow_back_ios_outlined,
                               color: Colors.white,
                             ),
                             InkWell(onTap: (){
 
                             },
-                              child: Icon(
+                              child: const Icon(
                                 Icons.person_add_alt_1_outlined,
                                 color: Colors.white,
                               ),)
@@ -55,9 +55,9 @@ class _Memory_Lane extends State<Memory_Lane> {
                                       border: Border.all(
                                           color: Colors.white, width: 2)),
                                 ),
-                                Padding(
+                                const Padding(
                                     padding: EdgeInsets.only(top: 5, left: 35),
-                                    child: const Text(
+                                    child: Text(
                                       "Bnaff Trip 2021",
                                       style: TextStyle(
                                           color: Colors.white,
@@ -67,7 +67,7 @@ class _Memory_Lane extends State<Memory_Lane> {
                               ],
                             )),
                         Padding(
-                          padding: EdgeInsets.only(top: 35, left: 180),
+                          padding: const EdgeInsets.only(top: 35, left: 180),
                           child: Container(
                             height: 30,
                             width: 30,
@@ -79,7 +79,7 @@ class _Memory_Lane extends State<Memory_Lane> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(top: 35, left: 200),
+                          padding: const EdgeInsets.only(top: 35, left: 200),
                           child: Container(
                             height: 30,
                             width: 30,
@@ -94,8 +94,8 @@ class _Memory_Lane extends State<Memory_Lane> {
                     ),
                   )),
               Padding(
-                  padding: EdgeInsets.only(left: 15, right: 15, top: 5,bottom: 60),
-                  child: Container(
+                  padding: const EdgeInsets.only(left: 15, right: 15, top: 5,bottom: 60),
+                  child: SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width*1.5,
                     child: ListView.builder(
@@ -117,30 +117,30 @@ class _Memory_Lane extends State<Memory_Lane> {
                                           border: Border.all(
                                               color: Colors.white, width: 2)),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 10,
                                     ),
                                     Column(
                                       crossAxisAlignment:
                                       CrossAxisAlignment.start,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Tanya Peters",
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         RichText(
-                                          text: TextSpan(
+                                          text: const TextSpan(
                                             text: 'Banff, vancouvar, BC ',
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 10),
-                                            children: const <TextSpan>[
+                                            children: <TextSpan>[
                                               TextSpan(
                                                   text: 'Apr 29/21',
                                                   style: TextStyle(
@@ -154,7 +154,7 @@ class _Memory_Lane extends State<Memory_Lane> {
                                   ],
                                 ),
                                 Row(
-                                  children: [
+                                  children: const [
                                     Text(
                                       "3",
                                       style: TextStyle(color: Colors.black),
@@ -168,7 +168,7 @@ class _Memory_Lane extends State<Memory_Lane> {
                                 )
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             Container(
@@ -179,7 +179,7 @@ class _Memory_Lane extends State<Memory_Lane> {
                                   borderRadius: BorderRadius.circular(20)),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(top: 5, left: 15),
+                              padding: const EdgeInsets.only(top: 5, left: 15),
                               child: TextFormField(
                                 decoration: const InputDecoration(
                                     border: InputBorder.none,
@@ -195,7 +195,7 @@ class _Memory_Lane extends State<Memory_Lane> {
                               width: MediaQuery.of(context).size.width,
                               color: Colors.grey,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           ],
@@ -210,10 +210,10 @@ class _Memory_Lane extends State<Memory_Lane> {
       bottomSheet: Container(
           height: 60,
           color: Colors.white,
-          child:Padding(padding: EdgeInsets.only(left: 30,right: 30),
+          child:Padding(padding: const EdgeInsets.only(left: 30,right: 30),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: const [
 
                 Icon(Icons.insert_drive_file_outlined,color: Colors.grey,size: 25,),
                 Icon(Icons.share_outlined,color: Colors.grey,size: 25,),
