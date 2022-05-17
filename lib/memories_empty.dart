@@ -5,7 +5,7 @@ import 'package:stasht/all_photos.dart';
 import 'package:stasht/app_bar.dart';
 import 'package:stasht/notifications.dart';
 import 'package:stasht/profile.dart';
-import 'package:stasht/routes/sign_in.dart';
+import 'package:stasht/login_signup/domain/sign_in.dart';
 
 class Memories_Empty extends StatefulWidget {
   const Memories_Empty({Key? key}) : super(key: key);

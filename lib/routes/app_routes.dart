@@ -1,12 +1,13 @@
 
 abstract class AppRoutes {
-  static const SplashScreen = "/spalsh";
-  static const SignIn = "/signin";
-  static const Signup = "/signup";
-  static const ForgotPassword = "/forgot_password";
-  static const ResetPassword = "/reset_password";
+  static const splashScreen = "/spalsh";
+  static const signIn = "/signin";
+  static const signup = "/signup";
+  static const forgotPassword = "/forgot_password";
+  static const resetPassword = "/reset_password";
 
-  static const MemoriesStep1 = "/memories_step_1";
-  static const MemoriesStep2 = "/memories_step_2";
-  static const AddCaption = "/add_caption";
+  static const memoriesStep1 = "/memories_step_1";
+  static const memoriesStep2 = "/memories_step_2";
+  static const addCaption = "/add_caption";
+  static const memories = "/memories";
 }

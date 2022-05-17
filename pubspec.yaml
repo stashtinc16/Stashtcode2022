@@ -47,6 +47,7 @@ dependencies:
   get: ^4.6.3
   cloud_firestore: ^3.1.15
   
+  
 
 
 
@@ -98,7 +99,7 @@ flutter:
 
     - family: gibsonsemibold
       fonts:
-        - asset: assets/fonts/Gibson-SemiBold.otf
+        - asset: assets/fonts/gibson-semibold.otf
 
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic

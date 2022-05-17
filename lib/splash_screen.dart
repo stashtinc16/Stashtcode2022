@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
-import 'package:stasht/sign_up.dart';
+import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/assets_images.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -14,16 +14,25 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreen extends State<StatefulWidget> {
+  User? firebaseAuth = FirebaseAuth.instance.currentUser;
   @override
   void initState() {
     super.initState();
     hundling();
   }
 
-  hundling() async{
-    Future.delayed(const Duration(milliseconds:3000),(){
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (cotext) => const SignUp()));
+  hundling() async {
+   
+    Future.delayed(const Duration(milliseconds: 2500), () {
+      
+       if (firebaseAuth != null) {
+      Get.offNamed(AppRoutes.memories);
+    } else {
+      Get.offNamed(AppRoutes.signIn);
+    }
+     
+      // Navigator.pushReplacement(
+      //     context, MaterialPageRoute(builder: (cotext) => const SignUp()));
     });
   }
 
@@ -34,12 +43,15 @@ class _SplashScreen extends State<StatefulWidget> {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             decoration: const BoxDecoration(
-                image:  DecorationImage(
+                image: DecorationImage(
                     fit: BoxFit.cover,
                     image: AssetImage(
                       preLoader,
                     ))),
-            child: Image.asset(logo,height: 40,width: 40,)
-        ));
+            child: Image.asset(
+              logo,
+              height: 40,
+              width: 40,
+            )));
   }
 }

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'memories.dart';
+import 'memories/presentation/memories.dart';
 
 class Step_2 extends StatefulWidget{
   const Step_2({Key? key}) : super(key: key);
