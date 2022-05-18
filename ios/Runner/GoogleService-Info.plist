@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>66437154598-i7vg9e8pj2lrb6biceq4pdgljrir9ju6.apps.googleusercontent.com</string>
+	<string>66437154598-6hsoo53bv7qp08kc0qqdjbpfig82j2uh.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.66437154598-i7vg9e8pj2lrb6biceq4pdgljrir9ju6</string>
+	<string>com.googleusercontent.apps.66437154598-6hsoo53bv7qp08kc0qqdjbpfig82j2uh</string>
 	<key>API_KEY</key>
 	<string>AIzaSyD9jbZv04oon4AUbhAJCebf1GGmDZxUEUA</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.app.stasht</string>
+	<string>com.app.stasht2</string>
 	<key>PROJECT_ID</key>
 	<string>mvpstasht</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:66437154598:ios:73320c9ed79aa2e4f563e7</string>
+	<string>1:66437154598:ios:8bf74d9be1a6a22cf563e7</string>
 </dict>
 </plist>

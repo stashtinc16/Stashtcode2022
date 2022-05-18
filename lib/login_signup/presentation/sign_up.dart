@@ -1,14 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:stasht/authentication.dart';
-import 'package:stasht/forget_password.dart';
+import 'package:stasht/forgot_password/presentation/forget_password.dart';
 import 'package:stasht/login_signup/controllers/signup_controller.dart';
-import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/login_signup/domain/sign_in.dart';
-import 'package:stasht/step_1.dart';
+import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/assets_images.dart';
 
 class SignUp extends GetView<SignupController> {
@@ -16,7 +12,6 @@ class SignUp extends GetView<SignupController> {
   bool isEmail = false;
   bool isLoggedIn = false;
   var profileData;
-  var facebookLogin = FacebookLogin();
 
   void onLoginStatusChanged(bool isLoggedIn, {profileData}) {
     this.isLoggedIn = isLoggedIn;
@@ -30,7 +25,8 @@ class SignUp extends GetView<SignupController> {
       child: Padding(
           padding: const EdgeInsets.all(25),
           child: Form(
-              key: controller.formkey,
+              key: controller.formkeySignin,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -58,7 +54,8 @@ class SignUp extends GetView<SignupController> {
                     const SizedBox(height: 15),
                     MaterialButton(
                       onPressed: () {
-                        controller.facebookSignin();
+                        // controller.facebookSignin();
+                        controller.facebookLogin();
                       },
                       height: 50,
                       color: const Color.fromRGBO(2, 152, 216, 1),
@@ -162,6 +159,8 @@ class SignUp extends GetView<SignupController> {
                       ),
                       child: TextFormField(
                         controller: controller.emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
                         decoration: const InputDecoration(
                             labelText: "E-mail",
                             labelStyle: TextStyle(
@@ -174,9 +173,7 @@ class SignUp extends GetView<SignupController> {
                                 EdgeInsets.only(bottom: 10, left: 15, top: 5)),
                         style: const TextStyle(color: Colors.black),
                         validator: (v) {
-                          if (v!.isEmpty ||
-                              !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                  .hasMatch(v)) {
+                          if (v!.isEmpty) {
                             return 'Enter a valid email!';
                           }
                           return null;
@@ -199,7 +196,6 @@ class SignUp extends GetView<SignupController> {
                           child: Obx(
                         () => TextFormField(
                           obscureText: controller.isObscure.value,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           controller: controller.passwordController,
                           decoration: InputDecoration(
                               labelText: "Password",
@@ -220,6 +216,12 @@ class SignUp extends GetView<SignupController> {
                                       !controller.isObscure.value;
                                 },
                               )),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Please enter password";
+                            }
+                            return null;
+                          },
                           style: const TextStyle(color: Colors.black),
                         ),
                       )),
@@ -258,10 +260,7 @@ class SignUp extends GetView<SignupController> {
                     ),
                     InkWell(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Forget_Password()));
+                        Get.toNamed(AppRoutes.forgotPassword);
                       },
                       child: const Center(
                         child: Text(

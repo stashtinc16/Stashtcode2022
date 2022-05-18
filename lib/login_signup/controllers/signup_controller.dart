@@ -1,24 +1,35 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
-import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:stasht/authentication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:get/get.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/routes/app_routes.dart';
+import 'package:stasht/utils/constants.dart';
 
 class SignupController extends GetxController {
-  var facebookLogin = FacebookLogin();
+  // var facebookLogin = FacebookLogin();
   final RxBool isObscure = true.obs;
 
-  final AuthenticationService _auth = AuthenticationService();
   final formkey = GlobalKey<FormState>();
+  final formkeySignin = GlobalKey<FormState>();
   final userNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  final FacebookAuth _facebookAuth = FacebookAuth.instance;
+
+  bool? _isLogged;
+  bool _fetching = false;
+
+  bool get fetching => _fetching;
+  bool? get isLogged => _isLogged;
+
+  Map<String, dynamic>? _userData;
+  Map<String, dynamic>? get userData => _userData;
 
   final usersRef = FirebaseFirestore.instance
       .collection('users')
@@ -29,6 +40,7 @@ class SignupController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _init();
   }
 
   void checkEmailExists() {
@@ -47,52 +59,106 @@ class SignupController extends GetxController {
             });
   }
 
+// Signup user to app and save session
   Future<void> signupUser() async {
     if (formkey.currentState!.validate()) {
-      try {
-        await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        )
-            .then((value) {
-          print("FirebaseAuthExceptionValue $value");
-          saveUserToDB(value.user, userNameController.text);
-        }).onError((error, stackTrace) {
-          print("FirebaseAuthExceptionError $error");
-        });
-      } on FirebaseAuthException catch (e) {
-        print("FirebaseAuthException $e");
-        return;
-      }
-    }
-  }
-
-  Future<void> signIn() async {
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text)
-          .then((value) {
-        Get.offNamed(AppRoutes.memories);
-      });
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print("User not found");
-        return Future.error(
-            "User Not Found", StackTrace.fromString("User Not Found"));
-      } else if (e.code == 'wrong-password') {
-        print("Incorrect password");
-
-        return Future.error(
-            "Incorrect password", StackTrace.fromString("Incorrect password"));
+      if (!checkValidEmail(emailController.text.toString())) {
+        Get.snackbar("Email Invalid", "Please enter valid email address");
+      } else if (passwordController.text.toString().length < 6) {
+        Get.snackbar("Password", "Please enter at least 6 characters",
+            borderColor: Colors.red);
       } else {
-        print("Login Failed");
-        return Future.error(
-            "Login Failed", StackTrace.fromString("Unknown error"));
+        try {
+          EasyLoading.show(status: 'Processing..');
+      
+          await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text,
+          )
+              .then((value) {
+            print("FirebaseAuthExceptionValue $value");
+            saveUserToDB(value.user, userNameController.text);
+          }).onError((error, stackTrace) {
+            if (error.toString().contains("email-already-in-use")) {
+              Get.snackbar(
+                "Email exits",
+                "The email address is already in use by another account.",
+                snackPosition: SnackPosition.BOTTOM,
+              );
+            }
+            EasyLoading.dismiss();
+            print("FirebaseAuthExceptionError ${error.toString()}");
+          });
+        } on FirebaseAuthException catch (e) {
+          EasyLoading.dismiss();
+          print("FirebaseAuthException $e");
+          return;
+        }
       }
     }
   }
+
+// Signin user to app and save session
+  Future<void> signIn() async {
+    if (formkeySignin.currentState!.validate()) {
+      if (!checkValidEmail(emailController.text.toString())) {
+        Get.snackbar("Email Invalid", "Please enter valid email address");
+      } else if (passwordController.text.toString().length < 6) {
+        Get.snackbar("Password", "Please enter at least 6 characters",
+            borderColor: Colors.red);
+      } else {
+        try {
+          EasyLoading.show(status: 'Processing..');
+          await FirebaseAuth.instance
+              .signInWithEmailAndPassword(
+                  email: emailController.text,
+                  password: passwordController.text)
+              .then((value1) {
+           
+            usersRef
+                .where("email", isEqualTo: value1.user!.email)
+                .get()
+                .then((value) => {
+                      print(
+                          'MyLogin ${value1.user!.email} =>${value.size} ==>'),
+                      EasyLoading.dismiss(),
+                      if (value.docs.isNotEmpty)
+                        {
+                          saveSession(
+                              value.docs[0].id,
+                              value.docs[0].data().userName!,
+                              emailController.text,
+                              value.docs[0].data().profileImage!),
+                          Get.offNamed(AppRoutes.memories)
+                        }
+                      else
+                        {Get.snackbar("Error", "Email not exists!")}
+                    });
+          });
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'user-not-found') {
+            print("User not found");
+            EasyLoading.dismiss();
+            return Future.error(
+                "User Not Found", StackTrace.fromString("User Not Found"));
+          } else if (e.code == 'wrong-password') {
+            print("Incorrect password");
+            EasyLoading.dismiss();
+            return Future.error("Incorrect password",
+                StackTrace.fromString("Incorrect password"));
+          } else {
+            print("Login Failed");
+            EasyLoading.dismiss();
+            return Future.error(
+                "Login Failed", StackTrace.fromString("Unknown error"));
+          }
+        }
+      }
+    }
+  }
+
+//Save user to Firebase
 
   void saveUserToDB(User? user, String username) {
     UserModel userModel = UserModel(
@@ -107,57 +173,103 @@ class SignupController extends GetxController {
         status: true);
 
     usersRef.add(userModel).then((value) => {
+          EasyLoading.dismiss(),
           print('UsersDB $value'),
-          Get.snackbar('Success', "User logged-in successfully",
+          saveSession(value.id, username, user.email!, ""),
+          emailController.text = "",
+          passwordController.text = "",
+          userNameController.text = "",
+          Get.snackbar('Success', "User registerd successfully",
               snackPosition: SnackPosition.BOTTOM),
           Get.offNamed(AppRoutes.memories)
         });
   }
 
+// Initialize Facebook
+  void _init() async {
+    _isLogged = await _facebookAuth.accessToken != null;
+    if (_isLogged!) {
+      _userData = await _facebookAuth.getUserData(
+        fields: "name,email,picture.width(200)",
+      );
+    }
+  }
+
 //Signin to facebook
-  Future<void> facebookSignin() async {
-    final fbLogin = FacebookLogin();
-    final FacebookLoginResult result = await fbLogin.logIn(permissions: [
-      FacebookPermission.publicProfile,
-      FacebookPermission.email,
-    ]);
+  Future<bool> facebookLogin() async {
+    EasyLoading.show(status: 'Processing');
+    _fetching = true;
 
-    final FacebookAccessToken? accessToken = result.accessToken;
+    final LoginResult result = await _facebookAuth.login();
 
-    // Get profile data
-    final profile = await fbLogin.getUserProfile();
-    final email = await fbLogin.getUserEmail();
-    final profileImage =
-        await fbLogin.getProfileImageUrl(width: 500, height: 500);
-    saveUserToFirebase(profile, email, profileImage);
-    print('Hello, ${profile!.name}! You ID: ${profile.userId}');
+    _isLogged = result.status == LoginStatus.success;
+    if (_isLogged!) {
+      _userData = await _facebookAuth.getUserData();
+      print('_userData ${_userData}');
+      _fetching = false;
+      usersRef
+          .where("email", isEqualTo: _userData!['email'])
+          .get()
+          .then((value) => {
+                value.docs.length,
+                if (value.docs.isEmpty)
+                  {
+                    saveUserToFirebase(_userData!['name'], _userData!['email'],
+                        _userData!['picture']['data']['url'])
+                  }
+                else
+                  {
+                    EasyLoading.dismiss(),
+                    emailController.text = "",
+                    passwordController.text = "",
+                    Get.snackbar('Success', "User logged-in successfully",
+                        snackPosition: SnackPosition.BOTTOM),
+                    Get.offNamed(AppRoutes.memories)
+                  }
+              });
+    }
+
+    return _isLogged!;
   }
 
 // Save user to firebase
-  void saveUserToFirebase(
-      FacebookUserProfile? profile, String? email, String? profileImage) {
+  void saveUserToFirebase(String? name, String? email, String? profileImage) {
     UserModel userModel = UserModel(
-        userName: profile!.name!,
+        userName: name!,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         deviceToken: "",
         deviceType: Platform.isAndroid ? "Android" : "IOS",
-        displayName: profile.name,
+        displayName: name,
         email: email,
         profileImage: profileImage,
         status: true);
 
     usersRef.add(userModel).then((value) => {
-          print('UsersDB $value'),
+          EasyLoading.dismiss(),
+          saveSession(value.id, name, email!, profileImage!),
           Get.snackbar('Success', "User logged-in successfully",
               snackPosition: SnackPosition.BOTTOM),
           Get.offNamed(AppRoutes.memories)
         });
   }
 
+// Save User Session
+  void saveSession(
+      String _userId, String _userName, String _userEmail, String _userImage) {
+    userId = _userId;
+    userEmail = _userEmail;
+    userName = _userName;
+    userImage = _userImage;
+  }
+
   @override
   void onClose() {
     super.onClose();
+    print('OnClose ');
+    userNameController.text = "";
+    emailController.text = "";
+    passwordController.text = "";
   }
 
   @override

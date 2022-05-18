@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stasht/app_bar.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
+import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 import '../../memory_lane.dart';
 
@@ -17,7 +19,10 @@ class Memories extends GetView<MemoriesController> {
         appBar: commonAppbar(
           context,
           'Memories',
-          pageSelected: (isMemory, isPhotos, isNotification, isSettings) => {},
+          pageSelected: (isMemory, isPhotos, isNotification, isSettings) => {
+            print('isSettings $isSettings'),
+            if (isSettings) {Get.toNamed(AppRoutes.profile)}
+          },
         ),
         body: Padding(
             padding: const EdgeInsets.all(15),

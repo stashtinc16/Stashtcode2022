@@ -10,4 +10,5 @@ abstract class AppRoutes {
   static const memoriesStep2 = "/memories_step_2";
   static const addCaption = "/add_caption";
   static const memories = "/memories";
+  static const profile = "/profile";
 }
