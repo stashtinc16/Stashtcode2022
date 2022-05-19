@@ -263,13 +263,16 @@ class SignUp extends GetView<SignupController> {
                         Get.toNamed(AppRoutes.forgotPassword);
                       },
                       child: const Center(
-                        child: Text(
-                          "Forgot your password? ",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color.fromRGBO(108, 96, 255, 1),
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Forgot your password? ",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color.fromRGBO(108, 96, 255, 1),
+                              fontSize: 14,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ),
                       ),

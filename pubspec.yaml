@@ -47,6 +47,9 @@ dependencies:
   cloud_firestore: ^3.1.15
   flutter_easyloading: ^3.0.3
   flutter_facebook_auth: ^4.3.4
+  photo_gallery: ^1.1.1
+  permission_handler: ^9.2.0
+  transparent_image: ^2.0.0
   
   
 
@@ -101,6 +104,15 @@ flutter:
     - family: gibsonsemibold
       fonts:
         - asset: assets/fonts/gibson-semibold.otf
+    - family: robotoRegular
+      fonts:
+        - asset: assets/fonts/roboto_regular.ttf
+    - family: robotoMedium
+      fonts:
+        - asset: assets/fonts/roboto_medium.ttf
+    - family: robotoBold
+      fonts:
+        - asset: assets/fonts/roboto_bold.ttf        
 
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic

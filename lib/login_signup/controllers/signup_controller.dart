@@ -8,6 +8,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/routes/app_routes.dart';
+import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/constants.dart';
 
 class SignupController extends GetxController {
@@ -70,7 +71,7 @@ class SignupController extends GetxController {
       } else {
         try {
           EasyLoading.show(status: 'Processing..');
-      
+
           await FirebaseAuth.instance
               .createUserWithEmailAndPassword(
             email: emailController.text,
@@ -115,7 +116,6 @@ class SignupController extends GetxController {
                   email: emailController.text,
                   password: passwordController.text)
               .then((value1) {
-           
             usersRef
                 .where("email", isEqualTo: value1.user!.email)
                 .get()
@@ -137,19 +137,26 @@ class SignupController extends GetxController {
                     });
           });
         } on FirebaseAuthException catch (e) {
+          EasyLoading.dismiss();
           if (e.code == 'user-not-found') {
             print("User not found");
-            EasyLoading.dismiss();
+
+            Get.snackbar("Error", "User not found",
+                snackPosition: SnackPosition.BOTTOM);
             return Future.error(
                 "User Not Found", StackTrace.fromString("User Not Found"));
           } else if (e.code == 'wrong-password') {
             print("Incorrect password");
-            EasyLoading.dismiss();
+
+            Get.snackbar("Error", "Password is incorrect",
+                snackPosition: SnackPosition.BOTTOM);
             return Future.error("Incorrect password",
                 StackTrace.fromString("Incorrect password"));
           } else {
-            print("Login Failed");
-            EasyLoading.dismiss();
+            print("Login Failed ${e.message}");
+
+            Get.snackbar("Error", "Login Failed! Please try again in some time",
+                snackPosition: SnackPosition.BOTTOM);
             return Future.error(
                 "Login Failed", StackTrace.fromString("Unknown error"));
           }
@@ -203,6 +210,7 @@ class SignupController extends GetxController {
     final LoginResult result = await _facebookAuth.login();
 
     _isLogged = result.status == LoginStatus.success;
+    print('Status ${result.status}');
     if (_isLogged!) {
       _userData = await _facebookAuth.getUserData();
       print('_userData ${_userData}');
@@ -227,6 +235,8 @@ class SignupController extends GetxController {
                     Get.offNamed(AppRoutes.memories)
                   }
               });
+    } else {
+      EasyLoading.dismiss();
     }
 
     return _isLogged!;

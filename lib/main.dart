@@ -7,6 +7,7 @@ import 'package:stasht/login_signup/bindings/signup_binding.dart';
 import 'package:stasht/routes/app_pages.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
+import 'package:stasht/utils/assets_images.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,13 +39,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       getPages: AppPages.routes,
       initialRoute: AppPages.initial,
       initialBinding: SignupBinding(),
       builder: EasyLoading.init(),
+      theme: ThemeData(fontFamily: robotoRegular,),
     );
   }
 }

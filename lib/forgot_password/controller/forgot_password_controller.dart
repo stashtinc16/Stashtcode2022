@@ -25,13 +25,15 @@ class ForgotPasswordController extends GetxController {
       await firebaseAuth
           .sendPasswordResetEmail(email: emailController.text.toString())
           .then((value) => {
+                print('value '),
                 emailController.text = "",
                 EasyLoading.dismiss(),
+                Get.back(),
                 Get.snackbar(
                     'Success', 'Password reset link has sent to your email'),
-                Get.back()
               })
-          .onError((error, stackTrace) => {EasyLoading.dismiss()});
+          .onError((error, stackTrace) =>
+              {print('onError $error'), EasyLoading.dismiss()});
     }
   }
 

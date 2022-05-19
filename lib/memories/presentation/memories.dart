@@ -29,6 +29,35 @@ class Memories extends GetView<MemoriesController> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  Image.asset(
+                    "assets/images/memoryempty.png",
+                    height: 230,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    "You haven't created a memory yet!",
+                    style: TextStyle(color: Colors.black, fontSize: 16),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      controller.createMemoriesStep1();
+                    },
+                    child: const Text(
+                      "Create your first memory!",
+                      style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontSize: 15,
+                          decoration: TextDecoration.underline),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   InkWell(
                     onTap: () {
                       isTap = !isTap;
@@ -47,7 +76,7 @@ class Memories extends GetView<MemoriesController> {
                                 size: 30,
                               ),
                         const Text(
-                          "My Memories (1) ",
+                          "My Memories (0) ",
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 15,
@@ -213,8 +242,7 @@ class Memories extends GetView<MemoriesController> {
             child: FittedBox(
               child: FloatingActionButton(
                 onPressed: () {
-                  //  Navigator.push(context,
-                  //  MaterialPageRoute(builder: (context) => Sign_In()));
+                  Get.toNamed(AppRoutes.memoriesStep1);
                 },
                 child: const Icon(
                   Icons.add,

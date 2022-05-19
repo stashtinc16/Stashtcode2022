@@ -36,13 +36,13 @@ class AppPages {
         transition: Transition.leftToRight),
     GetPage(
         name: AppRoutes.memoriesStep1,
-        page: () => const Step1(),
+        page: () =>  Step1(),
         binding: SignupBinding(),
         transitionDuration: const Duration(milliseconds: 500),
         transition: Transition.leftToRight),
     GetPage(
         name: AppRoutes.memoriesStep2,
-        page: () => const Step_2(),
+        page: () =>  Step_2(),
         binding: SignupBinding(),
         transitionDuration: const Duration(milliseconds: 500),
         transition: Transition.leftToRight),

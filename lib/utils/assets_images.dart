@@ -1,4 +1,7 @@
 const gibsonSemiBold = "gibsonsemibold";
+const robotoRegular = "robotoRegular";
+const robotoMedium = "robotoMedium";
+const robotoBold = "robotoBold";
 
 
 const assetPath = "assets/images/";
