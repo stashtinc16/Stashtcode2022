@@ -5,6 +5,7 @@ import 'package:stasht/login_signup/bindings/signup_binding.dart';
 import 'package:stasht/login_signup/presentation/sign_up.dart';
 import 'package:stasht/memories/bindings/memories_binding.dart';
 import 'package:stasht/memories/presentation/memories.dart';
+import 'package:stasht/memory_lane.dart';
 import 'package:stasht/profile/bindings/profile_binding.dart';
 import 'package:stasht/profile/presentation/profile.dart';
 import 'package:stasht/routes/app_routes.dart';
@@ -36,13 +37,13 @@ class AppPages {
         transition: Transition.leftToRight),
     GetPage(
         name: AppRoutes.memoriesStep1,
-        page: () =>  Step1(),
+        page: () => Step1(),
         binding: SignupBinding(),
         transitionDuration: const Duration(milliseconds: 500),
         transition: Transition.leftToRight),
     GetPage(
         name: AppRoutes.memoriesStep2,
-        page: () =>  Step_2(),
+        page: () => Step_2(),
         binding: SignupBinding(),
         transitionDuration: const Duration(milliseconds: 500),
         transition: Transition.leftToRight),
@@ -62,6 +63,12 @@ class AppPages {
         name: AppRoutes.forgotPassword,
         page: () => ForgotPassword(),
         binding: ForgotPasswordBindings(),
+        transitionDuration: const Duration(milliseconds: 500),
+        transition: Transition.leftToRight),
+    GetPage(
+        name: AppRoutes.memoryList,
+        page: () => Memory_Lane(),
+        binding: MemoriesBinding(),
         transitionDuration: const Duration(milliseconds: 500),
         transition: Transition.leftToRight)
   ];

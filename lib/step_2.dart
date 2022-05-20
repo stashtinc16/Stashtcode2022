@@ -1,12 +1,11 @@
 // ignore_for_file: camel_case_types
 
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
-import 'package:transparent_image/transparent_image.dart';
-
-import 'memories/presentation/memories.dart';
+import 'package:stasht/utils/app_colors.dart';
+import 'package:stasht/utils/assets_images.dart';
 
 class Step_2 extends GetView<MemoriesController> {
   List Items = [
@@ -45,6 +44,7 @@ class Step_2 extends GetView<MemoriesController> {
 
   @override
   Widget build(BuildContext context) {
+    var data = Get.arguments;
     return Scaffold(
         body: SafeArea(
             child: SingleChildScrollView(
@@ -76,11 +76,24 @@ class Step_2 extends GetView<MemoriesController> {
                       height: 8,
                     ),
                     const Text(
-                      "Choose photos to add to your memory folder ",
+                      "Choose photos to add to ",
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black,
-                        fontFamily: "gibsonsemibold",
+                        fontFamily: robotoMedium,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Obx(
+                      () => Text(
+                        "${data['title'].toString()} (${controller.selectedCount.value})",
+                        style: const TextStyle(
+                          fontSize: 19,
+                          color: Colors.black,
+                          fontFamily: robotoBold,
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -90,7 +103,8 @@ class Step_2 extends GetView<MemoriesController> {
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.width * 1.5,
                           child: GridView.builder(
-                            itemCount: controller.mediaPages.length,
+                            // controller: controller.controller,
+                            itemCount: controller.mediaPages.value.length,
                             scrollDirection: Axis.vertical,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
@@ -107,25 +121,63 @@ class Step_2 extends GetView<MemoriesController> {
                               context,
                               index,
                             ) {
-                              return GestureDetector(
-                                onTap: () {
-                                  //Navigator.of(context).pushNamed(RouteName.GridViewCustom);
-                                },
-                                child: Container(
-                                    height: 30,
-                                    width: 30,
-                                    color: Colors.grey,
-                                    child: FadeInImage(
-                                        image: PhotoProvider(
-                                            mediumId: controller
-                                                .mediaPages[index].id),
-                                        fit: BoxFit.cover,
-                                        placeholder:
-                                            MemoryImage(kTransparentImage))),
-                              );
+                              print(
+                                  'controller.mediaPages.length ${controller.mediaPages.length}');
+                              return Obx(() => GestureDetector(
+                                  onTap: () {
+                                    if (!controller.selectionList[index] &&
+                                        controller.selectedCount.value == 10) {
+                                      Get.snackbar('Max Limit',
+                                          'You can add upto 10 images only');
+                                    } else {
+                                      controller.selectionList[index] =
+                                          !controller.selectionList[index];
+                                      controller.addIndex(index,
+                                          controller.selectionList[index]);
+                                      controller.getSelectedCount();
+                                    }
+
+                                    //Navigator.of(context).pushNamed(RouteName.GridViewCustom);
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        color: Colors.grey,
+                                        child: Image(
+                                            image: ResizeImage(
+                                                PhotoProvider(
+                                                    mediumId: controller
+                                                        .mediaPages
+                                                        .value[index]
+                                                        .id),
+                                                height: 150,
+                                                width: 150)),
+                                      ),
+                                      if (controller.selectionList[index])
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.32,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.32,
+                                            color:
+                                                controller.selectionList[index]
+                                                    ? AppColors.primaryColor
+                                                        .withOpacity(0.62)
+                                                    : Colors.transparent,
+                                            child: const Icon(
+                                              Icons.check,
+                                              color: Colors.white,
+                                              size: 35,
+                                            )),
+                                    ],
+                                  )));
                             },
                           ),
-                        ))
+                        )),
                   ],
                 ),
               )),
@@ -136,8 +188,7 @@ class Step_2 extends GetView<MemoriesController> {
               padding: const EdgeInsets.only(top: 5, right: 10),
               child: InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Memories()));
+                    controller.uploadImagesToMemories(0);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -155,6 +206,7 @@ class Step_2 extends GetView<MemoriesController> {
                       Icon(
                         Icons.arrow_forward_ios_outlined,
                         color: Colors.black,
+                        size: 20,
                       )
                     ],
                   ))),

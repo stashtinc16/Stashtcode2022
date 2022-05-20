@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:stasht/app_bar.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
+import 'package:stasht/utils/assets_images.dart';
 import '../../memory_lane.dart';
 
 class Memories extends GetView<MemoriesController> {
-  bool isTap = false;
   bool isClick = false;
   bool isCheck = false;
 
@@ -29,42 +29,55 @@ class Memories extends GetView<MemoriesController> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Image.asset(
-                    "assets/images/memoryempty.png",
-                    height: 230,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    "You haven't created a memory yet!",
-                    style: TextStyle(color: Colors.black, fontSize: 16),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      controller.createMemoriesStep1();
-                    },
-                    child: const Text(
-                      "Create your first memory!",
-                      style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontSize: 15,
-                          decoration: TextDecoration.underline),
+                  Obx(
+                    () => Visibility(
+                      maintainAnimation: true,
+                      maintainSize: false,
+                      maintainState: true,
+                      visible: controller.memoriesList.isEmpty,
+                      child: Column(
+                        children: [
+                          SvgPicture.asset(
+                            noMemories,
+                            height: 230,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text(
+                            "You haven't created a memory yet!",
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              controller.createMemoriesStep1();
+                            },
+                            child: const Text(
+                              "Create your first memory!",
+                              style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontSize: 15,
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
                   InkWell(
                     onTap: () {
-                      isTap = !isTap;
+                      controller.myMemoriesExpand.value =
+                          !controller.myMemoriesExpand.value;
                     },
                     child: Row(
                       children: [
-                        isTap
+                        controller.myMemoriesExpand.value
                             ? const Icon(
                                 Icons.arrow_drop_down,
                                 color: Colors.black,
@@ -75,77 +88,105 @@ class Memories extends GetView<MemoriesController> {
                                 color: Colors.black,
                                 size: 30,
                               ),
-                        const Text(
-                          "My Memories (0) ",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
+                        Obx(
+                          () => Text(
+                            "My Memories (${controller.memoriesList.length}) ",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  isTap
-                      ? InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Memory_Lane()));
-                          },
-                          child: Container(
-                            height: 100,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Container(
-                                  height: 45,
-                                  width: 45,
-                                  alignment: Alignment.center,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.lightBlueAccent,
-                                      shape: BoxShape.circle),
+                  Obx(() => Container(
+                      child: controller.myMemoriesExpand.value
+                          ? InkWell(
+                              onTap: () {
+                                Get.toNamed(AppRoutes.memoryList);
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) => Memory_Lane()));
+                              },
+                              child: Container(
+                                height: 100,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                        controller.memoriesList.isNotEmpty
+                                            ? controller
+                                                .memoriesList[0].images[0]
+                                            : "",
+                                      ),
+                                      fit: BoxFit.fill),
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
-                                    Text(
-                                      "Baniff Trip 2021",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 18),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Container(
+                                      height: 45,
+                                      width: 45,
+                                      alignment: Alignment.center,
+                                      decoration: const BoxDecoration(
+                                          color: Colors.grey,
+                                          shape: BoxShape.circle),
+                                      child: Image.asset(
+                                        userIcon,
+                                        fit: BoxFit.fill,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                    Text(
-                                      "Author: Taniya & 10 others",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 12),
-                                    )
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          controller.memoriesList.isNotEmpty
+                                              ? controller
+                                                  .memoriesList[0].title!
+                                              : "",
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 18),
+                                        ),
+                                        Text(
+                                          controller.memoriesList.isNotEmpty
+                                              ? "Author : ${controller.userModel!.userName!}"
+                                              : "",
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12),
+                                        )
+                                      ],
+                                    ),
+                                    Container(
+                                      height: 35,
+                                      width: 35,
+                                      alignment: Alignment.center,
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle),
+                                      child: Text(
+                                        controller.memoriesList.isNotEmpty
+                                            ? "${controller.memoriesList[0].images!.length}"
+                                            : "0",
+                                        style: const TextStyle(
+                                            color: AppColors.primaryColor,
+                                            fontSize: 14),
+                                      ),
+                                    ),
                                   ],
                                 ),
-                                Container(
-                                  height: 35,
-                                  width: 35,
-                                  alignment: Alignment.center,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.greenAccent,
-                                      shape: BoxShape.circle),
-                                  child: const Text(
-                                    "34",
-                                    style: TextStyle(
-                                        color: Colors.blue, fontSize: 14),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ))
-                      : Container(),
+                              ))
+                          : Container())),
                   const SizedBox(
                     height: 10,
                   ),

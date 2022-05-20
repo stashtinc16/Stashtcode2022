@@ -45,7 +45,8 @@ class MyApp extends StatelessWidget {
       initialRoute: AppPages.initial,
       initialBinding: SignupBinding(),
       builder: EasyLoading.init(),
-      theme: ThemeData(fontFamily: robotoRegular,),
+      theme: ThemeData(fontFamily: robotoRegular, splashColor: Colors.transparent,
+      highlightColor: Colors.transparent),
     );
   }
 }

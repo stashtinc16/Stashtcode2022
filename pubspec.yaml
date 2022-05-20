@@ -50,6 +50,8 @@ dependencies:
   photo_gallery: ^1.1.1
   permission_handler: ^9.2.0
   transparent_image: ^2.0.0
+  path_provider: ^2.0.10
+  flutter_image_compress: ^1.1.0
   
   
 
@@ -112,7 +114,11 @@ flutter:
         - asset: assets/fonts/roboto_medium.ttf
     - family: robotoBold
       fonts:
-        - asset: assets/fonts/roboto_bold.ttf        
+        - asset: assets/fonts/roboto_bold.ttf     
+        
+    - family: gibsonRegular
+      fonts:
+        - asset: assets/fonts/gibson_regular.ttf        
 
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
