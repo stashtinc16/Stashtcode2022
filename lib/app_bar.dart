@@ -9,39 +9,41 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
         pageSelected}) {
   return AppBar(
     backgroundColor: Colors.white,
+    centerTitle: false,
+    title: Row(
+      children: [
+        InkWell(
+          onTap: () {
+            // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> Memories()),(kj)=>false);
+            pageSelected(true, false, false, false);
+          },
+          child: SvgPicture.asset(
+            folderIcon,
+            width: 24,
+            height: 20,
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        InkWell(
+          onTap: () {
+            // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const All_Photos()),(kj)=>false);
+            pageSelected(false, true, false, false);
+          },
+          child: SvgPicture.asset(
+            "assets/images/todayapp.svg",
+            height: 22,
+            width: 21,
+            color: const Color.fromRGBO(108, 96, 255, 1),
+          ),
+        )
+      ],
+    ),
     actions: [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          InkWell(
-            onTap: () {
-              // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> Memories()),(kj)=>false);
-              pageSelected(true, false, false, false);
-            },
-            child: SvgPicture.asset(
-              folderIcon,
-              width: 24,
-              height: 20,
-            ),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
-          InkWell(
-            onTap: () {
-              // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const All_Photos()),(kj)=>false);
-              pageSelected(false, true, false, false);
-            },
-            child: SvgPicture.asset(
-              "assets/images/todayapp.svg",
-              height: 22,
-              width: 21,
-              color: const Color.fromRGBO(108, 96, 255, 1),
-            ),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
           Container(
             height: 30,
             width: 160,
@@ -55,7 +57,7 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
             ),
           ),
           const SizedBox(
-            width: 15,
+            width: 30,
           ),
           Stack(
             children: [

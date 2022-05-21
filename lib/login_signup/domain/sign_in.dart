@@ -23,6 +23,7 @@ class SignIn extends GetView<SignupController> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                   
                     const Center(
                       child: Text(
                         "stasht.",

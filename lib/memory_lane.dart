@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:stasht/memories/controllers/memories_controller.dart';
+import 'package:stasht/utils/assets_images.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-class Memory_Lane extends StatefulWidget {
-  @override
-  State<Memory_Lane> createState() {
-    return _Memory_Lane();
-  }
-}
-
-class _Memory_Lane extends State<Memory_Lane> {
-  String items = "";
-
+class Memory_Lane extends GetView<MemoriesController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,52 +16,67 @@ class _Memory_Lane extends State<Memory_Lane> {
               Container(
                   width: MediaQuery.of(context).size.width,
                   height: 150,
-                  color: Colors.grey,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    image: DecorationImage(
+                        image: NetworkImage(controller
+                            .memoriesList[controller.memoriesList.length - 1]
+                            .images[0]),
+                        fit: BoxFit.cover),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(15),
                     child: Stack(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children:  [
-                            const Icon(
-                              Icons.arrow_back_ios_outlined,
-                              color: Colors.white,
+                          children: [
+                            IconButton(
+                              onPressed: () => Get.back(),
+                              icon: const Icon(
+                                Icons.arrow_back_ios_outlined,
+                                color: Colors.white,
+                              ),
                             ),
-                            InkWell(onTap: (){
-
-                            },
+                            InkWell(
+                              onTap: () {},
                               child: const Icon(
                                 Icons.person_add_alt_1_outlined,
                                 color: Colors.white,
-                              ),)
+                              ),
+                            )
                           ],
                         ),
                         Center(
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.greenAccent,
-                                      border: Border.all(
-                                          color: Colors.white, width: 2)),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.greenAccent,
+                                  border: Border.all(
+                                      color: Colors.white, width: 2)),
+                            ),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                  top: 5,
                                 ),
-                                const Padding(
-                                    padding: EdgeInsets.only(top: 5, left: 35),
-                                    child: Text(
-                                      "Bnaff Trip 2021",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 18),
-                                    ))
-                              ],
-                            )),
+                                child: Text(
+                                  controller
+                                      .memoriesList[
+                                          controller.memoriesList.length - 1]
+                                      .title!,
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18),
+                                ))
+                          ],
+                        )),
                         Padding(
                           padding: const EdgeInsets.only(top: 35, left: 180),
                           child: Container(
@@ -75,7 +86,7 @@ class _Memory_Lane extends State<Memory_Lane> {
                                 shape: BoxShape.circle,
                                 color: Colors.blueAccent,
                                 border:
-                                Border.all(color: Colors.white, width: 2)),
+                                    Border.all(color: Colors.white, width: 2)),
                           ),
                         ),
                         Padding(
@@ -87,19 +98,23 @@ class _Memory_Lane extends State<Memory_Lane> {
                                 shape: BoxShape.circle,
                                 color: Colors.redAccent,
                                 border:
-                                Border.all(color: Colors.white, width: 2)),
+                                    Border.all(color: Colors.white, width: 2)),
                           ),
                         )
                       ],
                     ),
                   )),
               Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15, top: 5,bottom: 60),
+                  padding: const EdgeInsets.only(
+                      left: 15, right: 15, top: 5, bottom: 60),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width*1.5,
+                    height: MediaQuery.of(context).size.width * 1.5,
                     child: ListView.builder(
-                      itemCount: 4,
+                      itemCount: controller
+                          .memoriesList[controller.memoriesList.length - 1]
+                          .images
+                          .length,
                       itemBuilder: (context, index) {
                         return Column(
                           children: [
@@ -111,22 +126,34 @@ class _Memory_Lane extends State<Memory_Lane> {
                                     Container(
                                       height: 60,
                                       width: 60,
+                                      alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Colors.grey,
                                           border: Border.all(
                                               color: Colors.white, width: 2)),
+                                      child: Text(
+                                        controller.userModel!.userName!
+                                            .toString()
+                                            .substring(0, 1)
+                                            .toUpperCase(),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                            fontFamily: gibsonSemiBold),
+                                      ),
                                     ),
                                     const SizedBox(
                                       width: 10,
                                     ),
                                     Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          "Tanya Peters",
-                                          style: TextStyle(
+                                        Text(
+                                          controller.userModel!.userName!,
+                                          style: const TextStyle(
                                               color: Colors.black,
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900),
@@ -156,7 +183,7 @@ class _Memory_Lane extends State<Memory_Lane> {
                                 Row(
                                   children: const [
                                     Text(
-                                      "3",
+                                      "0",
                                       style: TextStyle(color: Colors.black),
                                     ),
                                     Icon(
@@ -177,6 +204,21 @@ class _Memory_Lane extends State<Memory_Lane> {
                               decoration: BoxDecoration(
                                   color: Colors.blueGrey,
                                   borderRadius: BorderRadius.circular(20)),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: CachedNetworkImage(
+                                    progressIndicatorBuilder:
+                                        (context, url, progress) => Center(
+                                              child: CircularProgressIndicator(
+                                                value: progress.progress,
+                                              ),
+                                            ),
+                                    fit: BoxFit.cover,
+                                    imageUrl: controller
+                                        .memoriesList[
+                                            controller.memoriesList.length - 1]
+                                        .images[index]!),
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 5, left: 15),
@@ -207,22 +249,21 @@ class _Memory_Lane extends State<Memory_Lane> {
           ),
         ),
       ),
-      bottomSheet: Container(
-          height: 60,
-          color: Colors.white,
-          child:Padding(padding: const EdgeInsets.only(left: 30,right: 30),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+      // bottomSheet: Container(
+      //     height: 60,
+      //     color: Colors.white,
+      //     child:Padding(padding: const EdgeInsets.only(left: 30,right: 30),
+      //       child: Row(
+      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //         children: const [
 
-                Icon(Icons.insert_drive_file_outlined,color: Colors.grey,size: 25,),
-                Icon(Icons.share_outlined,color: Colors.grey,size: 25,),
-                Icon(Icons.web_outlined,color: Colors.grey,size: 25,),
+      //           Icon(Icons.insert_drive_file_outlined,color: Colors.grey,size: 25,),
+      //           Icon(Icons.share_outlined,color: Colors.grey,size: 25,),
+      //           Icon(Icons.web_outlined,color: Colors.grey,size: 25,),
 
-
-              ],
-            ),)
-      ),
+      //         ],
+      //       ),)
+      // ),
     );
   }
 }

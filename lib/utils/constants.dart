@@ -4,6 +4,7 @@ String userId = "";
 String userName = "";
 String userImage = "";
 String userEmail = "";
+bool isSocailUser = false;
 
 bool checkValidEmail(String email) {
   return RegExp(

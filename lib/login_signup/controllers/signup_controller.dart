@@ -4,11 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/routes/app_routes.dart';
-import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/constants.dart';
 
 class SignupController extends GetxController {
@@ -21,8 +20,11 @@ class SignupController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  final FacebookAuth _facebookAuth = FacebookAuth.instance;
-
+  FacebookAccessToken? _token;
+  FacebookUserProfile? _profile;
+  String? _email;
+  String? _imageUrl;
+  final plugin = FacebookLogin(debug: true);
   bool? _isLogged;
   bool _fetching = false;
 
@@ -194,52 +196,63 @@ class SignupController extends GetxController {
 
 // Initialize Facebook
   void _init() async {
-    _isLogged = await _facebookAuth.accessToken != null;
-    if (_isLogged!) {
-      _userData = await _facebookAuth.getUserData(
-        fields: "name,email,picture.width(200)",
-      );
-    }
+    _isLogged = plugin.accessToken != null;
   }
 
 //Signin to facebook
   Future<bool> facebookLogin() async {
     EasyLoading.show(status: 'Processing');
-    _fetching = true;
 
-    final LoginResult result = await _facebookAuth.login();
+    await plugin.logIn(permissions: [
+      FacebookPermission.publicProfile,
+      FacebookPermission.email,
+    ]);
 
-    _isLogged = result.status == LoginStatus.success;
-    print('Status ${result.status}');
-    if (_isLogged!) {
-      _userData = await _facebookAuth.getUserData();
-      print('_userData ${_userData}');
-      _fetching = false;
-      usersRef
-          .where("email", isEqualTo: _userData!['email'])
-          .get()
-          .then((value) => {
-                value.docs.length,
-                if (value.docs.isEmpty)
-                  {
-                    saveUserToFirebase(_userData!['name'], _userData!['email'],
-                        _userData!['picture']['data']['url'])
-                  }
-                else
-                  {
-                    EasyLoading.dismiss(),
-                    emailController.text = "",
-                    passwordController.text = "",
-                    Get.snackbar('Success', "User logged-in successfully",
-                        snackPosition: SnackPosition.BOTTOM),
-                    Get.offNamed(AppRoutes.memories)
-                  }
-              });
+    final res = await plugin.expressLogin();
+    if (res.status == FacebookLoginStatus.success) {
+      await _updateLoginInfo();
     } else {
       EasyLoading.dismiss();
     }
 
     return _isLogged!;
+  }
+
+  Future<void> _updateLoginInfo() async {
+    final token = await plugin.accessToken;
+    FacebookUserProfile? profile;
+    String? email;
+    String? imageUrl;
+
+    if (token != null) {
+      profile = await plugin.getUserProfile();
+      if (token.permissions.contains(FacebookPermission.email.name)) {
+        email = await plugin.getUserEmail();
+      }
+      imageUrl = await plugin.getProfileImageUrl(width: 100);
+    }
+    if (_isLogged!) {
+      _fetching = false;
+      usersRef.where("email", isEqualTo: email).get().then((value) => {
+            value.docs.length,
+            if (value.docs.isEmpty)
+              {
+                isSocailUser = true,
+                saveUserToFirebase(profile!.name, email, imageUrl),
+              }
+            else
+              {
+ saveSession(value.docs[0].id, value.docs[0].data().userName!, value.docs[0].data().email!, value.docs[0].data().profileImage!),                EasyLoading.dismiss(),
+                emailController.text = "",
+                passwordController.text = "",
+                Get.snackbar('Success', "User logged-in successfully",
+                    snackPosition: SnackPosition.BOTTOM),
+                Get.offNamed(AppRoutes.memories)
+              }
+          });
+    } else {
+      EasyLoading.dismiss();
+    }
   }
 
 // Save user to firebase
@@ -257,6 +270,7 @@ class SignupController extends GetxController {
 
     usersRef.add(userModel).then((value) => {
           EasyLoading.dismiss(),
+          isSocailUser = false,
           saveSession(value.id, name, email!, profileImage!),
           Get.snackbar('Success', "User logged-in successfully",
               snackPosition: SnackPosition.BOTTOM),

@@ -30,6 +30,7 @@ class SignUp extends GetView<SignupController> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                     SizedBox(height: 100,),
                     Center(child: SvgPicture.asset(stashtLogo)),
                     const SizedBox(
                       height: 60,

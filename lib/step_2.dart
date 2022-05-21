@@ -107,12 +107,9 @@ class Step_2 extends GetView<MemoriesController> {
                             itemCount: controller.mediaPages.value.length,
                             scrollDirection: Axis.vertical,
                             gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                               const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount:
-                                  MediaQuery.of(context).orientation ==
-                                          Orientation.landscape
-                                      ? 3
-                                      : 3,
+                                   3,
                               crossAxisSpacing: 1,
                               mainAxisSpacing: 1,
                               childAspectRatio: (1 / 1),

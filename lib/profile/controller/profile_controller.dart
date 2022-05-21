@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -14,7 +14,7 @@ class ProfileController extends GetxController {
   RxBool status2 = true.obs;
   RxBool status3 = true.obs;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  FacebookAuth facebookAuth = FacebookAuth.instance;
+  FacebookLogin facebookAuth = FacebookLogin();
   @override
   void onInit() {
     // TODO: implement onInit

@@ -37,13 +37,13 @@ class MemoriesController extends GetxController {
   void onInit() {
     super.onInit();
     _promptPermissionSetting();
-    getAlbums();
+    getMyMemories();
   }
 
   @override
   void onReady() {
     super.onReady();
-    getMyMemories();
+    // getMyMemories();
   }
 
   void getMyMemories() {
@@ -52,12 +52,15 @@ class MemoriesController extends GetxController {
     memoriesRef.get().then((value) => {
           print('value $userId => ${value.docs.length}'),
           value.docs.forEach((element) {
-            if (userModel == null) {
-              getUserData(element.data().createdBy!);
+            print('CreatedBy ${element.data().createdBy!} => $userId');
+            if (element.data().createdBy! == userId) {
+              if (userModel == null) {
+                getUserData(element.data().createdBy!);
+              }
+              MemoriesModel memoriesModel = element.data();
+              memoriesModel.memoryId = element.id;
+              memoriesList.add(memoriesModel);
             }
-            MemoriesModel memoriesModel = element.data();
-            memoriesModel.memoryId = element.id;
-            memoriesList.add(memoriesModel);
           })
         });
   }
@@ -87,6 +90,7 @@ class MemoriesController extends GetxController {
             await Permission.storage.request().isGranted &&
             await Permission.photos.request().isGranted ||
         Platform.isAndroid && await Permission.storage.request().isGranted) {
+      getAlbums();
       return true;
     }
     return false;
@@ -161,19 +165,24 @@ class MemoriesController extends GetxController {
   }
 
   Future<void> uploadImagesToMemories(int imageIndex) async {
-    if (imageIndex == 0) {
-      EasyLoading.show(status: 'Uploading...');
+    if (selectedIndexList.length > 0) {
+      if (imageIndex == 0) {
+        EasyLoading.show(status: 'Uploading...');
+      }
+      //selectedIndexList = index of selected items from main photos list
+      final dir = await path_provider.getTemporaryDirectory();
+
+      final File file =
+          await mediaPages[selectedIndexList[imageIndex]].getFile();
+      final targetPath =
+          dir.absolute.path + "/temp${DateTime.now().millisecond}.jpg";
+
+      final File? newFile = await testCompressAndGetFile(file, targetPath);
+      final UploadTask? uploadTask = await uploadFile(
+          newFile!, mediaPages[selectedIndexList[imageIndex]].filename);
+    } else {
+      Get.snackbar('Error', "Please select images");
     }
-    //selectedIndexList = index of selected items from main photos list
-    final dir = await path_provider.getTemporaryDirectory();
-
-    final File file = await mediaPages[selectedIndexList[imageIndex]].getFile();
-    final targetPath =
-        dir.absolute.path + "/temp${DateTime.now().millisecond}.jpg";
-
-    final File? newFile = await testCompressAndGetFile(file, targetPath);
-    final UploadTask? uploadTask = await uploadFile(
-        newFile!, mediaPages[selectedIndexList[imageIndex]].filename);
   }
 
   /// The user selects a file, and the task is added to the list.

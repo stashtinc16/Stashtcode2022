@@ -72,8 +72,10 @@ class Memories extends GetView<MemoriesController> {
                   ),
                   InkWell(
                     onTap: () {
+                      if(controller.memoriesList.length>0){
                       controller.myMemoriesExpand.value =
                           !controller.myMemoriesExpand.value;
+                          }
                     },
                     child: Row(
                       children: [
@@ -114,14 +116,17 @@ class Memories extends GetView<MemoriesController> {
                                 height: 100,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
+                                  color: Colors.grey,
                                   image: DecorationImage(
                                       image: NetworkImage(
                                         controller.memoriesList.isNotEmpty
                                             ? controller
-                                                .memoriesList[0].images[0]
+                                                .memoriesList[controller
+                                                .memoriesList.length-1].images[0]
                                             : "",
                                       ),
-                                      fit: BoxFit.fill),
+                                      
+                                      fit: BoxFit.cover),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Row(
@@ -150,7 +155,8 @@ class Memories extends GetView<MemoriesController> {
                                         Text(
                                           controller.memoriesList.isNotEmpty
                                               ? controller
-                                                  .memoriesList[0].title!
+                                                  .memoriesList[controller
+                                                .memoriesList.length-1].title!
                                               : "",
                                           style: const TextStyle(
                                               color: Colors.white,
@@ -176,7 +182,8 @@ class Memories extends GetView<MemoriesController> {
                                           shape: BoxShape.circle),
                                       child: Text(
                                         controller.memoriesList.isNotEmpty
-                                            ? "${controller.memoriesList[0].images!.length}"
+                                            ? "${controller.memoriesList[controller
+                                                .memoriesList.length-1].images!.length}"
                                             : "0",
                                         style: const TextStyle(
                                             color: AppColors.primaryColor,
@@ -238,7 +245,7 @@ class Memories extends GetView<MemoriesController> {
                   ),
                   InkWell(
                     onTap: () {
-                      isCheck = !isCheck;
+                      // isCheck = !isCheck;
                     },
                     child: Row(
                       children: [
