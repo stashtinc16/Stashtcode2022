@@ -14,11 +14,14 @@ class SignupController extends GetxController {
   // var facebookLogin = FacebookLogin();
   final RxBool isObscure = true.obs;
 
-  final formkey = GlobalKey<FormState>();
-  final formkeySignin = GlobalKey<FormState>();
-  final userNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  GlobalKey<FormState> formkeySignin = GlobalKey<FormState>();
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  TextEditingController email1Controller = TextEditingController();
+  TextEditingController password1Controller = TextEditingController();
 
   FacebookAccessToken? _token;
   FacebookUserProfile? _profile;
@@ -105,9 +108,9 @@ class SignupController extends GetxController {
 // Signin user to app and save session
   Future<void> signIn() async {
     if (formkeySignin.currentState!.validate()) {
-      if (!checkValidEmail(emailController.text.toString())) {
+      if (!checkValidEmail(email1Controller.text.toString())) {
         Get.snackbar("Email Invalid", "Please enter valid email address");
-      } else if (passwordController.text.toString().length < 6) {
+      } else if (password1Controller.text.toString().length < 6) {
         Get.snackbar("Password", "Please enter at least 6 characters",
             borderColor: Colors.red);
       } else {
@@ -115,22 +118,20 @@ class SignupController extends GetxController {
           EasyLoading.show(status: 'Processing..');
           await FirebaseAuth.instance
               .signInWithEmailAndPassword(
-                  email: emailController.text,
-                  password: passwordController.text)
+                  email: email1Controller.text,
+                  password: password1Controller.text)
               .then((value1) {
             usersRef
                 .where("email", isEqualTo: value1.user!.email)
                 .get()
                 .then((value) => {
-                      print(
-                          'MyLogin ${value1.user!.email} =>${value.size} ==>'),
                       EasyLoading.dismiss(),
                       if (value.docs.isNotEmpty)
                         {
                           saveSession(
                               value.docs[0].id,
                               value.docs[0].data().userName!,
-                              emailController.text,
+                              email1Controller.text,
                               value.docs[0].data().profileImage!),
                           Get.offNamed(AppRoutes.memories)
                         }
@@ -183,14 +184,11 @@ class SignupController extends GetxController {
 
     usersRef.add(userModel).then((value) => {
           EasyLoading.dismiss(),
-          print('UsersDB $value'),
           saveSession(value.id, username, user.email!, ""),
-          emailController.text = "",
-          passwordController.text = "",
-          userNameController.text = "",
+          clearTexts(),
           Get.snackbar('Success', "User registerd successfully",
               snackPosition: SnackPosition.BOTTOM),
-          Get.offNamed(AppRoutes.memories)
+          Get.offNamed(AppRoutes.memoriesStep1,arguments: "yes")
         });
   }
 
@@ -208,10 +206,16 @@ class SignupController extends GetxController {
       FacebookPermission.email,
     ]);
 
-    final res = await plugin.expressLogin();
-    if (res.status == FacebookLoginStatus.success) {
-      await _updateLoginInfo();
+    if (Platform.isAndroid) {
+      final res = await plugin.expressLogin();
+      if (res.status == FacebookLoginStatus.success) {
+        await _updateLoginInfo();
+      } else {
+        EasyLoading.dismiss();
+      }
     } else {
+      await _updateLoginInfo();
+
       EasyLoading.dismiss();
     }
 
@@ -231,7 +235,8 @@ class SignupController extends GetxController {
       }
       imageUrl = await plugin.getProfileImageUrl(width: 100);
     }
-    if (_isLogged!) {
+    print('email $email $_isLogged');
+    if (_isLogged! && email != null) {
       _fetching = false;
       usersRef.where("email", isEqualTo: email).get().then((value) => {
             value.docs.length,
@@ -242,7 +247,12 @@ class SignupController extends GetxController {
               }
             else
               {
- saveSession(value.docs[0].id, value.docs[0].data().userName!, value.docs[0].data().email!, value.docs[0].data().profileImage!),                EasyLoading.dismiss(),
+                saveSession(
+                    value.docs[0].id,
+                    value.docs[0].data().userName!,
+                    value.docs[0].data().email!,
+                    value.docs[0].data().profileImage!),
+                EasyLoading.dismiss(),
                 emailController.text = "",
                 passwordController.text = "",
                 Get.snackbar('Success', "User logged-in successfully",
@@ -285,15 +295,22 @@ class SignupController extends GetxController {
     userEmail = _userEmail;
     userName = _userName;
     userImage = _userImage;
+    clearTexts();
+  }
+
+// Clear
+  void clearTexts() {
+    userNameController.text = "";
+    emailController.text = "";
+    passwordController.text = "";
+    email1Controller.text = "";
+    password1Controller.text = "";
   }
 
   @override
   void onClose() {
     super.onClose();
-    print('OnClose ');
-    userNameController.text = "";
-    emailController.text = "";
-    passwordController.text = "";
+    clearTexts();
   }
 
   @override

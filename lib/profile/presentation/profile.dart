@@ -1,10 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:stasht/app_bar.dart';
 import 'package:stasht/profile/controller/profile_controller.dart';
@@ -33,13 +30,14 @@ class Profile extends GetView<ProfileController> {
     return SafeArea(
       child: Scaffold(
           backgroundColor: Colors.white,
-          appBar: commonAppbar(
-            context,
-            'Settings',
-            pageSelected: (isMemory, isPhotos, isNotification, isSettings) => {
-              if (isMemory) {Get.toNamed(AppRoutes.memories)}
-            },
-          ),
+          appBar: 
+          commonAppbar(
+          context,
+          'Settings',
+          pageSelected: (isMemory, isPhotos, isNotification, isSettings) => {
+           if (isMemory) {Get.toNamed(AppRoutes.memories)}
+          },
+        ),
           body: SingleChildScrollView(
               child: Padding(
             padding: const EdgeInsets.only(top: 0),
@@ -193,58 +191,58 @@ class Profile extends GetView<ProfileController> {
                         color: Colors.grey,
                         margin: const EdgeInsets.only(bottom: 15),
                       ),
-                      if (!isSocailUser)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                                child: Obx(
-                              () => TextFormField(
-                                obscureText: controller.isObscure.value,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                controller: controller.passwordcontroller,
-                                decoration: InputDecoration(
-                                    labelText: "Password",
-                                    labelStyle: const TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.only(
-                                        bottom: 10, top: 5),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        controller.isObscure.value
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off,
-                                        color: Colors.grey,
-                                      ),
-                                      onPressed: () {
-                                        controller.isObscure.value =
-                                            !controller.isObscure.value;
-                                      },
-                                    )),
-                                style: const TextStyle(
-                                    color: Colors.black, fontSize: 14),
-                              ),
-                            )),
-                            const Text(
-                              "Change",
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      if (!isSocailUser) Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 1,
-                        color: Colors.grey,
-                      ),
+                      // if (!isSocailUser)
+                      //   Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Expanded(
+                      //           child: Obx(
+                      //         () => TextFormField(
+                      //           obscureText: controller.isObscure.value,
+                      //           autovalidateMode:
+                      //               AutovalidateMode.onUserInteraction,
+                      //           controller: controller.passwordcontroller,
+                      //           decoration: InputDecoration(
+                      //               labelText: "Password",
+                      //               labelStyle: const TextStyle(
+                      //                 color: Colors.grey,
+                      //                 fontSize: 12,
+                      //                 fontWeight: FontWeight.w400,
+                      //               ),
+                      //               border: InputBorder.none,
+                      //               contentPadding: const EdgeInsets.only(
+                      //                   bottom: 10, top: 5),
+                      //               suffixIcon: IconButton(
+                      //                 icon: Icon(
+                      //                   controller.isObscure.value
+                      //                       ? Icons.visibility_outlined
+                      //                       : Icons.visibility_off,
+                      //                   color: Colors.grey,
+                      //                 ),
+                      //                 onPressed: () {
+                      //                   controller.isObscure.value =
+                      //                       !controller.isObscure.value;
+                      //                 },
+                      //               )),
+                      //           style: const TextStyle(
+                      //               color: Colors.black, fontSize: 14),
+                      //         ),
+                      //       )),
+                      //       const Text(
+                      //         "Change",
+                      //         style: TextStyle(
+                      //           color: AppColors.primaryColor,
+                      //           fontSize: 11,
+                      //           fontWeight: FontWeight.w400,
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // if (!isSocailUser) Container(
+                      //   width: MediaQuery.of(context).size.width,
+                      //   height: 1,
+                      //   color: Colors.grey,
+                      // ),
                       const SizedBox(
                         height: 60,
                       ),

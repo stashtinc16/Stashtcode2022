@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/constants.dart';
@@ -18,15 +17,14 @@ class SplashController extends GetxController {
         fromFirestore: (snapshots, _) => UserModel.fromJson(snapshots.data()!),
         toFirestore: (movie, _) => movie.toJson(),
       );
+
   @override
   void onInit() {
     super.onInit();
-
     hundling();
   }
 
   hundling() async {
-    print('FlutterFirebaseAuth $firebaseAuth');
     Future.delayed(const Duration(milliseconds: 2500), () async {
       _isLogged = await facebookAuth.accessToken != null;
 
@@ -52,16 +50,14 @@ class SplashController extends GetxController {
 
   // redirect user into app , if already logged in
   void goToMemories(String email) {
-    print('Email $email');
     usersRef.where("email", isEqualTo: email).get().then((value) => {
           value.docs.forEach((element) => {
                 print('UsersDB $value'),
                 saveSession(element.id, element.data().userName!,
                     element.data().email!, ""),
+                Get.offNamed(AppRoutes.memories),
               })
         });
-
-    Get.offNamed(AppRoutes.memories);
   }
 
 // Save User Session

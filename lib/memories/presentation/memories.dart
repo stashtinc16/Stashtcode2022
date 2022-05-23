@@ -14,6 +14,7 @@ class Memories extends GetView<MemoriesController> {
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         appBar: commonAppbar(
@@ -72,24 +73,22 @@ class Memories extends GetView<MemoriesController> {
                   ),
                   InkWell(
                     onTap: () {
-                      if(controller.memoriesList.length>0){
-                      controller.myMemoriesExpand.value =
-                          !controller.myMemoriesExpand.value;
-                          }
+                      if (controller.memoriesList.isNotEmpty) {
+                        controller.myMemoriesExpand.value =
+                            !controller.myMemoriesExpand.value;
+                      }
                     },
                     child: Row(
                       children: [
-                        controller.myMemoriesExpand.value
-                            ? const Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black,
-                                size: 30,
-                              )
-                            : const Icon(
-                                Icons.arrow_right,
-                                color: Colors.black,
-                                size: 30,
-                              ),
+                        Obx(
+                          () => Icon(
+                            controller.myMemoriesExpand.value
+                                ? Icons.arrow_drop_down
+                                : Icons.arrow_right,
+                            color: Colors.black,
+                            size: 30,
+                          ),
+                        ),
                         Obx(
                           () => Text(
                             "My Memories (${controller.memoriesList.length}) ",
@@ -104,95 +103,104 @@ class Memories extends GetView<MemoriesController> {
                   ),
                   Obx(() => Container(
                       child: controller.myMemoriesExpand.value
-                          ? InkWell(
-                              onTap: () {
-                                Get.toNamed(AppRoutes.memoryList);
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) => Memory_Lane()));
+                          ? ListView.builder(
+                              itemCount: controller.memoriesList.length,
+                              shrinkWrap: true,
+                              primary: false,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (BuildContext context, int index) {
+                                return InkWell(
+                                    onTap: () {
+                                      Get.toNamed(AppRoutes.memoryList);
+                                      // Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //         builder: (context) => Memory_Lane()));
+                                    },
+                                    child: Container(
+                                      height: 100,
+                                      margin: const EdgeInsets.only(top: 20),
+                                      width: MediaQuery.of(context).size.width,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                              controller.memoriesList.isNotEmpty
+                                                  ? controller
+                                                      .memoriesList[index]
+                                                      .images[0]
+                                                  : "",
+                                            ),
+                                            fit: BoxFit.cover),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Container(
+                                            height: 45,
+                                            width: 45,
+                                            alignment: Alignment.center,
+                                            decoration: const BoxDecoration(
+                                                color: Colors.grey,
+                                                shape: BoxShape.circle),
+                                            child: Image.asset(
+                                              userIcon,
+                                              fit: BoxFit.fill,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                controller
+                                                        .memoriesList.isNotEmpty
+                                                    ? controller
+                                                        .memoriesList[index]
+                                                        .title!
+                                                    : "",
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 18),
+                                              ),
+                                              Text(
+                                                controller
+                                                        .memoriesList.isNotEmpty
+                                                    ? "Author : ${controller.userModel!.userName!}"
+                                                    : "",
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12),
+                                              )
+                                            ],
+                                          ),
+                                          Container(
+                                            height: 35,
+                                            width: 35,
+                                            alignment: Alignment.center,
+                                            decoration: const BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle),
+                                            child: Text(
+                                              controller.memoriesList.isNotEmpty
+                                                  ? "${controller.memoriesList[index].images!.length}"
+                                                  : "0",
+                                              style: const TextStyle(
+                                                  color: AppColors.primaryColor,
+                                                  fontSize: 14),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ));
                               },
-                              child: Container(
-                                height: 100,
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  image: DecorationImage(
-                                      image: NetworkImage(
-                                        controller.memoriesList.isNotEmpty
-                                            ? controller
-                                                .memoriesList[controller
-                                                .memoriesList.length-1].images[0]
-                                            : "",
-                                      ),
-                                      
-                                      fit: BoxFit.cover),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Container(
-                                      height: 45,
-                                      width: 45,
-                                      alignment: Alignment.center,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.grey,
-                                          shape: BoxShape.circle),
-                                      child: Image.asset(
-                                        userIcon,
-                                        fit: BoxFit.fill,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          controller.memoriesList.isNotEmpty
-                                              ? controller
-                                                  .memoriesList[controller
-                                                .memoriesList.length-1].title!
-                                              : "",
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 18),
-                                        ),
-                                        Text(
-                                          controller.memoriesList.isNotEmpty
-                                              ? "Author : ${controller.userModel!.userName!}"
-                                              : "",
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                        )
-                                      ],
-                                    ),
-                                    Container(
-                                      height: 35,
-                                      width: 35,
-                                      alignment: Alignment.center,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle),
-                                      child: Text(
-                                        controller.memoriesList.isNotEmpty
-                                            ? "${controller.memoriesList[controller
-                                                .memoriesList.length-1].images!.length}"
-                                            : "0",
-                                        style: const TextStyle(
-                                            color: AppColors.primaryColor,
-                                            fontSize: 14),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ))
+                            )
                           : Container())),
                   const SizedBox(
                     height: 10,
@@ -290,7 +298,7 @@ class Memories extends GetView<MemoriesController> {
             child: FittedBox(
               child: FloatingActionButton(
                 onPressed: () {
-                  Get.toNamed(AppRoutes.memoriesStep1);
+                  Get.toNamed(AppRoutes.memoriesStep1,arguments: "no");
                 },
                 child: const Icon(
                   Icons.add,

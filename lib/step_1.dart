@@ -9,12 +9,10 @@ class Step1 extends GetView<MemoriesController> {
   int val = -1;
   bool isEmail = false;
 
-  var passwordcontroller = TextEditingController();
-  var namecontroller = TextEditingController();
-
   Step1({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    var argument = Get.arguments;
     return Scaffold(
         body: Padding(
             padding: const EdgeInsets.only(top: 50, left: 25, right: 25),
@@ -160,6 +158,25 @@ class Step1 extends GetView<MemoriesController> {
                     ),
                   ),
                 ),
+               if(argument=="yes") InkWell(
+                  onTap: () {
+                    Get.offNamed(AppRoutes.memories);
+                  },
+                  child: const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        "Skip this step",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color.fromRGBO(108, 96, 255, 1),
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
               ],
             )));
   }

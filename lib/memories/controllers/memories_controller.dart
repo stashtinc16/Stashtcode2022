@@ -49,18 +49,18 @@ class MemoriesController extends GetxController {
   void getMyMemories() {
     memoriesList.clear();
     print('userId $userId');
-    memoriesRef.get().then((value) => {
+    memoriesRef.where('created_by', isEqualTo: userId).get().then((value) => {
           print('value $userId => ${value.docs.length}'),
           value.docs.forEach((element) {
-            print('CreatedBy ${element.data().createdBy!} => $userId');
-            if (element.data().createdBy! == userId) {
+            // print('CreatedBy ${element.data().createdBy!} => $userId');
+            // if (element.data().createdBy! == userId) {
               if (userModel == null) {
                 getUserData(element.data().createdBy!);
               }
               MemoriesModel memoriesModel = element.data();
               memoriesModel.memoryId = element.id;
               memoriesList.add(memoriesModel);
-            }
+            // }
           })
         });
   }
@@ -86,6 +86,8 @@ class MemoriesController extends GetxController {
   }
 
   Future<bool> _promptPermissionSetting() async {
+    var status = await Permission.photos.request();
+    print('PermissionStatus ${status}');
     if (Platform.isIOS &&
             await Permission.storage.request().isGranted &&
             await Permission.photos.request().isGranted ||
@@ -245,13 +247,13 @@ class MemoriesController extends GetxController {
         inviteLink: "",
         published: false,
         users: []);
-    memoriesRef
-        .add(memoriesModel)
-        .then((value) => {
-              EasyLoading.dismiss(),
-              Get.snackbar('Success', 'Memory folder created successfully'),
-              Get.offAllNamed(AppRoutes.memories)
-            })
-        .onError((error, stackTrace) => {EasyLoading.dismiss()});
+    // memoriesRef
+    //     .add(memoriesModel)
+    //     .then((value) => {
+    //           EasyLoading.dismiss(),
+    //           Get.snackbar('Success', 'Memory folder created successfully'),
+    //           Get.offAllNamed(AppRoutes.memories)
+    //         })
+    //     .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }
 }

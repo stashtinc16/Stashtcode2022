@@ -10,40 +10,35 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
   return AppBar(
     backgroundColor: Colors.white,
     centerTitle: false,
-    title: Row(
-      children: [
-        InkWell(
-          onTap: () {
-            // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> Memories()),(kj)=>false);
-            pageSelected(true, false, false, false);
-          },
-          child: SvgPicture.asset(
-            folderIcon,
-            width: 24,
-            height: 20,
-          ),
-        ),
-        const SizedBox(
-          width: 10,
-        ),
-        InkWell(
-          onTap: () {
-            // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const All_Photos()),(kj)=>false);
-            pageSelected(false, true, false, false);
-          },
-          child: SvgPicture.asset(
-            "assets/images/todayapp.svg",
-            height: 22,
-            width: 21,
-            color: const Color.fromRGBO(108, 96, 255, 1),
-          ),
-        )
-      ],
+    leading: null,
+    title: InkWell(
+      onTap: () {
+        // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> Memories()),(kj)=>false);
+        pageSelected(false, false, false, false);
+      },
+      child: SvgPicture.asset(
+        folderIcon,
+        width: 24,
+        height: 20,
+        color: AppColors.primaryColor,
+      ),
     ),
     actions: [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          InkWell(
+            onTap: () {
+              // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const All_Photos()),(kj)=>false);
+              pageSelected(false, true, false, false);
+            },
+            child: SvgPicture.asset(
+              "assets/images/todayapp.svg",
+              height: 22,
+              width: 21,
+              color: const Color.fromRGBO(108, 96, 255, 1),
+            ),
+          ),
           Container(
             height: 30,
             width: 160,

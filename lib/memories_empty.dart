@@ -5,7 +5,7 @@ import 'package:stasht/all_photos.dart';
 import 'package:stasht/app_bar.dart';
 import 'package:stasht/notifications.dart';
 import 'package:stasht/profile/presentation/profile.dart';
-import 'package:stasht/login_signup/domain/sign_in.dart';
+import 'package:stasht/login_signup/domain/sign_up.dart';
 
 class Memories_Empty extends StatefulWidget {
   const Memories_Empty({Key? key}) : super(key: key);
@@ -177,7 +177,7 @@ class _Memories_Empty extends State<Memories_Empty> {
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignIn()));
+                        MaterialPageRoute(builder: (context) => Signup()));
                   },
                   child: const Icon(
                     Icons.add,
