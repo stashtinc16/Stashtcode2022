@@ -33,7 +33,7 @@ class SignupController extends GetxController {
 
   bool get fetching => _fetching;
   bool? get isLogged => _isLogged;
-
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   Map<String, dynamic>? _userData;
   Map<String, dynamic>? get userData => _userData;
 
@@ -188,7 +188,7 @@ class SignupController extends GetxController {
           clearTexts(),
           Get.snackbar('Success', "User registerd successfully",
               snackPosition: SnackPosition.BOTTOM),
-          Get.offNamed(AppRoutes.memoriesStep1,arguments: "yes")
+          Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
         });
   }
 
@@ -224,10 +224,16 @@ class SignupController extends GetxController {
 
   Future<void> _updateLoginInfo() async {
     final token = await plugin.accessToken;
+    print('token $token');
     FacebookUserProfile? profile;
     String? email;
     String? imageUrl;
 
+    // OAuthCredential credential = FacebookAuthProvider.credential(token!.token);
+    // UserCredential user = await firebaseAuth.signInWithCredential(credential);
+    
+  
+    EasyLoading.dismiss();
     if (token != null) {
       profile = await plugin.getUserProfile();
       if (token.permissions.contains(FacebookPermission.email.name)) {

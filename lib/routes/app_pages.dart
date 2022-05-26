@@ -4,8 +4,9 @@ import 'package:stasht/forgot_password/presentation/forget_password.dart';
 import 'package:stasht/login_signup/bindings/signup_binding.dart';
 import 'package:stasht/login_signup/presentation/sign_in.dart';
 import 'package:stasht/memories/bindings/memories_binding.dart';
+import 'package:stasht/memories/presentation/add_caption.dart';
 import 'package:stasht/memories/presentation/memories.dart';
-import 'package:stasht/memory_lane.dart';
+import 'package:stasht/memories/presentation/memory_lane.dart';
 import 'package:stasht/profile/bindings/profile_binding.dart';
 import 'package:stasht/profile/presentation/profile.dart';
 import 'package:stasht/routes/app_routes.dart';
@@ -30,13 +31,13 @@ class AppPages {
     GetPage(
         name: AppRoutes.memoriesStep1,
         page: () => Step1(),
-        binding: SignupBinding(),
+        binding: MemoriesBinding(),
         transitionDuration: const Duration(milliseconds: 200),
         transition: Transition.leftToRight),
     GetPage(
         name: AppRoutes.memoriesStep2,
         page: () => Step_2(),
-        binding: SignupBinding(),
+        binding: MemoriesBinding(),
         transitionDuration: const Duration(milliseconds: 200),
         transition: Transition.leftToRight),
     GetPage(
@@ -60,6 +61,12 @@ class AppPages {
     GetPage(
         name: AppRoutes.memoryList,
         page: () => Memory_Lane(),
+        binding: MemoriesBinding(),
+        transitionDuration: const Duration(milliseconds: 200),
+        transition: Transition.leftToRight),
+    GetPage(
+        name: AppRoutes.addCaption,
+        page: () => AddCaption(),
         binding: MemoriesBinding(),
         transitionDuration: const Duration(milliseconds: 200),
         transition: Transition.leftToRight)

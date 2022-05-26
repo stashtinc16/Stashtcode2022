@@ -22,15 +22,17 @@ void configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
     ..indicatorType = EasyLoadingIndicatorType.fadingCircle
-    ..loadingStyle = EasyLoadingStyle.dark
+    ..loadingStyle = EasyLoadingStyle.custom
     ..indicatorSize = 45.0
     ..radius = 10.0
+  ..backgroundColor = AppColors.primaryColor
     ..progressColor = AppColors.primaryColor
     ..backgroundColor = Colors.white
+    
     ..indicatorColor = AppColors.primaryColor
     ..textColor = AppColors.primaryColor
     ..maskColor = AppColors.primaryColor.withOpacity(0.5)
-    ..userInteractions = true
+    ..userInteractions = false
     ..dismissOnTap = false;
 }
 

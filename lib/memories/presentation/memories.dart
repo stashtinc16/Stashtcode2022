@@ -6,7 +6,6 @@ import 'package:stasht/memories/controllers/memories_controller.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
-import '../../memory_lane.dart';
 
 class Memories extends GetView<MemoriesController> {
   bool isClick = false;
@@ -111,7 +110,10 @@ class Memories extends GetView<MemoriesController> {
                               itemBuilder: (BuildContext context, int index) {
                                 return InkWell(
                                     onTap: () {
-                                      Get.toNamed(AppRoutes.memoryList);
+                                      Get.toNamed(AppRoutes.memoryList,arguments: {
+                                  'mainIndex':index ,
+                                
+                                });
                                       // Navigator.push(
                                       //     context,
                                       //     MaterialPageRoute(
@@ -128,7 +130,7 @@ class Memories extends GetView<MemoriesController> {
                                               controller.memoriesList.isNotEmpty
                                                   ? controller
                                                       .memoriesList[index]
-                                                      .images[0]
+                                                      .imagesCaption[0].image
                                                   : "",
                                             ),
                                             fit: BoxFit.cover),
@@ -189,8 +191,9 @@ class Memories extends GetView<MemoriesController> {
                                                 shape: BoxShape.circle),
                                             child: Text(
                                               controller.memoriesList.isNotEmpty
-                                                  ? "${controller.memoriesList[index].images!.length}"
+                                                  ? "${controller.memoriesList[index].imagesCaption!.length}"
                                                   : "0",
+                                                  
                                               style: const TextStyle(
                                                   color: AppColors.primaryColor,
                                                   fontSize: 14),

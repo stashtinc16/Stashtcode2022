@@ -28,7 +28,7 @@ class MemoriesController extends GetxController {
   int skip = 0;
   RxInt selectedCount = 0.obs;
   ScrollController controller = ScrollController();
-  List<String> imageUrls = List.empty(growable: true);
+  List<ImagesCaption> imageCaptionUrls = List.empty(growable: true);
   int uploadCount = 0;
   RxBool myMemoriesExpand = false.obs;
   UserModel? userModel;
@@ -54,12 +54,12 @@ class MemoriesController extends GetxController {
           value.docs.forEach((element) {
             // print('CreatedBy ${element.data().createdBy!} => $userId');
             // if (element.data().createdBy! == userId) {
-              if (userModel == null) {
-                getUserData(element.data().createdBy!);
-              }
-              MemoriesModel memoriesModel = element.data();
-              memoriesModel.memoryId = element.id;
-              memoriesList.add(memoriesModel);
+            if (userModel == null) {
+              getUserData(element.data().createdBy!);
+            }
+            MemoriesModel memoriesModel = element.data();
+            memoriesModel.memoryId = element.id;
+            memoriesList.add(memoriesModel);
             // }
           })
         });
@@ -197,7 +197,9 @@ class MemoriesController extends GetxController {
 
     final metadata = SettableMetadata(
       contentType: 'image/jpeg',
-      customMetadata: {'picked-file-path': file.path},
+      customMetadata: {
+        'picked-file-path': file.path,
+      },
     );
 
     print('metaData ${metadata.customMetadata}');
@@ -206,8 +208,8 @@ class MemoriesController extends GetxController {
     uploadTask.whenComplete(() => {
           uploadTask.snapshot.ref.getDownloadURL().then((value) => {
                 print('URl $value'),
-                imageUrls.add(value),
-                if (imageUrls.length < selectedIndexList.length)
+                imageCaptionUrls.add(ImagesCaption(caption: "", image: value)),
+                if (imageCaptionUrls.length < selectedIndexList.length)
                   {
                     uploadCount += 1,
                     uploadImagesToMemories(uploadCount),
@@ -238,22 +240,37 @@ class MemoriesController extends GetxController {
   void createMemories() {
     EasyLoading.show(status: 'Creating Memory');
     MemoriesModel memoriesModel = MemoriesModel(
-        caption: "",
         title: titleController.text.toString(),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         createdBy: userId,
-        images: imageUrls,
+        imagesCaption: imageCaptionUrls,
         inviteLink: "",
         published: false,
         users: []);
-    // memoriesRef
-    //     .add(memoriesModel)
-    //     .then((value) => {
-    //           EasyLoading.dismiss(),
-    //           Get.snackbar('Success', 'Memory folder created successfully'),
-    //           Get.offAllNamed(AppRoutes.memories)
-    //         })
-    //     .onError((error, stackTrace) => {EasyLoading.dismiss()});
+    memoriesRef
+        .add(memoriesModel)
+        .then((value) => {
+              EasyLoading.dismiss(),
+              Get.snackbar('Success', 'Memory folder created successfully'),
+              Get.offAllNamed(AppRoutes.memories)
+            })
+        .onError((error, stackTrace) => {EasyLoading.dismiss()});
+  }
+
+  void saveCaption(
+      String caption, int captionIndex, String docId, int mainIndex) {
+    print('caption $caption => $docId $captionIndex');
+    MemoriesModel memoriesModel = new MemoriesModel();
+    memoriesModel = memoriesList[mainIndex];
+
+    memoriesModel.imagesCaption![captionIndex].caption = caption;
+    EasyLoading.show(status: 'Processing');
+    memoriesRef
+        .doc(docId)
+        .set(memoriesModel)
+        .then((value) =>
+            {print('UpdateCaption '), EasyLoading.dismiss(), Get.back()})
+        .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }
 }

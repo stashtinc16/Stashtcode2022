@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>66437154598-6hsoo53bv7qp08kc0qqdjbpfig82j2uh.apps.googleusercontent.com</string>
+	<string>943512596213-3ijeocusv8cvo5gdge9f2d5k0v0m25nk.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.66437154598-6hsoo53bv7qp08kc0qqdjbpfig82j2uh</string>
+	<string>com.googleusercontent.apps.943512596213-3ijeocusv8cvo5gdge9f2d5k0v0m25nk</string>
 	<key>API_KEY</key>
-	<string>AIzaSyD9jbZv04oon4AUbhAJCebf1GGmDZxUEUA</string>
+	<string>AIzaSyBpM9ZYHxmNaH1h5mDac_xsFLM21zyZR4E</string>
 	<key>GCM_SENDER_ID</key>
-	<string>66437154598</string>
+	<string>943512596213</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.app.stasht2</string>
 	<key>PROJECT_ID</key>
-	<string>mvpstasht</string>
+	<string>stasht-mvp</string>
 	<key>STORAGE_BUCKET</key>
-	<string>mvpstasht.appspot.com</string>
+	<string>stasht-mvp.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:66437154598:ios:8bf74d9be1a6a22cf563e7</string>
+	<string>1:943512596213:ios:c47ec6e68c87be811c9fbc</string>
 </dict>
 </plist>
