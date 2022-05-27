@@ -20,55 +20,24 @@ class AppPages {
   static const initial = AppRoutes.splashScreen;
   static final routes = [
     GetPage(
-      name: AppRoutes.splashScreen,
-      page: () => const SplashScreen(),
-      binding: SplashBindings(),
-    ),
+      name: AppRoutes.splashScreen, page: () => const SplashScreen(), binding: SplashBindings()),
     GetPage(
         name: AppRoutes.signIn, page: () => SignIn(), binding: SignupBinding()),
     GetPage(
         name: AppRoutes.signup, page: () => Signup(), binding: SignupBinding()),
     GetPage(
-        name: AppRoutes.memoriesStep1,
-        page: () => Step1(),
-        binding: MemoriesBinding(),
-        transitionDuration: const Duration(milliseconds: 200),
-        transition: Transition.leftToRight),
+        name: AppRoutes.memoriesStep1, page: () => Step1(), binding: MemoriesBinding()),
     GetPage(
-        name: AppRoutes.memoriesStep2,
-        page: () => Step_2(),
-        binding: MemoriesBinding(),
-        transitionDuration: const Duration(milliseconds: 200),
-        transition: Transition.leftToRight),
+        name: AppRoutes.memoriesStep2, page: () => Step_2(), binding: MemoriesBinding()),
     GetPage(
-        name: AppRoutes.memories,
-        page: () => Memories(),
-        binding: MemoriesBinding(),
-        transitionDuration: const Duration(milliseconds: 200),
-        transition: Transition.leftToRight),
+        name: AppRoutes.memories, page: () => Memories(), binding: MemoriesBinding()),
     GetPage(
-        name: AppRoutes.profile,
-        page: () => Profile(),
-        binding: ProfileBinding(),
-        transitionDuration: const Duration(milliseconds: 200),
-        transition: Transition.leftToRight),
+        name: AppRoutes.profile, page: () => Profile(), binding: ProfileBinding()),
     GetPage(
-        name: AppRoutes.forgotPassword,
-        page: () => ForgotPassword(),
-        binding: ForgotPasswordBindings(),
-        transitionDuration: const Duration(milliseconds: 200),
-        transition: Transition.leftToRight),
+        name: AppRoutes.forgotPassword, page: () => ForgotPassword(), binding: ForgotPasswordBindings()),
     GetPage(
-        name: AppRoutes.memoryList,
-        page: () => Memory_Lane(),
-        binding: MemoriesBinding(),
-        transitionDuration: const Duration(milliseconds: 200),
-        transition: Transition.leftToRight),
+        name: AppRoutes.memoryList, page: () => Memory_Lane(), binding: MemoriesBinding()),
     GetPage(
-        name: AppRoutes.addCaption,
-        page: () => AddCaption(),
-        binding: MemoriesBinding(),
-        transitionDuration: const Duration(milliseconds: 200),
-        transition: Transition.leftToRight)
+        name: AppRoutes.addCaption, page: () => AddCaption(), binding: MemoriesBinding())
   ];
 }

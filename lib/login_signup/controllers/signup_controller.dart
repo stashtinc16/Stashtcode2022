@@ -68,39 +68,32 @@ class SignupController extends GetxController {
 // Signup user to app and save session
   Future<void> signupUser() async {
     if (formkey.currentState!.validate()) {
-      if (!checkValidEmail(emailController.text.toString())) {
-        Get.snackbar("Email Invalid", "Please enter valid email address");
-      } else if (passwordController.text.toString().length < 6) {
-        Get.snackbar("Password", "Please enter at least 6 characters",
-            borderColor: Colors.red);
-      } else {
-        try {
-          EasyLoading.show(status: 'Processing..');
+      try {
+        EasyLoading.show(status: 'Processing..');
 
-          await FirebaseAuth.instance
-              .createUserWithEmailAndPassword(
-            email: emailController.text,
-            password: passwordController.text,
-          )
-              .then((value) {
-            print("FirebaseAuthExceptionValue $value");
-            saveUserToDB(value.user, userNameController.text);
-          }).onError((error, stackTrace) {
-            if (error.toString().contains("email-already-in-use")) {
-              Get.snackbar(
-                "Email exits",
-                "The email address is already in use by another account.",
-                snackPosition: SnackPosition.BOTTOM,
-              );
-            }
-            EasyLoading.dismiss();
-            print("FirebaseAuthExceptionError ${error.toString()}");
-          });
-        } on FirebaseAuthException catch (e) {
+        await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        )
+            .then((value) {
+          print("FirebaseAuthExceptionValue $value");
+          saveUserToDB(value.user, userNameController.text);
+        }).onError((error, stackTrace) {
+          if (error.toString().contains("email-already-in-use")) {
+            Get.snackbar(
+              "Email exits",
+              "The email address is already in use by another account.",
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          }
           EasyLoading.dismiss();
-          print("FirebaseAuthException $e");
-          return;
-        }
+          print("FirebaseAuthExceptionError ${error.toString()}");
+        });
+      } on FirebaseAuthException catch (e) {
+        EasyLoading.dismiss();
+        print("FirebaseAuthException $e");
+        return;
       }
     }
   }
@@ -108,61 +101,54 @@ class SignupController extends GetxController {
 // Signin user to app and save session
   Future<void> signIn() async {
     if (formkeySignin.currentState!.validate()) {
-      if (!checkValidEmail(email1Controller.text.toString())) {
-        Get.snackbar("Email Invalid", "Please enter valid email address");
-      } else if (password1Controller.text.toString().length < 6) {
-        Get.snackbar("Password", "Please enter at least 6 characters",
-            borderColor: Colors.red);
-      } else {
-        try {
-          EasyLoading.show(status: 'Processing..');
-          await FirebaseAuth.instance
-              .signInWithEmailAndPassword(
-                  email: email1Controller.text,
-                  password: password1Controller.text)
-              .then((value1) {
-            usersRef
-                .where("email", isEqualTo: value1.user!.email)
-                .get()
-                .then((value) => {
-                      EasyLoading.dismiss(),
-                      if (value.docs.isNotEmpty)
-                        {
-                          saveSession(
-                              value.docs[0].id,
-                              value.docs[0].data().userName!,
-                              email1Controller.text,
-                              value.docs[0].data().profileImage!),
-                          Get.offNamed(AppRoutes.memories)
-                        }
-                      else
-                        {Get.snackbar("Error", "Email not exists!")}
-                    });
-          });
-        } on FirebaseAuthException catch (e) {
-          EasyLoading.dismiss();
-          if (e.code == 'user-not-found') {
-            print("User not found");
+      try {
+        EasyLoading.show(status: 'Processing..');
+        await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: email1Controller.text,
+                password: password1Controller.text)
+            .then((value1) {
+          usersRef
+              .where("email", isEqualTo: value1.user!.email)
+              .get()
+              .then((value) => {
+                    EasyLoading.dismiss(),
+                    if (value.docs.isNotEmpty)
+                      {
+                        saveSession(
+                            value.docs[0].id,
+                            value.docs[0].data().userName!,
+                            email1Controller.text,
+                            value.docs[0].data().profileImage!),
+                        Get.offNamed(AppRoutes.memories)
+                      }
+                    else
+                      {Get.snackbar("Error", "Email not exists!")}
+                  });
+        });
+      } on FirebaseAuthException catch (e) {
+        EasyLoading.dismiss();
+        if (e.code == 'user-not-found') {
+          print("User not found");
 
-            Get.snackbar("Error", "User not found",
-                snackPosition: SnackPosition.BOTTOM);
-            return Future.error(
-                "User Not Found", StackTrace.fromString("User Not Found"));
-          } else if (e.code == 'wrong-password') {
-            print("Incorrect password");
+          Get.snackbar("Error", "User not found",
+              snackPosition: SnackPosition.BOTTOM);
+          return Future.error(
+              "User Not Found", StackTrace.fromString("User Not Found"));
+        } else if (e.code == 'wrong-password') {
+          print("Incorrect password");
 
-            Get.snackbar("Error", "Password is incorrect",
-                snackPosition: SnackPosition.BOTTOM);
-            return Future.error("Incorrect password",
-                StackTrace.fromString("Incorrect password"));
-          } else {
-            print("Login Failed ${e.message}");
+          Get.snackbar("Error", "Password is incorrect",
+              snackPosition: SnackPosition.BOTTOM);
+          return Future.error("Incorrect password",
+              StackTrace.fromString("Incorrect password"));
+        } else {
+          print("Login Failed ${e.message}");
 
-            Get.snackbar("Error", "Login Failed! Please try again in some time",
-                snackPosition: SnackPosition.BOTTOM);
-            return Future.error(
-                "Login Failed", StackTrace.fromString("Unknown error"));
-          }
+          Get.snackbar("Error", "Login Failed! Please try again in some time",
+              snackPosition: SnackPosition.BOTTOM);
+          return Future.error(
+              "Login Failed", StackTrace.fromString("Unknown error"));
         }
       }
     }
@@ -215,7 +201,6 @@ class SignupController extends GetxController {
       }
     } else {
       await _updateLoginInfo();
-
       EasyLoading.dismiss();
     }
 
@@ -231,8 +216,7 @@ class SignupController extends GetxController {
 
     // OAuthCredential credential = FacebookAuthProvider.credential(token!.token);
     // UserCredential user = await firebaseAuth.signInWithCredential(credential);
-    
-  
+
     EasyLoading.dismiss();
     if (token != null) {
       profile = await plugin.getUserProfile();
@@ -290,7 +274,7 @@ class SignupController extends GetxController {
           saveSession(value.id, name, email!, profileImage!),
           Get.snackbar('Success', "User logged-in successfully",
               snackPosition: SnackPosition.BOTTOM),
-          Get.offNamed(AppRoutes.memories)
+          Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
         });
   }
 

@@ -31,12 +31,15 @@ class MemoriesController extends GetxController {
   List<ImagesCaption> imageCaptionUrls = List.empty(growable: true);
   int uploadCount = 0;
   RxBool myMemoriesExpand = false.obs;
+  RxBool sharedMemoriesExpand = false.obs;
   UserModel? userModel;
+  Rx<PermissionStatus> permissionStatus = PermissionStatus.denied.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _promptPermissionSetting();
+    print('OnInit');
+    promptPermissionSetting();
     getMyMemories();
   }
 
@@ -49,7 +52,7 @@ class MemoriesController extends GetxController {
   void getMyMemories() {
     memoriesList.clear();
     print('userId $userId');
-    memoriesRef.where('created_by', isEqualTo: userId).get().then((value) => {
+    memoriesRef.where('created_by', isEqualTo: userId).orderBy('created_at',descending: true).get().then((value) => {
           print('value $userId => ${value.docs.length}'),
           value.docs.forEach((element) {
             // print('CreatedBy ${element.data().createdBy!} => $userId');
@@ -85,17 +88,36 @@ class MemoriesController extends GetxController {
     await usersRef.doc(userId).get().then((value) => userModel = value.data()!);
   }
 
-  Future<bool> _promptPermissionSetting() async {
-    var status = await Permission.photos.request();
+  Future<bool> promptPermissionSetting() async {
+    var status;
+    if (Platform.isIOS) {
+      status = await Permission.photos.request();
+    } else {
+      status = await Permission.storage.request();
+    }
+    permissionStatus.value = status;
+
     print('PermissionStatus ${status}');
-    if (Platform.isIOS &&
-            await Permission.storage.request().isGranted &&
-            await Permission.photos.request().isGranted ||
-        Platform.isAndroid && await Permission.storage.request().isGranted) {
+    if (status == PermissionStatus.granted) {
       getAlbums();
       return true;
+    } else if (status == PermissionStatus.permanentlyDenied) {
+      checkPermission();
     }
+    // checkPermission();
     return false;
+  }
+
+  checkPermission() async {
+    var status;
+    if (Platform.isIOS) {
+      status = await Permission.photos.request();
+    } else {
+      status = await Permission.storage.request();
+    }
+    permissionStatus.value = status;
+    print('checkPermission $status');
+    return status = PermissionStatus.granted;
   }
 
 // Go To Step 1

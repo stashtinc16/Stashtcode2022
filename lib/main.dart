@@ -25,10 +25,8 @@ void configLoading() {
     ..loadingStyle = EasyLoadingStyle.custom
     ..indicatorSize = 45.0
     ..radius = 10.0
-  ..backgroundColor = AppColors.primaryColor
     ..progressColor = AppColors.primaryColor
     ..backgroundColor = Colors.white
-    
     ..indicatorColor = AppColors.primaryColor
     ..textColor = AppColors.primaryColor
     ..maskColor = AppColors.primaryColor.withOpacity(0.5)
@@ -47,8 +45,10 @@ class MyApp extends StatelessWidget {
       initialRoute: AppPages.initial,
       initialBinding: SignupBinding(),
       builder: EasyLoading.init(),
-      theme: ThemeData(fontFamily: robotoRegular, splashColor: Colors.transparent,
-      highlightColor: Colors.transparent),
+      theme: ThemeData(
+          fontFamily: robotoRegular,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent),
     );
   }
 }

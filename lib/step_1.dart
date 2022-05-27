@@ -33,25 +33,26 @@ class Step1 extends GetView<MemoriesController> {
                     const SizedBox(
                       height: 100,
                     ),
-                    const Center(
-                        child: Text(
-                      "Step 1",
-                      style: TextStyle(
-                          fontSize: 21,
-                          color: AppColors.primaryColor,
-                          fontFamily: gibsonRegular),
-                    )),
+                    if (argument == "yes")
+                      const Text(
+                        "Step 1",
+                        style: TextStyle(
+                            fontSize: 21,
+                            color: AppColors.primaryColor,
+                            fontFamily: gibsonRegular),
+                      ),
                     const SizedBox(
                       height: 10,
                     ),
-                    const Center(
-                        child: Text(
-                      "Create your first memory folder",
-                      style: TextStyle(
+                    Text(
+                      argument == "yes"
+                          ? "Create your first memory folder"
+                          : "Memory folder name",
+                      style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black,
                           fontFamily: robotoMedium),
-                    )),
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -59,10 +60,10 @@ class Step1 extends GetView<MemoriesController> {
                       child: TextFormField(
                         controller: controller.titleController,
                         decoration: const InputDecoration(
-                            hintText: "Ex: Wedding Photos",
+                            hintText: "Eg: Wedding Photos",
                             hintStyle: TextStyle(
-                                color: Color.fromRGBO(76, 73, 73, 0.6),
-                                fontSize: 24,
+                                color: AppColors.hintColor,
+                                fontSize: 34,
                                 fontFamily: gibsonSemiBold),
                             border: InputBorder.none,
                             contentPadding:
@@ -71,6 +72,7 @@ class Step1 extends GetView<MemoriesController> {
                             color: Colors.black,
                             fontSize: 34,
                             fontFamily: robotoBold),
+                        // readOnly: true,
                         textAlign: TextAlign.center,
                         onChanged: (text) {
                           if (text.isNotEmpty) {
@@ -93,7 +95,7 @@ class Step1 extends GetView<MemoriesController> {
                     maintainState: true,
                     visible: controller.showNext.value,
                     child: Container(
-                      margin: const EdgeInsets.only(bottom: 30),
+                      margin: const EdgeInsets.only(bottom: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -118,7 +120,8 @@ class Step1 extends GetView<MemoriesController> {
                           InkWell(
                             onTap: () {
                               Get.toNamed(AppRoutes.memoriesStep2, arguments: {
-                                "title": controller.titleController.value.text
+                                "title": controller.titleController.value.text,
+                                "fromSignup": argument
                               });
                             },
                             child: Center(
@@ -158,12 +161,12 @@ class Step1 extends GetView<MemoriesController> {
                     ),
                   ),
                 ),
-               if(argument=="yes") InkWell(
-                  onTap: () {
-                    Get.offNamed(AppRoutes.memories);
-                  },
-                  child: const Center(
-                    child: Padding(
+                if (argument == "yes")
+                  InkWell(
+                    onTap: () {
+                      Get.offNamed(AppRoutes.memories);
+                    },
+                    child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
                         "Skip this step",
@@ -176,6 +179,8 @@ class Step1 extends GetView<MemoriesController> {
                       ),
                     ),
                   ),
+                const SizedBox(
+                  height: 15,
                 )
               ],
             )));

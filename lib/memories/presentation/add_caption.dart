@@ -69,8 +69,10 @@ class AddCaption extends GetView<MemoriesController> {
           ),
           TextFormField(
             controller: captionController,
+            maxLines: 4,
             decoration: const InputDecoration(
                 hintText: 'Add Caption to this post..',
+                
                 hintStyle: TextStyle(fontSize: 12, color: AppColors.textColor),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0)),

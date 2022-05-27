@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/controllers/signup_controller.dart';
-import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
+import 'package:stasht/utils/constants.dart';
 
 class Signup extends GetView<SignupController> {
   int val = -1;
@@ -18,7 +18,7 @@ class Signup extends GetView<SignupController> {
       child: Container(
         height: MediaQuery.of(context).size.height,
         child: Padding(
-            padding: const EdgeInsets.only( left: 25, right: 25),
+            padding: const EdgeInsets.only(left: 25, right: 25),
             child: Form(
                 key: controller.formkey,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -30,7 +30,7 @@ class Signup extends GetView<SignupController> {
                         flex: 1,
                       ),
                       Expanded(
-                          flex: 3,
+                        flex: 3,
                         child: Column(
                           children: [
                             InkWell(
@@ -42,8 +42,8 @@ class Signup extends GetView<SignupController> {
                                   "Sign-in",
                                   style: TextStyle(
                                     fontSize: 21,
-                                    color: Color.fromRGBO(108, 96, 255, 1),
-                                    // fontFamily: "gibsonsemibold",
+                                    color: AppColors.primaryColor,
+                                    fontFamily: gibsonSemiBold,
                                   ),
                                 ),
                               ),
@@ -111,129 +111,140 @@ class Signup extends GetView<SignupController> {
                             const SizedBox(
                               height: 20,
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: AppColors.fieldBorderColor),
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.white,
-                              ),
-                              // height: 50,
-                              child: TextFormField(
-                                controller: controller.userNameController,
-                                textInputAction: TextInputAction.next,
-                                decoration: const InputDecoration(
-                                    labelText: "Username",
-                                    labelStyle: TextStyle(
-                                      color: AppColors.primaryColor,
-                                      fontSize: 11,
-                                    ),
-                                    border: InputBorder.none,
-                                    // hintText: 'Username',
-                                    // hintStyle: TextStyle(
-                                    //     color: AppColors.fieldBorderColor,
-                                    //     fontSize: 21),
-                                    contentPadding: EdgeInsets.only(
-                                        bottom: 10, left: 15, top: 5)),
-                                style: const TextStyle(color: Colors.black),
-                                validator: (v) {
-                                  if (v!.isEmpty ||
-                                      !RegExp(r"^[a-zA-Z0-9]+").hasMatch(v)) {
-                                    return 'Enter a valid username!';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: AppColors.fieldBorderColor),
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.white,
-                              ),
-                              child: TextFormField(
-                                controller: controller.emailController,
-                                textInputAction: TextInputAction.next,
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: const InputDecoration(
-                                    labelText: "E-mail",
-                                    // hintText: 'E-mail',
-                                    // hintStyle: TextStyle(
-                                    //     color: AppColors.fieldBorderColor,
-                                    //     fontSize: 21),
-                                    labelStyle: TextStyle(
-                                      color: AppColors.primaryColor,
-                                      fontSize: 11,
-                                    ),
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.only(
-                                        bottom: 10, left: 15, top: 5)),
-                                style: const TextStyle(color: Colors.black),
-                                validator: (v) {
-                                  if (v!.isEmpty) {
-                                    return 'Enter a valid email!';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: AppColors.fieldBorderColor),
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.white,
-                              ),
-                              child: Center(
-                                  child: Obx(
-                                () => TextFormField(
-                                  obscureText: controller.isObscure.value,
-                                  controller: controller.passwordController,
-                                  decoration: InputDecoration(
-                                      labelText: "Password",
-                                      // hintText: 'Password',
-                                      // hintStyle: const TextStyle(
-                                      //     color: AppColors.fieldBorderColor,
-                                      //     fontSize: 21),
-                                      labelStyle: const TextStyle(
-                                        color: AppColors.primaryColor,
-                                        fontSize: 11,
-                                      ),
-                                      border: InputBorder.none,
-                                      contentPadding: const EdgeInsets.only(
-                                          bottom: 10, left: 15, top: 5),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(controller.isObscure.value
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off, size: 20,),
-                                        onPressed: () {
-                                          controller.isObscure.value =
-                                              !controller.isObscure.value;
-                                        },
-                                      )),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return "Please enter password";
-                                    }
-                                    return null;
-                                  },
-                                  style: const TextStyle(color: Colors.black),
+                            TextFormField(
+                              controller: controller.userNameController,
+                              textInputAction: TextInputAction.next,
+                              decoration: InputDecoration(
+                                labelText: "Username",
+                                labelStyle: const TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontSize: 11,
                                 ),
-                              )),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.fieldBorderColor)),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.fieldBorderColor)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.fieldBorderColor)),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0, vertical: 7),
+                                hintText: 'Username',
+                                hintStyle: const TextStyle(
+                                    color: AppColors.fieldBorderColor,
+                                    fontSize: 21),
+                              ),
+                              style: const TextStyle(color: Colors.black),
+                              validator: (v) {
+                                if (v!.isEmpty ||
+                                    !RegExp(r"^[a-zA-Z0-9]+").hasMatch(v)) {
+                                  return 'Enter a valid username!';
+                                }
+                                return null;
+                              },
                             ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: controller.emailController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                  labelText: "E-mail",
+                                  hintText: 'E-mail',
+                                  hintStyle: const TextStyle(
+                                      color: AppColors.fieldBorderColor,
+                                      fontSize: 21),
+                                  labelStyle: const TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontSize: 11,
+                                  ),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                      borderSide: const BorderSide(
+                                          color: AppColors.fieldBorderColor)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                      borderSide: const BorderSide(
+                                          color: AppColors.fieldBorderColor)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                      borderSide: const BorderSide(
+                                          color: AppColors.fieldBorderColor)),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0, vertical: 7)),
+                              style: const TextStyle(color: Colors.black),
+                              validator: (v) {
+                                if (v!.isEmpty) {
+                                  return 'Enter a valid email!';
+                                } else if (!checkValidEmail(v)) {
+                                  return 'Please enter valid email address';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                                child: Obx(
+                              () => TextFormField(
+                                obscureText: controller.isObscure.value,
+                                controller: controller.passwordController,
+                                decoration: InputDecoration(
+                                    labelText: "Password",
+                                    hintText: 'Password',
+                                    hintStyle: const TextStyle(
+                                        color: AppColors.fieldBorderColor,
+                                        fontSize: 21),
+                                    labelStyle: const TextStyle(
+                                      color: AppColors.primaryColor,
+                                      fontSize: 11,
+                                    ),
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                        borderSide: const BorderSide(
+                                            color: AppColors.fieldBorderColor)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                        borderSide: const BorderSide(
+                                            color: AppColors.fieldBorderColor)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                        borderSide: const BorderSide(
+                                            color: AppColors.fieldBorderColor)),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 15.0, vertical: 7),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        controller.isObscure.value
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off,
+                                        size: 20,
+                                        color: AppColors.fieldBorderColor,
+                                      ),
+                                      onPressed: () {
+                                        controller.isObscure.value =
+                                            !controller.isObscure.value;
+                                      },
+                                    )),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Please enter password";
+                                  } else if (value.length < 6) {
+                                    return "Please enter at least 6 characters";
+                                  }
+                                  return null;
+                                },
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            )),
                             const SizedBox(height: 50),
                             GestureDetector(
                               onTap: () {
@@ -245,8 +256,7 @@ class Signup extends GetView<SignupController> {
                                   width: 150,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
-                                      color:
-                                          AppColors.primaryColor,
+                                      color: AppColors.primaryColor,
                                       borderRadius: BorderRadius.circular(22)),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -269,7 +279,6 @@ class Signup extends GetView<SignupController> {
                             ),
                           ],
                         ),
-                      
                       )
                     ]))),
       ),

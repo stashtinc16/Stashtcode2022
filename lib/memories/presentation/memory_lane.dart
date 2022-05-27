@@ -136,7 +136,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                         .substring(0, 1)
                                         .toUpperCase(),
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 22,
                                         color: Colors.white,
                                         fontFamily: gibsonSemiBold),
@@ -163,7 +163,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       RichText(
                                         text: TextSpan(
                                           text: '',
-                                          style: TextStyle(
+                                          style:const TextStyle(
                                               color: Colors.black,
                                               fontSize: 10),
                                           children: <TextSpan>[
@@ -174,7 +174,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                         .createdAt
                                                         .toDate())
                                                     .toString(),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.blue,
                                                     fontSize: 10)),
                                           ],
@@ -183,11 +183,11 @@ class Memory_Lane extends GetView<MemoriesController> {
                                     ],
                                   ),
                                 ),
-                                Text(
+                                const Text(
                                   "0",
                                   style: TextStyle(color: Colors.black),
                                 ),
-                                Icon(
+                                const Icon(
                                   Icons.chat_bubble_outline,
                                   color: Colors.black,
                                   size: 16,
@@ -209,7 +209,6 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width,
-                                      color: Colors.amberAccent,
                                       child: CachedNetworkImage(
                                           progressIndicatorBuilder:
                                               (context, url, progress) =>
