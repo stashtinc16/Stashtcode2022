@@ -4,6 +4,7 @@ import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/constants.dart';
 
@@ -34,6 +35,8 @@ class ProfileController extends GetxController {
     userId = "";
     userImage = "";
     userName = "";
+    fromShare = false;
     Get.offAllNamed(AppRoutes.signIn);
+    print('UserId==== $userId');
   }
 }

@@ -55,6 +55,9 @@ dependencies:
   cached_network_image: ^3.2.1
   connectivity: ^3.0.6
   app_settings: ^4.1.6
+  firebase_dynamic_links: ^4.2.5
+  flutter_share: ^2.0.0
+  firebase_crashlytics: ^2.8.1
 
 
 

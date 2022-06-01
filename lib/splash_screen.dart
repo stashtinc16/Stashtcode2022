@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/controllers/signup_controller.dart';
+import 'package:stasht/splash/controllers/splash_controller.dart';
 import 'package:stasht/utils/assets_images.dart';
 
-class SplashScreen extends GetView<SignupController> {
+class SplashScreen extends GetView<SplashController> {
   const SplashScreen({Key? key}) : super(key: key);
-
 
 
   @override

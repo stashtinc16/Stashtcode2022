@@ -56,30 +56,40 @@ class Step1 extends GetView<MemoriesController> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Center(
-                      child: TextFormField(
-                        controller: controller.titleController,
-                        decoration: const InputDecoration(
-                            hintText: "Eg: Wedding Photos",
-                            hintStyle: TextStyle(
-                                color: AppColors.hintColor,
-                                fontSize: 34,
-                                fontFamily: gibsonSemiBold),
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.only(bottom: 10, top: 5)),
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 34,
-                            fontFamily: robotoBold),
-                        // readOnly: true,
-                        textAlign: TextAlign.center,
-                        onChanged: (text) {
-                          if (text.isNotEmpty) {
-                            controller.showNext.value = true;
-                          } else {
-                            controller.showNext.value = false;
-                          }
+                    Obx(
+                      () => Focus(
+                        autofocus: false,
+                        child: TextFormField(
+                          controller: controller.titleController,
+
+                          decoration: InputDecoration(
+                              hintText: controller.hasFocus.value
+                                  ? ""
+                                  : "E.g. Wedding Photos",
+                              hintStyle: const TextStyle(
+                                  color: AppColors.hintTextColor,
+                                  fontSize: 34,
+                                  fontFamily: robotoBold),
+                              border: InputBorder.none,
+                              alignLabelWithHint: true,
+                              contentPadding:
+                                  const EdgeInsets.only(bottom: 10, top: 5)),
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 34,
+                              fontFamily: robotoBold),
+                          // readOnly: true,
+                          textAlign: TextAlign.center,
+                          onChanged: (text) {
+                            if (text.isNotEmpty) {
+                              controller.showNext.value = true;
+                            } else {
+                              controller.showNext.value = false;
+                            }
+                          },
+                        ),
+                        onFocusChange: (hasFocus) {
+                          controller.hasFocus.value = hasFocus;
                         },
                       ),
                     ),
@@ -130,8 +140,7 @@ class Step1 extends GetView<MemoriesController> {
                                     horizontal: 18, vertical: 10),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color:
-                                        const Color.fromRGBO(108, 96, 255, 1),
+                                    color: AppColors.primaryColor,
                                     borderRadius: BorderRadius.circular(18)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -141,8 +150,8 @@ class Step1 extends GetView<MemoriesController> {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w900),
+                                          fontSize: 14,
+                                          fontFamily: gibsonSemiBold),
                                     ),
                                     Padding(
                                         padding: EdgeInsets.only(left: 5),
@@ -164,6 +173,7 @@ class Step1 extends GetView<MemoriesController> {
                 if (argument == "yes")
                   InkWell(
                     onTap: () {
+                     
                       Get.offNamed(AppRoutes.memories);
                     },
                     child: const Padding(

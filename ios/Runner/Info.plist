@@ -43,6 +43,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>App needs media access to upload images to memories</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App needs photo gallery access to upload images to memories</string>
 	<key>UILaunchStoryboardName</key>

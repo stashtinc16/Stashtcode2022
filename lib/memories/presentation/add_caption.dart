@@ -70,6 +70,7 @@ class AddCaption extends GetView<MemoriesController> {
           TextFormField(
             controller: captionController,
             maxLines: 4,
+            textInputAction: TextInputAction.done,
             decoration: const InputDecoration(
                 hintText: 'Add Caption to this post..',
                 

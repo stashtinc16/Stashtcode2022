@@ -9,5 +9,6 @@ class AppColors {
   static const Color textColor = Color(0XFF919696);
   static const Color cursorColor = Color(0XFF3030F8);
   static const Color hintColor = Color(0XFFC4C4C4);
+  static const Color hintTextColor = Color(0XFFEDEDED);
   static const Color? redColor = Color?.fromARGB(255, 192, 12, 12);
 }

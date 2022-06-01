@@ -2,10 +2,12 @@ import 'dart:io';
 import 'dart:io' as io;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
@@ -19,6 +21,7 @@ class MemoriesController extends GetxController {
   RxBool showNext = false.obs;
   var mediaPages = List.empty(growable: true).obs;
   var memoriesList = List.empty(growable: true).obs;
+  RxList sharedMemoriesList = List.empty(growable: true).obs;
   RxList selectionList = List.empty(growable: true).obs;
   RxList selectedIndexList = List.empty(growable: true).obs;
   final titleController = TextEditingController();
@@ -32,40 +35,170 @@ class MemoriesController extends GetxController {
   int uploadCount = 0;
   RxBool myMemoriesExpand = false.obs;
   RxBool sharedMemoriesExpand = false.obs;
-  UserModel? userModel;
   Rx<PermissionStatus> permissionStatus = PermissionStatus.denied.obs;
+  RxBool hasFocus = false.obs;
+  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
+
+  String URI_PREFIX_FIREBASE = "https://stasht.page.link";
+  String DEFAULT_FALLBACK_URL_ANDROID = "https://stasht.page.link";
 
   @override
   void onInit() {
     super.onInit();
-    print('OnInit');
+
     promptPermissionSetting();
     getMyMemories();
+    print('Memory=> fromShare $fromShare  memoryArgument  ');
+    sharedMemoriesExpand.value = fromShare;
+    getSharedMemories();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    // getMyMemories();
+  //get Shared memories
+  void getSharedMemories() {
+    print('getSharedMemories=> $userId');
+
+    memoriesRef
+        .where('shared_with', arrayContainsAny: [
+          {'user_id': userId, 'status': 0},
+          {'user_id': userId, 'status': 1}
+        ])
+        .orderBy('created_at', descending: true)
+        .get()
+        .then((value) => {
+              print('sharedvalue $userId => ${value.docs.length}'),
+              sharedMemoriesList.clear(),
+              value.docs.forEach((element) {
+                usersRef.doc(element.data().createdBy!).get().then((userValue) {
+                  MemoriesModel memoriesModel = element.data();
+                  memoriesModel.memoryId = element.id;
+                  memoriesModel.userModel = userValue.data()!;
+                  sharedMemoriesList.add(memoriesModel);
+                  print('sharedMemoriesList ${sharedMemoriesList.length}');
+                  if (element.id == value.docs[value.docs.length - 1].id) {
+                    print('Shared ${sharedMemoriesList.length}');
+                    update();
+                  }
+                });
+              }),
+            })
+        .onError((error, stackTrace) => {print('onError $error')});
+  }
+
+  void updateJoinStatus(
+      String memoryID, int isJoined, int index, int shareIndex) {
+    MemoriesModel memoriesModel = MemoriesModel();
+    memoriesModel = sharedMemoriesList[index];
+    memoriesModel.sharedWith![shareIndex].status = isJoined;
+    print('MemoryModel ${memoriesModel.toJson()}');
+    memoriesRef
+        .doc(memoryID)
+        .set(memoriesModel)
+        .then((value) => {
+              sharedMemoriesList[index].sharedWith[shareIndex].status = 1,
+              print('update Join Status '),
+              update()
+
+              // Get.back()
+            })
+        .onError((error, stackTrace) => {EasyLoading.dismiss()});
+  }
+
+  void updateInviteLink(String memoryID, String inviteLink, int index) {
+    MemoriesModel memoriesModel = MemoriesModel();
+    memoriesModel = memoriesList[index];
+    memoriesModel.inviteLink = inviteLink;
+    memoriesRef
+        .doc(memoryID)
+        .set(memoriesModel)
+        .then((value) => {
+              print('update Invite Link '),
+
+              // Get.back()
+            })
+        .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }
 
   void getMyMemories() {
     memoriesList.clear();
     print('userId $userId');
-    memoriesRef.where('created_by', isEqualTo: userId).orderBy('created_at',descending: true).get().then((value) => {
-          print('value $userId => ${value.docs.length}'),
-          value.docs.forEach((element) {
-            // print('CreatedBy ${element.data().createdBy!} => $userId');
-            // if (element.data().createdBy! == userId) {
-            if (userModel == null) {
-              getUserData(element.data().createdBy!);
-            }
-            MemoriesModel memoriesModel = element.data();
-            memoriesModel.memoryId = element.id;
-            memoriesList.add(memoriesModel);
-            // }
-          })
-        });
+    memoriesRef
+        .where('created_by', isEqualTo: userId)
+        .orderBy('created_at', descending: true)
+        .get()
+        .then((value) => {
+              print('value $userId => ${value.docs.length}'),
+              value.docs.forEach((element) {
+                // getUserData(element.data().createdBy!);
+                usersRef.doc(userId).get().then(
+                  (userValue) {
+                    MemoriesModel memoriesModel = element.data();
+                    memoriesModel.memoryId = element.id;
+                    memoriesModel.userModel = userValue.data()!;
+                    memoriesList.add(memoriesModel);
+                    print('memoriesList ${memoriesList.length}');
+                    if (element.id == value.docs[value.docs.length - 1].id) {
+                      print('Shared ${memoriesList.length}');
+                      update();
+                    }
+                  },
+                );
+              })
+            });
+  }
+
+  void shareMemory(index) {
+    List<SharedWith> sharedList = List.empty(growable: true);
+
+    MemoriesModel memoriesModel = MemoriesModel();
+    memoriesModel = memoriesList[index];
+    sharedList = memoriesList[index].sharedWith;
+    // sharedList.add(SharedWith(userId: ))
+
+    // memoriesModel.sharedWith = caption;
+    EasyLoading.show(status: 'Processing');
+    memoriesRef
+        .doc(memoriesList[index].memoryId)
+        .set(memoriesModel)
+        .then((value) =>
+            {print('UpdateCaption '), EasyLoading.dismiss(), Get.back()})
+        .onError((error, stackTrace) => {EasyLoading.dismiss()});
+  }
+
+// Create Dynamic Link
+  Future<void> createDynamicLink(String memoryId, bool short, int index) async {
+    String link =
+        "$DEFAULT_FALLBACK_URL_ANDROID?memory_id=${memoriesList[index].memoryId}";
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: URI_PREFIX_FIREBASE,
+      link: Uri.parse(link),
+      androidParameters: const AndroidParameters(
+        packageName: 'com.app.stasht',
+        minimumVersion: 0,
+      ),
+      iosParameters: const IOSParameters(
+        bundleId: 'com.app.stasht2',
+        minimumVersion: '0',
+      ),
+    );
+
+    Uri url;
+    if (short) {
+      final ShortDynamicLink shortLink =
+          await dynamicLinks.buildShortLink(parameters);
+      url = shortLink.shortUrl;
+    } else {
+      url = await dynamicLinks.buildLink(parameters);
+    }
+    share(memoryId, url.toString(), index);
+  }
+
+  // Share Dynamic Link
+  Future<void> share(String memoryId, String shareText, int indexValue) async {
+    await FlutterShare.share(
+        title: memoriesList[indexValue].title,
+        linkUrl: shareText,
+        chooserTitle: 'Share memory folder via..');
+    updateInviteLink(memoryId, shareText, indexValue);
   }
 
   final memoriesRef = FirebaseFirestore.instance
@@ -83,11 +216,12 @@ class MemoriesController extends GetxController {
         toFirestore: (users, _) => users.toJson(),
       );
 
+  // Get User Data
   getUserData(String userId) async {
-    print('userId $userId');
-    await usersRef.doc(userId).get().then((value) => userModel = value.data()!);
+    // await usersRef.doc(userId).get().then((value) => userModel = value.data()!);
   }
 
+  // check and request permission
   Future<bool> promptPermissionSetting() async {
     var status;
     if (Platform.isIOS) {
@@ -97,7 +231,6 @@ class MemoriesController extends GetxController {
     }
     permissionStatus.value = status;
 
-    print('PermissionStatus ${status}');
     if (status == PermissionStatus.granted) {
       getAlbums();
       return true;
@@ -108,6 +241,7 @@ class MemoriesController extends GetxController {
     return false;
   }
 
+// Check Photos and gallery permission
   checkPermission() async {
     var status;
     if (Platform.isIOS) {
@@ -260,6 +394,7 @@ class MemoriesController extends GetxController {
 
   // Create memories to Firebase
   void createMemories() {
+    List<SharedWith> shareList = List.empty(growable: true);
     EasyLoading.show(status: 'Creating Memory');
     MemoriesModel memoriesModel = MemoriesModel(
         title: titleController.text.toString(),
@@ -269,7 +404,7 @@ class MemoriesController extends GetxController {
         imagesCaption: imageCaptionUrls,
         inviteLink: "",
         published: false,
-        users: []);
+        sharedWith: shareList);
     memoriesRef
         .add(memoriesModel)
         .then((value) => {
@@ -283,7 +418,7 @@ class MemoriesController extends GetxController {
   void saveCaption(
       String caption, int captionIndex, String docId, int mainIndex) {
     print('caption $caption => $docId $captionIndex');
-    MemoriesModel memoriesModel = new MemoriesModel();
+    MemoriesModel memoriesModel = MemoriesModel();
     memoriesModel = memoriesList[mainIndex];
 
     memoriesModel.imagesCaption![captionIndex].caption = caption;
