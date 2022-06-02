@@ -48,7 +48,7 @@ class MemoriesController extends GetxController {
 
     promptPermissionSetting();
     getMyMemories();
-    print('Memory=> fromShare $fromShare  memoryArgument  ');
+    print('Memory=> fromShare $fromShare    ');
     sharedMemoriesExpand.value = fromShare;
     getSharedMemories();
   }
@@ -202,7 +202,7 @@ class MemoriesController extends GetxController {
   }
 
   final memoriesRef = FirebaseFirestore.instance
-      .collection('memories')
+      .collection(memoriesCollection)
       .withConverter<MemoriesModel>(
         fromFirestore: (snapshots, _) =>
             MemoriesModel.fromJson(snapshots.data()!),
@@ -210,7 +210,7 @@ class MemoriesController extends GetxController {
       );
 
   final usersRef = FirebaseFirestore.instance
-      .collection('users')
+      .collection(userCollection)
       .withConverter<UserModel>(
         fromFirestore: (snapshots, _) => UserModel.fromJson(snapshots.data()!),
         toFirestore: (users, _) => users.toJson(),

@@ -5,7 +5,9 @@ String userEmail = "";
 bool isSocailUser = false;
 
 bool fromShare = false;
-
+String memoriesCollection = "memories";
+String userCollection = "users";
+String commentsCollection = "comments";
 
 bool checkValidEmail(String email) {
   return RegExp(

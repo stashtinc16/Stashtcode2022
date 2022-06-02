@@ -28,7 +28,7 @@ class SplashController extends GetxController {
       : Get.put(MemoriesController());
 
   final usersRef = FirebaseFirestore.instance
-      .collection('users')
+      .collection(userCollection)
       .withConverter<UserModel>(
         fromFirestore: (snapshots, _) => UserModel.fromJson(snapshots.data()!),
         toFirestore: (movie, _) => movie.toJson(),
@@ -63,7 +63,7 @@ class SplashController extends GetxController {
   //check memory for user if shared
   void checkMemoryForUser(String memoryId) {
     var memoriesRef = FirebaseFirestore.instance
-        .collection('memories')
+        .collection(memoriesCollection)
         .withConverter<MemoriesModel>(
           fromFirestore: (snapshots, _) =>
               MemoriesModel.fromJson(snapshots.data()!),

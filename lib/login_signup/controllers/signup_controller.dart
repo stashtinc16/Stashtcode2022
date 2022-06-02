@@ -38,7 +38,7 @@ class SignupController extends GetxController {
   Map<String, dynamic>? get userData => _userData;
 
   final usersRef = FirebaseFirestore.instance
-      .collection('users')
+      .collection(userCollection)
       .withConverter<UserModel>(
         fromFirestore: (snapshots, _) => UserModel.fromJson(snapshots.data()!),
         toFirestore: (movie, _) => movie.toJson(),

@@ -1,4 +1,6 @@
 import 'package:get/route_manager.dart';
+import 'package:stasht/comments/bindings/comment_bindings.dart';
+import 'package:stasht/comments/presentation/comments.dart';
 import 'package:stasht/forgot_password/bindings/forgot_password_binding.dart';
 import 'package:stasht/forgot_password/presentation/forget_password.dart';
 import 'package:stasht/login_signup/bindings/signup_binding.dart';
@@ -38,6 +40,8 @@ class AppPages {
     GetPage(
         name: AppRoutes.memoryList, page: () => Memory_Lane(), binding: MemoriesBinding()),
     GetPage(
-        name: AppRoutes.addCaption, page: () => AddCaption(), binding: MemoriesBinding())
+        name: AppRoutes.addCaption, page: () => AddCaption(), binding: MemoriesBinding()),
+         GetPage(
+        name: AppRoutes.comments, page: () => Comments(), binding: CommentsBindings())
   ];
 }
