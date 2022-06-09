@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:stasht/forgot_password/presentation/forget_password.dart';
 import 'package:stasht/login_signup/controllers/signup_controller.dart';
-import 'package:stasht/login_signup/domain/sign_up.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
@@ -22,10 +21,21 @@ class SignIn extends GetView<SignupController> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
     return Scaffold(
         body: SingleChildScrollView(
       child: Container(
         height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.primaryColor,
+            AppColors.primaryDarkColor,
+          ],
+        )),
         child: Padding(
             padding: const EdgeInsets.all(25),
             child: Form(
@@ -36,7 +46,11 @@ class SignIn extends GetView<SignupController> {
                     children: [
                       Expanded(
                           flex: 1,
-                          child: Center(child: SvgPicture.asset(stashtLogo))),
+                          child: Center(
+                              child: SvgPicture.asset(
+                            stashtLogo,
+                            color: Colors.white,
+                          ))),
                       Expanded(
                           flex: 3,
                           child: Column(
@@ -51,7 +65,7 @@ class SignIn extends GetView<SignupController> {
                                     style: TextStyle(
                                       fontSize: 21,
                                       fontFamily: "gibsonsemibold",
-                                      color: Color.fromRGBO(108, 96, 255, 1),
+                                      color: Colors.white,
                                       fontWeight: FontWeight.w100,
                                     ),
                                   ),
@@ -63,10 +77,10 @@ class SignIn extends GetView<SignupController> {
                                   // controller.facebookSignin();
                                   controller.facebookLogin();
                                 },
-                                height: 40,
-                                color: AppColors.colorBlue,
+                                height: 43,
+                                color: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -75,7 +89,7 @@ class SignIn extends GetView<SignupController> {
                                       "assets/images/fb.svg",
                                       height: 16,
                                       width: 8,
-                                      color: Colors.white,
+                                      color: AppColors.colorBlue,
                                     ),
                                     const SizedBox(
                                       width: 10,
@@ -88,8 +102,7 @@ class SignIn extends GetView<SignupController> {
                                           fontSize: 14,
                                           fontFamily: robotoMedium,
                                           fontWeight: FontWeight.w400,
-                                          color:
-                                              Color.fromRGBO(255, 255, 255, 1)),
+                                          color: AppColors.colorBlue),
                                     ),
                                   ],
                                 ),
@@ -99,14 +112,14 @@ class SignIn extends GetView<SignupController> {
                                 Expanded(
                                     child: Divider(
                                   height: 1,
-                                  color: Colors.grey,
+                                  color: AppColors.viewColor,
                                 )),
                                 SizedBox(
                                   width: 11,
                                 ),
                                 Text(
                                   "or",
-                                  style: TextStyle(color: Colors.grey),
+                                  style: TextStyle(color: Colors.white),
                                 ),
                                 SizedBox(
                                   width: 11,
@@ -114,132 +127,120 @@ class SignIn extends GetView<SignupController> {
                                 Expanded(
                                     child: Divider(
                                   height: 1,
-                                  color: Colors.grey,
+                                  color: AppColors.viewColor,
                                 )),
                               ]),
                               const SizedBox(
                                 height: 20,
                               ),
-                              TextFormField(
-                                controller: controller.email1Controller,
-                                keyboardType: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.next,
-                                decoration: InputDecoration(
-                                    labelText: "E-mail",
-                                    labelStyle: const TextStyle(
-                                      color: AppColors.primaryColor,
-                                      fontSize: 11,
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(11.0),
+                                      topRight: Radius.circular(11.0),
                                     ),
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50),
-                                        borderSide: const BorderSide(
-                                            color:
-                                                AppColors.fieldBorderColor)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50),
-                                        borderSide: const BorderSide(
-                                            color:
-                                                AppColors.fieldBorderColor)),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50),
-                                        borderSide: const BorderSide(
-                                            color:
-                                                AppColors.fieldBorderColor)),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0, vertical: 7)),
-                                style: const TextStyle(
-                                    color: Colors.black, fontSize: 21),
-                                cursorColor: AppColors.cursorColor,
-                                validator: (v) {
-                                  if (v!.isEmpty) {
-                                    return 'Enter a valid email!';
-                                  } else if (!checkValidEmail(v)) {
-                                    return 'Please enter valid email address';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Center(
-                                  child: Obx(
-                                () => TextFormField(
-                                  obscureText: controller.isObscure.value,
-                                  controller: controller.password1Controller,
-                                  decoration: InputDecoration(
-                                      labelText: "Password",
-                                      labelStyle: const TextStyle(
-                                        color: AppColors.primaryColor,
+                                    color: Colors.black.withOpacity(0.18)),
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: TextFormField(
+                                  controller: controller.email1Controller,
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  decoration: const InputDecoration(
+                                      labelText: "E-mail",
+                                      labelStyle: TextStyle(
+                                        color: Colors.white,
                                         fontSize: 11,
                                       ),
-                                      hintText: 'Password',
-                                      hintStyle: const TextStyle(
-                                          color: AppColors.fieldBorderColor,
-                                          fontSize: 21),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          borderSide: const BorderSide(
-                                              color: AppColors
-                                                  .fieldBorderColor)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          borderSide: const BorderSide(
-                                              color: AppColors
-                                                  .fieldBorderColor)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          borderSide: const BorderSide(
-                                              color: AppColors
-                                                  .fieldBorderColor)),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 15.0, vertical: 7),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          controller.isObscure.value
-                                              ? Icons.visibility_outlined
-                                              : Icons.visibility_off,
-                                          size: 20,
-                                          color: AppColors.fieldBorderColor,
-                                        ),
-                                        onPressed: () {
-                                          controller.isObscure.value =
-                                              !controller.isObscure.value;
-                                        },
-                                      )),
-                                  cursorColor: AppColors.cursorColor,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return "Please enter password";
-                                    }
-                                   else if (value.length < 6) {
-                                      return "Please enter at least 6 characters";
+                                      errorStyle: TextStyle(
+                                          color: AppColors.errorColor),
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 20.0, vertical: 10)),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 21,
+                                  ),
+                                  cursorColor: Colors.white,
+                                  validator: (v) {
+                                    if (v!.isEmpty) {
+                                      return 'Enter a valid email!';
+                                    } else if (!checkValidEmail(v)) {
+                                      return 'Please enter valid email address';
                                     }
                                     return null;
                                   },
-                                  style: const TextStyle(
-                                      color: Colors.black, fontSize: 21),
                                 ),
-                              )),
-                              const SizedBox(height: 50),
+                              ),
+                              const SizedBox(
+                                height: 2,
+                              ),
+                              Container(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(11.0),
+                                        bottomRight: Radius.circular(11.0),
+                                      ),
+                                      color: Colors.black.withOpacity(0.18)),
+                                  child: Obx(
+                                    () => TextFormField(
+                                      obscureText: controller.isObscure.value,
+                                      controller:
+                                          controller.password1Controller,
+                                      decoration: InputDecoration(
+                                          labelText: "Password",
+                                          labelStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11,
+                                          ),
+                                          errorStyle: const TextStyle(
+                                              color: AppColors.errorColor),
+                                          hintText: 'Password',
+                                          hintStyle: const TextStyle(
+                                              color: AppColors.hintPrimaryColor,
+                                              fontSize: 21),
+                                          border: InputBorder.none,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 20.0,
+                                                  vertical: 10),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              controller.isObscure.value
+                                                  ? Icons.visibility_outlined
+                                                  : Icons.visibility_off,
+                                              size: 15,
+                                              color: AppColors.hintPrimaryColor,
+                                            ),
+                                            onPressed: () {
+                                              controller.isObscure.value =
+                                                  !controller.isObscure.value;
+                                            },
+                                          )),
+                                      cursorColor: Colors.white,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter password";
+                                        } else if (value.length < 6) {
+                                          return "Please enter at least 6 characters";
+                                        }
+                                        return null;
+                                      },
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 21),
+                                    ),
+                                  )),
+                              const SizedBox(height: 10),
                               GestureDetector(
                                 onTap: () {
                                   controller.signIn();
                                 },
                                 child: Container(
                                   height: 42,
-                                  width: 96,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                       color: AppColors.primaryColor,
-                                      borderRadius: BorderRadius.circular(22)),
+                                      borderRadius: BorderRadius.circular(11)),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: const [
@@ -256,7 +257,7 @@ class SignIn extends GetView<SignupController> {
                                 ),
                               ),
                               const SizedBox(
-                                height: 10,
+                                height: 12,
                               ),
                               InkWell(
                                 onTap: () {
@@ -269,7 +270,7 @@ class SignIn extends GetView<SignupController> {
                                       "Forgot your password? ",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: AppColors.primaryColor,
+                                        color: AppColors.fieldBorderColor,
                                         fontSize: 14,
                                         decoration: TextDecoration.underline,
                                       ),

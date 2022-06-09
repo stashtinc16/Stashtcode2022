@@ -17,7 +17,7 @@ import 'package:stasht/routes/app_routes.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:stasht/utils/constants.dart';
 
-class MemoriesController extends GetxController {
+class MemoriesController extends GetxController with WidgetsBindingObserver {
   RxBool showNext = false.obs;
   var mediaPages = List.empty(growable: true).obs;
   var memoriesList = List.empty(growable: true).obs;
@@ -49,8 +49,17 @@ class MemoriesController extends GetxController {
     promptPermissionSetting();
     getMyMemories();
     print('Memory=> fromShare $fromShare    ');
+
     sharedMemoriesExpand.value = fromShare;
+
     getSharedMemories();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    print('state = $state');
   }
 
   //get Shared memories
@@ -82,6 +91,29 @@ class MemoriesController extends GetxController {
               }),
             })
         .onError((error, stackTrace) => {print('onError $error')});
+  }
+
+  void deleteMemory(String memoryId, int removeIndex,
+      MemoriesModel memoriesModel, ImagesCaption imagesCaption) {
+    List<int> removeItemList = List.empty(growable: true);
+    removeItemList.add(removeIndex);
+    print('ImageCaption ${removeItemList[0]}');
+    MemoriesModel memoriesModels = memoriesModel;
+    memoriesModels.imagesCaption!.removeAt(removeIndex);
+    memoriesRef
+        .doc(memoryId)
+        .update(memoriesModels.toJson())
+        .then((value) => print('Deleted Successfully!'))
+        .whenComplete(() {
+      print('Field Deleted');
+    });
+    // memoriesRef
+    //     .doc(memoryId)
+    //     .update({'images_caption': FieldValue.arrayRemove(removeItemList)})
+    //     .then((value) => print('Deleted Successfully!'))
+    //     .whenComplete(() {
+    //       print('Field Deleted');
+    //     });
   }
 
   void updateJoinStatus(
@@ -134,10 +166,14 @@ class MemoriesController extends GetxController {
                     MemoriesModel memoriesModel = element.data();
                     memoriesModel.memoryId = element.id;
                     memoriesModel.userModel = userValue.data()!;
+                    print('commentCount ${element.data().commentCount}');
+
                     memoriesList.add(memoriesModel);
-                    print('memoriesList ${memoriesList.length}');
                     if (element.id == value.docs[value.docs.length - 1].id) {
                       print('Shared ${memoriesList.length}');
+                      if (!fromShare) {
+                        myMemoriesExpand.value = true;
+                      }
                       update();
                     }
                   },
@@ -230,8 +266,12 @@ class MemoriesController extends GetxController {
       status = await Permission.storage.request();
     }
     permissionStatus.value = status;
+    print('promptPermissionSetting $status');
 
-    if (status == PermissionStatus.granted) {
+    if (status == PermissionStatus.granted ||
+        status == PermissionStatus.limited) {
+      print('granteddd');
+      update();
       getAlbums();
       return true;
     } else if (status == PermissionStatus.permanentlyDenied) {
@@ -263,7 +303,9 @@ class MemoriesController extends GetxController {
   Future<void> getAlbums() async {
     final List<Album> imageAlbums =
         await PhotoGallery.listAlbums(mediumType: MediumType.image);
+
     for (int i = 0; i < imageAlbums.length; i++) {
+      print('Albums ${imageAlbums[i]}');
       if (imageAlbums[i].name == "All" || imageAlbums[i].name == "Recent") {
         print('imageAlbums[i] ${imageAlbums[i]}');
         getListData(imageAlbums[i]);
@@ -296,6 +338,7 @@ class MemoriesController extends GetxController {
     totalCount = imagePage.total;
     selectionList = List.filled(totalCount, false).obs;
     mediaPages.value.addAll(imagePage.items);
+    update();
   }
 
   // Get Total count of selected items
@@ -404,6 +447,7 @@ class MemoriesController extends GetxController {
         imagesCaption: imageCaptionUrls,
         inviteLink: "",
         published: false,
+        commentCount: 0,
         sharedWith: shareList);
     memoriesRef
         .add(memoriesModel)

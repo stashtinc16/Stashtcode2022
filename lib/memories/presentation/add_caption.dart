@@ -32,21 +32,25 @@ class AddCaption extends GetView<MemoriesController> {
         actions: [
           InkWell(
             onTap: () {
-              controller.saveCaption(captionController.text.toString(),imageIndex!, controller.memoriesList[mainIndex!].memoryId, mainIndex!);
+              controller.saveCaption(
+                  captionController.text.toString(),
+                  imageIndex!,
+                  controller.memoriesList[mainIndex!].memoryId,
+                  mainIndex!);
             },
             child: Row(
-              children: [
-                const Text(
+              children: const [
+                Text(
                   'Done',
                   style: TextStyle(
                       fontFamily: robotoBold,
                       fontSize: 14,
                       color: AppColors.darkColor),
                 ),
-                const SizedBox(
+                SizedBox(
                   width: 5,
                 ),
-                const Icon(
+                Icon(
                   Icons.arrow_forward_ios,
                   color: AppColors.darkColor,
                   size: 15,
@@ -59,8 +63,7 @@ class AddCaption extends GetView<MemoriesController> {
           )
         ],
       ),
-      body: Container(
-          child: Column(
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
@@ -71,10 +74,11 @@ class AddCaption extends GetView<MemoriesController> {
             controller: captionController,
             maxLines: 4,
             textInputAction: TextInputAction.done,
+            maxLength: 350,
             decoration: const InputDecoration(
                 hintText: 'Add Caption to this post..',
-                
-                hintStyle: TextStyle(fontSize: 12, color: AppColors.textColor),
+              
+                hintStyle: TextStyle(fontSize: 14, color: AppColors.textColor),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0)),
             style: const TextStyle(fontSize: 14.0, color: Colors.black),
@@ -91,7 +95,7 @@ class AddCaption extends GetView<MemoriesController> {
                     .imagesCaption[imageIndex!].image!),
           )
         ],
-      )),
+      ),
     );
   }
 }

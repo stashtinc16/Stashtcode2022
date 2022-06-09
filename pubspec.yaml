@@ -123,6 +123,10 @@ flutter:
     - family: gibsonRegular
       fonts:
         - asset: assets/fonts/gibson_regular.ttf        
+        
+    - family: gibsonRegularItalic
+      fonts:
+        - asset: assets/fonts/gibson_regularitalic.ttf        
 
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic

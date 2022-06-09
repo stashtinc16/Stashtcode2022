@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:stasht/app_bar.dart';
@@ -15,71 +18,75 @@ class Memories extends GetView<MemoriesController> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.white));
     return GetBuilder(
         builder: (MemoriesController controller) => SafeArea(
-              child: Scaffold(
-                appBar: commonAppbar(
-                  context,
-                  'Memories',
-                  pageSelected:
-                      (isMemory, isPhotos, isNotification, isSettings) => {
-                    print('isSettings $isSettings'),
-                    if (isSettings) {Get.toNamed(AppRoutes.profile)}
-                  },
-                ),
-                body: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Obx(
-                            () => Visibility(
-                              maintainAnimation: true,
-                              maintainSize: false,
-                              maintainState: true,
-                              visible: controller.memoriesList.isEmpty,
-                              child: Column(
-                                children: [
-                                  SvgPicture.asset(
-                                    noMemories,
-                                    height: 230,
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Text(
-                                      "You haven't created a memory yet!",
+              child: Container(
+                color: Colors.white,
+                child: Scaffold(
+                  backgroundColor: Colors.white,
+                  appBar: commonAppbar(
+                    context,
+                    memoriesTitle,
+                    pageSelected:
+                        (isMemory, isPhotos, isNotification, isSettings) => {
+                      print('isSettings $isSettings'),
+                      if (isSettings) {Get.toNamed(AppRoutes.profile)}
+                    },
+                  ),
+                  body: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Obx(
+                          () => Visibility(
+                            maintainAnimation: true,
+                            maintainSize: false,
+                            maintainState: true,
+                            visible: controller.memoriesList.isEmpty,
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  noMemoriesPlaceholder,
+                                  height: 230,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("You haven't created a memory yet!",
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 16)),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    controller.createMemoriesStep1();
+                                  },
+                                  child: const Text("Create your first memory!",
                                       style: TextStyle(
-                                          color: Colors.black, fontSize: 16)),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      controller.createMemoriesStep1();
-                                    },
-                                    child: const Text(
-                                        "Create your first memory!",
-                                        style: TextStyle(
-                                            color: AppColors.primaryColor,
-                                            fontSize: 15,
-                                            decoration:
-                                                TextDecoration.underline)),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
-                              ),
+                                          color: AppColors.primaryColor,
+                                          fontSize: 15,
+                                          decoration:
+                                              TextDecoration.underline)),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                              ],
                             ),
                           ),
-                          InkWell(
-                            onTap: () {
-                              if (controller.memoriesList.isNotEmpty) {
-                                controller.myMemoriesExpand.value =
-                                    !controller.myMemoriesExpand.value;
-                              }
-                            },
+                        ),
+                        InkWell(
+                          onTap: () {
+                            if (controller.memoriesList.isNotEmpty) {
+                              controller.myMemoriesExpand.value =
+                                  !controller.myMemoriesExpand.value;
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            margin: const EdgeInsets.only(top: 15),
                             child: Row(
                               children: [
                                 Obx(
@@ -103,187 +110,236 @@ class Memories extends GetView<MemoriesController> {
                               ],
                             ),
                           ),
-                          Obx(() => Container(
-                              child: controller.myMemoriesExpand.value
-                                  ? ListView.builder(
-                                      itemCount: controller.memoriesList.length,
-                                      shrinkWrap: true,
-                                      primary: false,
-                                      scrollDirection: Axis.vertical,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return InkWell(
-                                            onTap: () {
-                                              Get.toNamed(AppRoutes.memoryList,
-                                                  arguments: {
-                                                    'mainIndex': index,
-                                                    'list': controller
-                                                        .memoriesList[index]
-                                                  });
-                                            },
-                                            child: Container(
-                                              height: 100,
-                                              margin: const EdgeInsets.only(
-                                                  top: 20),
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey,
-                                                image: DecorationImage(
-                                                    image:
-                                                        CachedNetworkImageProvider(
-                                                      controller.memoriesList
-                                                              .isNotEmpty
-                                                          ? controller
-                                                              .memoriesList[
-                                                                  index]
-                                                              .imagesCaption[0]
-                                                              .image
-                                                          : "",
-                                                    ),
-                                                    fit: BoxFit.cover),
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    height: 45,
-                                                    width: 45,
-                                                    margin: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 15),
-                                                    alignment: Alignment.center,
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                            color: Colors.grey,
-                                                            shape: BoxShape
-                                                                .circle),
-                                                    child: ClipRRect(
+                        ),
+                        Obx(() => Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: controller.myMemoriesExpand.value
+                                ? ListView.builder(
+                                    itemCount: controller.memoriesList.length,
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return InkWell(
+                                          onTap: () {
+                                            Get.toNamed(AppRoutes.memoryList,
+                                                arguments: {
+                                                  'mainIndex': index,
+                                                  'list': controller
+                                                      .memoriesList[index]
+                                                });
+                                          },
+                                          child: Container(
+                                            margin:
+                                                const EdgeInsets.only(top: 20),
+                                            child: Stack(
+                                              children: [
+                                                Card(
+                                                  elevation: 1,
+                                                  shape:
+                                                      const RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          15))),
+                                                  child: Container(
+                                                    height: 100,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                          image:
+                                                              CachedNetworkImageProvider(
+                                                            controller
+                                                                    .memoriesList
+                                                                    .isNotEmpty
+                                                                ? controller
+                                                                    .memoriesList[
+                                                                        index]
+                                                                    .imagesCaption[
+                                                                        0]
+                                                                    .image
+                                                                : "",
+                                                          ),
+                                                          fit: BoxFit.cover),
                                                       borderRadius:
-                                                          const BorderRadius
-                                                                  .all(
-                                                              Radius.circular(
-                                                                  30)),
-                                                      child: controller
-                                                                      .memoriesList[
-                                                                          index]
-                                                                      .userModel !=
-                                                                  null &&
-                                                              controller
-                                                                  .memoriesList[
-                                                                      index]
-                                                                  .userModel!
-                                                                  .profileImage!
-                                                                  .isNotEmpty
-                                                          ? CachedNetworkImage(
-                                                              imageUrl: controller
-                                                                  .memoriesList[
-                                                                      index]
-                                                                  .userModel!
-                                                                  .profileImage!)
-                                                          : Image.asset(
-                                                              userIcon,
-                                                              fit: BoxFit.fill,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
+                                                          BorderRadius.circular(
+                                                              15),
                                                     ),
                                                   ),
-                                                  Expanded(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          controller
-                                                                  .memoriesList
-                                                                  .isNotEmpty
-                                                              ? controller
-                                                                  .memoriesList[
-                                                                      index]
-                                                                  .title!
-                                                              : "",
-                                                          style:
-                                                              const TextStyle(
+                                                ),
+                                                Container(
+                                                  height: 100,
+                                                  margin:
+                                                      const EdgeInsets.all(5),
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.shadowColor
+                                                        .withOpacity(0.27),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        height: 45,
+                                                        width: 45,
+                                                        margin: const EdgeInsets
+                                                                .symmetric(
+                                                            horizontal: 15),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.grey,
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .white,
+                                                                width: 1)),
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          30)),
+                                                          child: controller
+                                                                          .memoriesList[
+                                                                              index]
+                                                                          .userModel !=
+                                                                      null &&
+                                                                  controller
+                                                                      .memoriesList[
+                                                                          index]
+                                                                      .userModel!
+                                                                      .profileImage!
+                                                                      .isNotEmpty
+                                                              ? CachedNetworkImage(
+                                                                  imageUrl: controller
+                                                                      .memoriesList[
+                                                                          index]
+                                                                      .userModel!
+                                                                      .profileImage!,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  height: 45,
+                                                                  width: 45,
+                                                                )
+                                                              : Image.asset(
+                                                                  userIcon,
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              controller
+                                                                      .memoriesList
+                                                                      .isNotEmpty
+                                                                  ? controller
+                                                                      .memoriesList[
+                                                                          index]
+                                                                      .title!
+                                                                  : "",
+                                                              style: const TextStyle(
                                                                   color: Colors
                                                                       .white,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
                                                                   fontSize: 18),
-                                                        ),
-                                                        Text(
-                                                          controller
-                                                                      .memoriesList[
-                                                                          index]
-                                                                      .userModel !=
-                                                                  null
-                                                              ? "Author : ${controller.memoriesList[index].userModel!.userName!}"
-                                                              : "",
-                                                          style:
-                                                              const TextStyle(
+                                                            ),
+                                                            Text(
+                                                              controller.memoriesList[index]
+                                                                          .userModel !=
+                                                                      null
+                                                                  ? "Author : ${controller.memoriesList[index].userModel!.userName!}"
+                                                                  : "",
+                                                              style: const TextStyle(
                                                                   color: Colors
                                                                       .white,
                                                                   fontSize: 12),
-                                                        )
-                                                      ],
-                                                    ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        height: 35,
+                                                        width: 35,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        margin: const EdgeInsets
+                                                                .symmetric(
+                                                            horizontal: 10),
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                shape: BoxShape
+                                                                    .circle),
+                                                        child: Text(
+                                                          controller
+                                                                  .memoriesList
+                                                                  .isNotEmpty
+                                                              ? "${controller.memoriesList[index].imagesCaption!.length}"
+                                                              : "0",
+                                                          style: const TextStyle(
+                                                              color: AppColors
+                                                                  .primaryColor,
+                                                              fontSize: 14),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Container(
-                                                    height: 35,
-                                                    width: 35,
-                                                    alignment: Alignment.center,
-                                                    margin: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 10),
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                            color: Colors.white,
-                                                            shape: BoxShape
-                                                                .circle),
-                                                    child: Text(
-                                                      controller.memoriesList
-                                                              .isNotEmpty
-                                                          ? "${controller.memoriesList[index].imagesCaption!.length}"
-                                                          : "0",
-                                                      style: const TextStyle(
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                          fontSize: 14),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ));
-                                      },
-                                    )
-                                  : Container())),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 1,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              controller.sharedMemoriesExpand.value =
-                                  !controller.sharedMemoriesExpand.value;
-                              if (controller.sharedMemoriesExpand.value) {
-                                controller.getSharedMemories();
-                              }
-                              controller.update();
-                            },
+                                                ),
+                                              ],
+                                            ),
+                                          ));
+                                    },
+                                  )
+                                : Container())),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 2,
+                          width: MediaQuery.of(context).size.width,
+                          color: AppColors.bgColor,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            controller.sharedMemoriesExpand.value =
+                                !controller.sharedMemoriesExpand.value;
+                            if (controller.sharedMemoriesExpand.value) {
+                              controller.getSharedMemories();
+                            }
+                            controller.update();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: Row(
                               children: [
                                 Obx(
@@ -305,22 +361,26 @@ class Memories extends GetView<MemoriesController> {
                               ],
                             ),
                           ),
-                          sharedMemoryUI(),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 1,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              // isCheck = !isCheck;
-                            },
+                        ),
+                        sharedMemoryUI(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 2,
+                          width: MediaQuery.of(context).size.width,
+                          color: AppColors.bgColor,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            // showInviteRepondDialog(context);
+                            // isCheck = !isCheck;
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: Row(
                               children: [
                                 isCheck
@@ -344,46 +404,49 @@ class Memories extends GetView<MemoriesController> {
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 1,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                        ],
-                      ),
-                    )),
-                floatingActionButton: SizedBox(
-                    height: 70,
-                    width: 70,
-                    child: FittedBox(
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.memoriesStep1, arguments: "no");
-                        },
-                        child: const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 25,
                         ),
-                        backgroundColor: Colors.deepPurpleAccent,
-                        elevation: 0,
-                      ),
-                    )),
-                floatingActionButtonLocation:
-                    FloatingActionButtonLocation.centerFloat,
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 2,
+                          width: MediaQuery.of(context).size.width,
+                          color: AppColors.bgColor,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                  floatingActionButton: SizedBox(
+                      height: 70,
+                      width: 70,
+                      child: FittedBox(
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            Get.toNamed(AppRoutes.memoriesStep1,
+                                arguments: "no");
+                          },
+                          child: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                          backgroundColor: Colors.deepPurpleAccent,
+                          elevation: 0,
+                        ),
+                      )),
+                  floatingActionButtonLocation:
+                      FloatingActionButtonLocation.centerFloat,
+                ),
               ),
             ));
   }
 
   sharedMemoryUI() {
-    print('SharedMemory UI');
     return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: controller.sharedMemoriesExpand.value
             ? ListView.builder(
                 itemCount: controller.sharedMemoriesList.length,
@@ -396,8 +459,7 @@ class Memories extends GetView<MemoriesController> {
                   //     .addAll(controller.sharedMemoriesList[index].sharedWith);
                   int shareIndex = 0;
                   int isJoined = 0;
-                  print(
-                      'IndexLength ${controller.sharedMemoriesList[index].sharedWith.length}');
+
                   if (controller.sharedMemoriesList[index].sharedWith.length >
                       0) {
                     var shareObject =
@@ -447,24 +509,47 @@ class Memories extends GetView<MemoriesController> {
                               borderRadius: BorderRadius.circular(15),
                               color: isJoined == 0
                                   ? AppColors.primaryColor.withOpacity(0.62)
-                                  : Colors.transparent,
+                                  : AppColors.shadowColor,
                             ),
                             margin: const EdgeInsets.only(top: 20),
                             child: Row(
                               children: [
                                 Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 15),
                                   height: 45,
                                   width: 45,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15),
                                   alignment: Alignment.center,
-                                  decoration: const BoxDecoration(
+                                  decoration: BoxDecoration(
                                       color: Colors.grey,
-                                      shape: BoxShape.circle),
-                                  child: Image.asset(
-                                    userIcon,
-                                    fit: BoxFit.fill,
-                                    color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.white, width: 1)),
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(30)),
+                                    child: controller.memoriesList[index]
+                                                    .userModel !=
+                                                null &&
+                                            controller
+                                                .memoriesList[index]
+                                                .userModel!
+                                                .profileImage!
+                                                .isNotEmpty
+                                        ? CachedNetworkImage(
+                                            imageUrl: controller
+                                                .memoriesList[index]
+                                                .userModel!
+                                                .profileImage!,
+                                            fit: BoxFit.cover,
+                                            height: 45,
+                                            width: 45,
+                                          )
+                                        : Image.asset(
+                                            userIcon,
+                                            fit: BoxFit.fill,
+                                            color: Colors.white,
+                                          ),
                                   ),
                                 ),
                                 Expanded(
@@ -493,6 +578,7 @@ class Memories extends GetView<MemoriesController> {
                                   child: isJoined == 0
                                       ? InkWell(
                                           onTap: () {
+                                            // showInviteRepondDialog(context);
                                             controller.updateJoinStatus(
                                                 controller
                                                     .sharedMemoriesList[index]
@@ -537,5 +623,97 @@ class Memories extends GetView<MemoriesController> {
                 },
               )
             : Container());
+  }
+
+  showInviteRepondDialog(BuildContext context) {
+    Get.defaultDialog(
+        title: '',
+        radius: 9,
+        content: Container(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                child: Stack(
+                  children: [
+                    const Text(
+                      'Join a shared memory',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: robotoMedium,
+                          color: Colors.black),
+                      textAlign: TextAlign.center,
+                    ),
+                    Positioned(
+                      right: 40,
+                      top: 10,
+                      child: IconButton(
+                          onPressed: () {
+                            Get.back();
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                            size: 25,
+                            color: AppColors.darkColor,
+                          )),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                height: 1,
+                color: AppColors.hintTextColor,
+              ),
+              Container(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColors.primaryColor, width: 2),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(12))),
+                        child: const Text(
+                          'Accept',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: robotoBold,
+                              color: AppColors.primaryColor),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColors.redBorder, width: 2),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(12))),
+                        child: const Text(
+                          'Deny',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: robotoBold,
+                              color: AppColors.redBorder),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }

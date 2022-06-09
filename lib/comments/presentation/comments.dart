@@ -39,123 +39,127 @@ class Comments extends GetView<CommentsController> {
               image: DecorationImage(
                   image: CachedNetworkImageProvider(imagePath),
                   fit: BoxFit.cover)),
-          child: Column(
-            children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Obx(() => ListView.builder(
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            children: [
-                              Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 15),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      height: 30,
-                                      width: 30,
-                                      margin: const EdgeInsets.only(right: 5),
-                                      alignment: Alignment.center,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.grey,
-                                          shape: BoxShape.circle),
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(30)),
-                                        child: controller.commentsList[index].userModel.profileImage.isNotEmpty
-                                            ? CachedNetworkImage(
-                                                imageUrl: controller.commentsList[index].userModel.profileImage)
-                                            : Image.asset(
-                                                userIcon,
-                                                fit: BoxFit.fill,
-                                                color: Colors.white,
-                                              ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                        child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                         Text(
-                                          controller.commentsList[index].userModel.userName,
-                                          style: const TextStyle(
-                                              fontSize: 11.0,
-                                              color: Colors.white,
-                                              fontFamily: robotoBold),
+          child: Container(
+            decoration: BoxDecoration(color: Colors.black.withOpacity(0.49)),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Obx(() => ListView.builder(
+                          itemBuilder: (BuildContext context, int index) {
+                            return Column(
+                              children: [
+                                Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 15),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: 30,
+                                        width: 30,
+                                        margin: const EdgeInsets.only(right: 5),
+                                        alignment: Alignment.center,
+                                        decoration: const BoxDecoration(
+                                            color: Colors.grey,
+                                            shape: BoxShape.circle),
+                                        child: ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(30)),
+                                          child: controller.commentsList[index].userModel.profileImage.isNotEmpty
+                                              ? CachedNetworkImage(
+                                                  imageUrl: controller.commentsList[index].userModel.profileImage, height: 30,
+                                        width: 30, fit: BoxFit.cover,)
+                                              : Image.asset(
+                                                  userIcon,
+                                                  fit: BoxFit.fill,
+                                                  color: Colors.white,
+                                                ),
                                         ),
-                                        Text(
-                                          controller
-                                              .commentsList[index].comment,
-                                          style: const TextStyle(
-                                              fontSize: 10.0,
-                                              color: Colors.white),
-                                        )
-                                      ],
-                                    )),
-                                    Text(
-                                      DateFormat("MMM dd/yy")
-                                          .format(controller
-                                              .commentsList[index].createdAt!
-                                              .toDate())
-                                          .toString(),
-                                      style: const TextStyle(
-                                          fontSize: 9.0, color: Colors.white),
-                                    )
-                                  ],
+                                      ),
+                                      Expanded(
+                                          child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                           Text(
+                                            controller.commentsList[index].userModel.displayName,
+                                            style: const TextStyle(
+                                                fontSize: 11.0,
+                                                color: Colors.white,
+                                                fontFamily: robotoBold),
+                                          ),
+                                          Text(
+                                            controller
+                                                .commentsList[index].comment,
+                                            style: const TextStyle(
+                                                fontSize: 10.0,
+                                                color: Colors.white),
+                                          )
+                                        ],
+                                      )),
+                                      Text(
+                                        DateFormat("MMM dd/yy")
+                                            .format(controller
+                                                .commentsList[index].createdAt!
+                                                .toDate())
+                                            .toString(),
+                                        style: const TextStyle(
+                                            fontSize: 9.0, color: Colors.white),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                height: 0.7,
-                                color: AppColors.greyColor,
-                                margin: const EdgeInsets.symmetric(vertical: 7),
-                              )
-                            ],
-                          );
-                        },
-                        itemCount: controller.commentsList.length,
+                                Container(
+                                  height: 0.7,
+                                  color: Colors.white,
+                                  margin: const EdgeInsets.symmetric(vertical: 7),
+                                )
+                              ],
+                            );
+                          },
+                          itemCount: controller.commentsList.length,
+                          
+                          shrinkWrap: true,
+                        )),
+                  ),
+                ),
+                Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    color: Colors.black,
+                  ),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                  child: Row(children: [
+                    Expanded(
+                        child: TextField(
+                      controller: controller.commentController,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Add a comment',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                          hintStyle:
+                              TextStyle(fontSize: 16.0, color: Colors.white)),
+                      onChanged: (commentText) {
+                       
+                          controller.update();
                         
-                        shrinkWrap: true,
-                      )),
+                      },
+                      style: const TextStyle(fontSize: 16.0, color: Colors.white),
+                    )),
+                    if (controller.commentController.text.trim().isNotEmpty)
+                      IconButton(
+                          onPressed: () {
+                            controller.addComment(memoryId);
+                          },
+                          icon: const Icon(Icons.arrow_circle_right_outlined,
+                              color: Colors.white))
+                  ]),
                 ),
-              ),
-              Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: AppColors.greyColor,
-                ),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                child: Row(children: [
-                  Expanded(
-                      child: TextField(
-                    controller: controller.commentController,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Add a comment',
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                        hintStyle:
-                            TextStyle(fontSize: 16.0, color: Colors.white)),
-                    onChanged: (commentText) {
-                     
-                        controller.update();
-                      
-                    },
-                    style: const TextStyle(fontSize: 16.0, color: Colors.white),
-                  )),
-                  if (controller.commentController.text.trim().isNotEmpty)
-                    IconButton(
-                        onPressed: () {
-                          controller.addComment(memoryId);
-                        },
-                        icon: const Icon(Icons.arrow_circle_right_outlined,
-                            color: Colors.white))
-                ]),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

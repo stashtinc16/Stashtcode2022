@@ -1,4 +1,6 @@
 
+import 'package:stasht/memories/presentation/collaborators.dart';
+
 abstract class AppRoutes {
   static const splashScreen = "/spalsh";
   static const signIn = "/signin";
@@ -13,4 +15,5 @@ abstract class AppRoutes {
   static const profile = "/profile";
   static const memoryList = "/memory_list";
   static const comments = "/comments";
+  static const collaborators = "/collaborators";
 }

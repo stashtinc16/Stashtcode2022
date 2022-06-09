@@ -10,6 +10,7 @@ class MemoriesModel {
   String? inviteLink;
   bool? published;
   String? createdBy;
+  int? commentCount;
   List<SharedWith>? sharedWith;
   UserModel? userModel;
 
@@ -19,9 +20,11 @@ class MemoriesModel {
       this.createdAt,
       this.updatedAt,
       this.inviteLink,
+      this.commentCount,
       this.published,
       this.createdBy,
-      this.sharedWith,this.userModel});
+      this.sharedWith,
+      this.userModel});
 
   MemoriesModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];
@@ -30,6 +33,7 @@ class MemoriesModel {
     inviteLink = json['invite_link'];
     published = json['published'];
     createdBy = json['created_by'];
+    commentCount = json['comment_count'];
     if (json['images_caption'] != null) {
       imagesCaption = <ImagesCaption>[];
       json['images_caption'].forEach((v) {
@@ -53,6 +57,7 @@ class MemoriesModel {
     if (sharedWith != null) {
       data['shared_with'] = sharedWith!.map((v) => v.toJson()).toList();
     }
+    data['comment_count'] = commentCount;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['invite_link'] = inviteLink;

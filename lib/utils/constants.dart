@@ -1,6 +1,8 @@
+import 'package:flutter/widgets.dart';
+
 String userId = "";
 String userName = "";
-String userImage = "";
+var userImage = ValueNotifier<String>("");
 String userEmail = "";
 bool isSocailUser = false;
 
@@ -8,6 +10,10 @@ bool fromShare = false;
 String memoriesCollection = "memories";
 String userCollection = "users";
 String commentsCollection = "comments";
+
+String memoriesTitle = "Memories";
+String settingsTitle = "Settings";
+
 
 bool checkValidEmail(String email) {
   return RegExp(

@@ -13,12 +13,14 @@ import 'package:stasht/utils/constants.dart';
 class SignupController extends GetxController {
   // var facebookLogin = FacebookLogin();
   final RxBool isObscure = true.obs;
+  final RxBool isObscureCP = true.obs;
 
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   GlobalKey<FormState> formkeySignin = GlobalKey<FormState>();
   TextEditingController userNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
   TextEditingController email1Controller = TextEditingController();
   TextEditingController password1Controller = TextEditingController();
@@ -50,6 +52,7 @@ class SignupController extends GetxController {
   }
 
   void checkEmailExists() {
+    print('checkEmailExists');
     usersRef
         .where("email", isEqualTo: emailController.text.toString())
         .get()
@@ -60,7 +63,8 @@ class SignupController extends GetxController {
               else
                 {
                   Get.snackbar("Email Exists",
-                      "This email id is already registered with us, please sign-in!")
+                      "This email id is already registered with us, please sign-in!",
+                      colorText: Colors.white)
                 }
             });
   }
@@ -81,11 +85,9 @@ class SignupController extends GetxController {
           saveUserToDB(value.user, userNameController.text);
         }).onError((error, stackTrace) {
           if (error.toString().contains("email-already-in-use")) {
-            Get.snackbar(
-              "Email exits",
-              "The email address is already in use by another account.",
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            Get.snackbar("Email exits",
+                "The email address is already in use by another account.",
+                snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           }
           EasyLoading.dismiss();
           print("FirebaseAuthExceptionError ${error.toString()}");
@@ -117,13 +119,16 @@ class SignupController extends GetxController {
                       {
                         saveSession(
                             value.docs[0].id,
-                            value.docs[0].data().userName!,
+                            value.docs[0].data().displayName!,
                             email1Controller.text,
                             value.docs[0].data().profileImage!),
                         Get.offNamed(AppRoutes.memories)
                       }
                     else
-                      {Get.snackbar("Error", "Email not exists!")}
+                      {
+                        Get.snackbar("Error", "Email not exists!",
+                            colorText: Colors.white)
+                      }
                   });
         });
       } on FirebaseAuthException catch (e) {
@@ -132,21 +137,21 @@ class SignupController extends GetxController {
           print("User not found");
 
           Get.snackbar("Error", "User not found",
-              snackPosition: SnackPosition.BOTTOM);
+              snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           return Future.error(
               "User Not Found", StackTrace.fromString("User Not Found"));
         } else if (e.code == 'wrong-password') {
           print("Incorrect password");
 
           Get.snackbar("Error", "Password is incorrect",
-              snackPosition: SnackPosition.BOTTOM);
+              snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           return Future.error("Incorrect password",
               StackTrace.fromString("Incorrect password"));
         } else {
           print("Login Failed ${e.message}");
 
           Get.snackbar("Error", "Login Failed! Please try again in some time",
-              snackPosition: SnackPosition.BOTTOM);
+              snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           return Future.error(
               "Login Failed", StackTrace.fromString("Unknown error"));
         }
@@ -173,7 +178,7 @@ class SignupController extends GetxController {
           saveSession(value.id, username, user.email!, ""),
           clearTexts(),
           Get.snackbar('Success', "User registerd successfully",
-              snackPosition: SnackPosition.BOTTOM),
+              snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
           Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
         });
   }
@@ -239,14 +244,15 @@ class SignupController extends GetxController {
               {
                 saveSession(
                     value.docs[0].id,
-                    value.docs[0].data().userName!,
+                    value.docs[0].data().displayName!,
                     value.docs[0].data().email!,
                     value.docs[0].data().profileImage!),
                 EasyLoading.dismiss(),
                 emailController.text = "",
                 passwordController.text = "",
                 Get.snackbar('Success', "User logged-in successfully",
-                    snackPosition: SnackPosition.BOTTOM),
+                    snackPosition: SnackPosition.BOTTOM,
+                    colorText: Colors.white),
                 Get.offNamed(AppRoutes.memories)
               }
           });
@@ -273,7 +279,7 @@ class SignupController extends GetxController {
           isSocailUser = false,
           saveSession(value.id, name, email!, profileImage!),
           Get.snackbar('Success', "User logged-in successfully",
-              snackPosition: SnackPosition.BOTTOM),
+              snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
           Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
         });
   }
@@ -284,7 +290,7 @@ class SignupController extends GetxController {
     userId = _userId;
     userEmail = _userEmail;
     userName = _userName;
-    userImage = _userImage;
+    userImage.value = _userImage;
     clearTexts();
   }
 

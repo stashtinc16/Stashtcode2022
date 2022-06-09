@@ -105,7 +105,7 @@ class Step1 extends GetView<MemoriesController> {
                     maintainState: true,
                     visible: controller.showNext.value,
                     child: Container(
-                      margin: const EdgeInsets.only(bottom: 20),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -113,17 +113,15 @@ class Step1 extends GetView<MemoriesController> {
                             onTap: () {
                               Get.back();
                             },
-                            child: const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Cancel",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontFamily: gibsonRegular),
-                                ),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 3.0,vertical: 8),
+                              child: Text(
+                                "Cancel",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontFamily: gibsonRegular),
                               ),
                             ),
                           ),
@@ -137,7 +135,7 @@ class Step1 extends GetView<MemoriesController> {
                             child: Center(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 18, vertical: 10),
+                                    horizontal: 18, vertical: 11),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                     color: AppColors.primaryColor,
@@ -158,7 +156,7 @@ class Step1 extends GetView<MemoriesController> {
                                         child: Icon(
                                           Icons.arrow_forward_ios,
                                           color: Colors.white,
-                                          size: 16,
+                                          size: 10,
                                         ))
                                   ],
                                 ),
@@ -173,7 +171,6 @@ class Step1 extends GetView<MemoriesController> {
                 if (argument == "yes")
                   InkWell(
                     onTap: () {
-                     
                       Get.offNamed(AppRoutes.memories);
                     },
                     child: const Padding(
@@ -190,7 +187,7 @@ class Step1 extends GetView<MemoriesController> {
                     ),
                   ),
                 const SizedBox(
-                  height: 15,
+                  height: 10,
                 )
               ],
             )));

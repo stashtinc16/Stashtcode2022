@@ -146,6 +146,7 @@ class SplashController extends GetxController {
       _isLogged = await facebookAuth.accessToken != null;
 
       if (firebaseAuth != null || _isLogged!) {
+        print('Inside ');
         String email = "";
         if (firebaseAuth != null) {
           email = firebaseAuth!.email!;
@@ -158,12 +159,21 @@ class SplashController extends GetxController {
               .then((value) => print('UserProfile $value'));
           facebookAuth.getUserEmail().then((value) => {
                 if (value == null)
-                  {facebookAuth.logOut(), Get.offNamed(AppRoutes.signIn)}
+                  {
+                    facebookAuth.logOut(),
+                    print('Inside_2'),
+                    Get.offNamed(AppRoutes.signIn)
+                  }
                 else
-                  {email = value, goToMemories(email, fromDeepLink)}
+                  {
+                    email = value,
+                    print('Inside_3'),
+                    goToMemories(email, fromDeepLink)
+                  }
               });
         }
       } else {
+        print('InSide_1 ');
         Get.offNamed(AppRoutes.signIn);
       }
       // Navigator.pushReplacement(
@@ -173,31 +183,45 @@ class SplashController extends GetxController {
 
   // redirect user into app , if already logged in
   void goToMemories(String email, bool fromDeepLink) {
-    usersRef.where("email", isEqualTo: email).get().then((value) => {
-          value.docs.forEach((element) => {
-                print('UsersDB $value'),
-                saveSession(element.id, element.data().userName!,
-                    element.data().email!, ""),
-                if (fromDeepLink)
-                  {
-                    Get.off(() => Memories(), binding: MemoriesBinding())
-                    }
-                else
-                  {
-                    Get.offNamed(AppRoutes.memories,
-                        arguments: {"fromDeepLink": fromDeepLink})
-                  }
-              })
-        });
+    print('Inside_5 $email');
+    usersRef
+        .where("email", isEqualTo: email)
+        .get()
+        .then((value) => {
+              if (value.docs.isNotEmpty)
+                {
+                  value.docs.forEach((element) => {
+                        print('Inside_6 ${element.data().userName}'),
+                        saveSession(
+                            element.id,
+                            element.data().displayName!,
+                            element.data().email!,
+                            element.data().profileImage!),
+                        if (fromDeepLink)
+                          {
+                            Get.off(() => Memories(),
+                                binding: MemoriesBinding())
+                          }
+                        else
+                          {
+                            Get.offNamed(AppRoutes.memories,
+                                arguments: {"fromDeepLink": fromDeepLink})
+                          }
+                      })
+                }
+              else
+                {Get.offNamed(AppRoutes.signIn)}
+            })
+        .onError((error, stackTrace) => {});
   }
 
 // Save User Session
   void saveSession(
       String _userId, String _userName, String _userEmail, String _userImage) {
-    print('saveSession userId $_userId');
+    print('saveSession userId $_userId => $_userImage');
     userId = _userId;
     userEmail = _userEmail;
     userName = _userName;
-    userImage = _userImage;
+    userImage.value = _userImage;
   }
 }

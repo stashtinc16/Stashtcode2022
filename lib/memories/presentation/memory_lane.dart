@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
 import 'package:stasht/memories/domain/memories_model.dart';
@@ -14,53 +15,71 @@ class Memory_Lane extends GetView<MemoriesController> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
     mainIndex = Get.arguments['mainIndex'];
     memoriesModel = Get.arguments['list'];
     return Scaffold(
-      body: SafeArea(
-        child: memoriesModel != null
-            ? Column(
-                children: [
-                  Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                memoriesModel!.imagesCaption![0].image!),
-                            fit: BoxFit.cover),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Stack(
+      resizeToAvoidBottomInset: false,
+      body:
+          
+          Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 170,
+                padding: const EdgeInsets.only(top: 45),
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: CachedNetworkImageProvider(
+                            memoriesModel!.imagesCaption![0].image!),
+                        fit: BoxFit.cover)),
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 170,
+                  padding: const EdgeInsets.only(top: 45),
+                  decoration: const BoxDecoration(
+                    color: AppColors.shadowColorBg,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    child: Stack(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                IconButton(
-                                  onPressed: () => Get.back(),
-                                  icon: const Icon(
-                                    Icons.arrow_back_ios_outlined,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    controller.createDynamicLink(
-                                        memoriesModel!.memoryId!,
-                                        true,
-                                        mainIndex!);
-                                  },
-                                  child: const Icon(
-                                    Icons.person_add_alt_1_outlined,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              ],
+                            IconButton(
+                              onPressed: () => Get.back(),
+                              icon: const Icon(
+                                Icons.arrow_back_ios_outlined,
+                                color: Colors.white,
+                              ),
                             ),
-                            Center(
-                                child: Column(
+                            InkWell(
+                              onTap: () {
+                                // Get.toNamed(AppRoutes.collaborators,
+                                //     arguments: {
+                                //       'mainIndex': mainIndex,
+                                //       'imageIndex': 0,
+                                //       'list': memoriesModel
+                                //     });
+                                controller.createDynamicLink(
+                                    memoriesModel!.memoryId!, true, mainIndex!);
+                              },
+                              child: const Icon(
+                                Icons.person_add_alt_1_outlined,
+                                color: Colors.white,
+                              ),
+                            )
+                          ],
+                        ),
+                        Container(
+                            margin: const EdgeInsets.only(top: 5),
+                            alignment: Alignment.center,
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -79,7 +98,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               Radius.circular(30)),
                                           child: CachedNetworkImage(
                                               imageUrl: memoriesModel!
-                                                  .userModel!.profileImage!))
+                                                  .userModel!.profileImage!,fit: BoxFit.cover,))
                                       : Container(),
                                 ),
                                 Padding(
@@ -87,7 +106,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       top: 5,
                                     ),
                                     child: Text(
-                                      memoriesModel!.title!,
+                                      "${memoriesModel!.title!} (${memoriesModel!.imagesCaption!.length})",
                                       style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w900,
@@ -95,234 +114,246 @@ class Memory_Lane extends GetView<MemoriesController> {
                                     ))
                               ],
                             )),
-                          ],
-                        ),
-                      )),
-                  Expanded(
-                    child: Container(
+                      ],
+                    ),
+                  )),
+            ],
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: memoriesModel!.imagesCaption!.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
                       padding: const EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 8.0),
-                      child: ListView.builder(
-                        itemCount: memoriesModel!.imagesCaption!.length,
-                        itemBuilder: (context, index) {
-                          return Column(
+                          left: 15.0, right: 15.0, bottom: 8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    height: 45,
-                                    width: 45,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.grey,
-                                        border: Border.all(
-                                            color: Colors.white, width: 2)),
-                                    child: memoriesModel!.userModel != null
-                                        ? ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(30)),
-                                            child: CachedNetworkImage(
-                                              imageUrl: memoriesModel!
-                                                  .userModel!.profileImage!,
-                                            ),
-                                          )
-                                        : Text(
-                                            memoriesModel!.userModel!.userName!
-                                                .toString()
-                                                .substring(0, 1)
-                                                .toUpperCase(),
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontSize: 22,
-                                                color: Colors.white,
-                                                fontFamily: gibsonSemiBold),
-                                          ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Text(
-                                          memoriesModel!.userModel!.userName!,
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w900),
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            text: '',
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 10),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                  text: DateFormat("MMM dd/yy")
-                                                      .format(memoriesModel!
-                                                          .createdAt!
-                                                          .toDate())
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      color: Colors.blue,
-                                                      fontSize: 10)),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      if (memoriesModel!
-                                          .imagesCaption!.isNotEmpty) {
-                                        Get.toNamed(AppRoutes.comments,
-                                            arguments: {
-                                              "memoryId":
-                                                  memoriesModel!.memoryId!,
-                                              "memoryImage": memoriesModel!
-                                                  .imagesCaption![0].image
-                                            });
-                                      }
-                                    },
-                                    child: const Text(
-                                      "0",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      if (memoriesModel!
-                                          .imagesCaption!.isNotEmpty) {
-                                        Get.toNamed(AppRoutes.comments,
-                                            arguments: {
-                                              "memoryId":
-                                                  memoriesModel!.memoryId!,
-                                              "memoryImage": memoriesModel!
-                                                  .imagesCaption![0].image
-                                            });
-                                      }
-                                    },
-                                    child: const Icon(
-                                      Icons.chat_bubble_outline,
-                                      color: Colors.black,
-                                      size: 16,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
                               Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: 400,
+                                height: 45,
+                                width: 45,
+                                alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: Colors.blueGrey,
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Stack(
-                                    children: [
-                                      SizedBox(
-                                        height: 400,
-                                        width:
-                                            MediaQuery.of(context).size.width,
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey,
+                                    border: Border.all(
+                                        color: Colors.white, width: 2)),
+                                child: memoriesModel!.userModel != null
+                                    ? ClipRRect(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(30)),
                                         child: CachedNetworkImage(
-                                            progressIndicatorBuilder: (context,
-                                                    url, progress) =>
-                                                Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    value: progress.progress,
-                                                  ),
-                                                ),
-                                            fit: BoxFit.cover,
-                                            imageUrl: memoriesModel!
-                                                .imagesCaption![index].image!),
-                                      ),
-                                      Positioned(
-                                        right: 10,
-                                        top: 10,
-                                        child: Container(
-                                          height: 35,
-                                          width: 35,
-                                          decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(12)),
-                                              color: AppColors.primaryColor),
-                                          child: const Icon(
-                                            Icons.check,
-                                            color: Colors.white,
-                                          ),
+                                          width: 45,height: 45,
+                                          imageUrl: memoriesModel!
+                                              .userModel!.profileImage!,fit: BoxFit.cover,
                                         ),
                                       )
-                                    ],
-                                  ),
+                                    : Text(
+                                        memoriesModel!.userModel!.userName!
+                                            .toString()
+                                            .substring(0, 1)
+                                            .toUpperCase(),
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                            fontFamily: gibsonSemiBold),
+                                      ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Text(
+                                      memoriesModel!.userModel!.userName!,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontFamily: robotoBold),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    RichText(
+                                      text: TextSpan(
+                                        text: '',
+                                        style: const TextStyle(fontSize: 11),
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                              text: DateFormat("MMM dd/yy")
+                                                  .format(memoriesModel!
+                                                      .createdAt!
+                                                      .toDate())
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: AppColors.primaryColor
+                                                      .withOpacity(0.67),
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      gibsonRegularItalic)),
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
                               InkWell(
                                 onTap: () {
-                                  Get.toNamed(AppRoutes.addCaption, arguments: {
-                                    'mainIndex': mainIndex,
-                                    'imageIndex': index
-                                  });
+                                  if (memoriesModel!
+                                      .imagesCaption!.isNotEmpty) {
+                                    Get.toNamed(AppRoutes.comments, arguments: {
+                                      "memoryId": memoriesModel!.memoryId!,
+                                      "memoryImage": memoriesModel!
+                                          .imagesCaption![0].image,
+                                      'list': memoriesModel,
+                                      'mainIndex': mainIndex
+                                    });
+                                  }
                                 },
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  margin: EdgeInsets.only(top: 10),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 5),
-                                  child: Text(
-                                      memoriesModel!.imagesCaption![index]
-                                              .caption!.isEmpty
-                                          ? 'Add caption to this Post...'
-                                          : memoriesModel!
-                                              .imagesCaption![index].caption!,
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                          color: memoriesModel!
-                                                  .imagesCaption![index]
-                                                  .caption!
-                                                  .isEmpty
-                                              ? AppColors.textColor
-                                              : AppColors.darkColor,
-                                          fontSize: memoriesModel!
-                                                  .imagesCaption![index]
-                                                  .caption!
-                                                  .isEmpty
-                                              ? 12
-                                              : 14,
-                                          fontStyle: FontStyle.italic)),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      memoriesModel!.commentCount!.toString(),
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                    ),
+                                    const SizedBox(
+                                      width: 3,
+                                    ),
+                                    Image.asset(
+                                      messageIcon,
+                                      width: 12,
+                                      height: 12,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              // Container(
-                              //   height: 1,
-                              //   width: MediaQuery.of(context).size.width,
-                              //   color: Colors.grey,
-                              // ),
                               const SizedBox(
-                                height: 15,
+                                width: 6,
                               ),
                             ],
-                          );
-                        },
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 400,
+                            decoration: BoxDecoration(
+                                color: Colors.blueGrey,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Stack(
+                                children: [
+                                  SizedBox(
+                                    height: 400,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: CachedNetworkImage(
+                                        progressIndicatorBuilder: (context, url,
+                                                progress) =>
+                                            Center(
+                                              child: CircularProgressIndicator(
+                                                value: progress.progress,
+                                              ),
+                                            ),
+                                        fit: BoxFit.cover,
+                                        imageUrl: memoriesModel!
+                                            .imagesCaption![index].image!),
+                                  ),
+                                  Positioned(
+                                    right: 5,
+                                    top: 5,
+                                    child: InkWell(
+                                      onTap: () {
+                                        showDeleteBottomSheet(
+                                            context,
+                                            memoriesModel!.memoryId!,
+                                            index,
+                                            controller,
+                                            memoriesModel!,
+                                            memoriesModel!
+                                                .imagesCaption![index]);
+                                      },
+                                      child: Image.asset(
+                                        tickIcon,
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Get.toNamed(AppRoutes.addCaption, arguments: {
+                                'mainIndex': mainIndex,
+                                'imageIndex': index,
+                                'list': memoriesModel
+                              });
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(top: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 5),
+                              child: Text(
+                                  memoriesModel!.imagesCaption![index].caption!
+                                          .isEmpty
+                                      ? 'Add caption to this Post...'
+                                      : memoriesModel!
+                                          .imagesCaption![index].caption!,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      color: memoriesModel!
+                                              .imagesCaption![index]
+                                              .caption!
+                                              .isEmpty
+                                          ? AppColors.textColor
+                                          : AppColors.darkColor,
+                                      fontSize: 12,
+                                      fontStyle: memoriesModel!
+                                              .imagesCaption![index]
+                                              .caption!
+                                              .isEmpty
+                                          ? FontStyle.italic
+                                          : FontStyle.normal)),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                ],
-              )
-            : Container(),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      color: AppColors.bgColor,
+                      height: 3,
+                    ),
+                    const SizedBox(
+                      height: 11,
+                    ),
+                  ],
+                );
+              },
+            ),
+          )
+        ],
       ),
+
+      // : Container(color: Colors.amberAccent,),
       // bottomSheet: Container(
       //     height: 60,
       //     color: Colors.white,
@@ -340,4 +371,88 @@ class Memory_Lane extends GetView<MemoriesController> {
       // ),
     );
   }
+}
+
+void showDeleteBottomSheet(
+    BuildContext context,
+    String memoryId,
+    int index,
+    MemoriesController controller,
+    MemoriesModel memoriesModel,
+    ImagesCaption imagesCaption) {
+  print('Data ${imagesCaption.caption} => ${imagesCaption.image}');
+  showModalBottomSheet(
+      context: context,
+      isScrollControlled: false,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+          height: MediaQuery.of(context).size.height * 0.23,
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(25.0),
+                child: Text(
+                  'Are you sure you want to delete?',
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: AppColors.darkColor,
+                      fontFamily: robotoBold),
+                ),
+              ),
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                      child: InkWell(
+                    onTap: () {
+                      controller.deleteMemory(
+                          memoryId, index, memoriesModel, imagesCaption);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(40),
+                      child: const Text(
+                        'Yes',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: AppColors.primaryColor,
+                            fontFamily: robotoBold),
+                        textAlign: TextAlign.center,
+                      ),
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          color: AppColors.hintTextColor),
+                    ),
+                  )),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                      child: Container(
+                    padding: const EdgeInsets.all(40),
+                    child: const Text(
+                      'No',
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.primaryColor,
+                          fontFamily: robotoBold),
+                      textAlign: TextAlign.center,
+                    ),
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        color: AppColors.hintTextColor),
+                  )),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      });
 }

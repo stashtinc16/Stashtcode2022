@@ -7,6 +7,7 @@ import 'package:stasht/login_signup/bindings/signup_binding.dart';
 import 'package:stasht/login_signup/presentation/sign_in.dart';
 import 'package:stasht/memories/bindings/memories_binding.dart';
 import 'package:stasht/memories/presentation/add_caption.dart';
+import 'package:stasht/memories/presentation/collaborators.dart';
 import 'package:stasht/memories/presentation/memories.dart';
 import 'package:stasht/memories/presentation/memory_lane.dart';
 import 'package:stasht/profile/bindings/profile_binding.dart';
@@ -42,6 +43,8 @@ class AppPages {
     GetPage(
         name: AppRoutes.addCaption, page: () => AddCaption(), binding: MemoriesBinding()),
          GetPage(
-        name: AppRoutes.comments, page: () => Comments(), binding: CommentsBindings())
+        name: AppRoutes.comments, page: () => Comments(), binding: CommentsBindings()),
+         GetPage(
+        name: AppRoutes.collaborators, page: () => Collaborators(), binding: MemoriesBinding())
   ];
 }

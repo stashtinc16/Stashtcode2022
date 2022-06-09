@@ -3,6 +3,7 @@ const robotoRegular = "robotoRegular";
 const robotoMedium = "robotoMedium";
 const robotoBold = "robotoBold";
 const gibsonRegular = "gibsonRegular";
+const gibsonRegularItalic = "gibsonRegularItalic";
 
 
 const assetPath = "assets/images/";
@@ -14,3 +15,9 @@ const userIcon = assetPath + "user.png";
 const noMemories = assetPath + "no_memories_icon.svg";
 const checkBox = assetPath + "checkbox.svg";
 const pastaImage = assetPath + "default-pasta.jpeg";
+const noMemoriesPlaceholder = assetPath + "no_memories_placeholder.png";
+const eclipseImage = assetPath + "eclipse.png";
+const messageIcon = assetPath + "message_icon.png";
+const tickIcon = assetPath + "tick_icon.png";
+const copyIcon = assetPath + "copy_icon.png";
+const deleteIcon = assetPath + "delete_icon.png";

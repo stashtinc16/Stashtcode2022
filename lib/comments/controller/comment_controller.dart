@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stasht/comments/domain/comments_model.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
+import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/utils/constants.dart';
 
 class CommentsController extends GetxController {
@@ -30,11 +31,12 @@ class CommentsController extends GetxController {
 
   final memoryRef = FirebaseFirestore.instance
       .collection(memoriesCollection)
-      .withConverter<CommentsModel>(
+      .withConverter<MemoriesModel>(
         fromFirestore: (snapshots, _) =>
-            CommentsModel.fromJson(snapshots.data()!),
+            MemoriesModel.fromJson(snapshots.data()!),
         toFirestore: (comments, _) => comments.toJson(),
       );
+
   @override
   void onInit() {
     super.onInit();
@@ -64,10 +66,25 @@ class CommentsController extends GetxController {
           commentsModel.userModel = userValue.data()!;
 
           commentsList.add(commentsModel);
-          streamController.sink.add(commentsModel);
+          // streamController.sink.add(commentsModel);
           print('Inside ${commentsList.length}');
+          if (element.id == event.docs[event.docs.length - 1].id) {
+            memoryRef.doc(commentsModel.memoryId).get().then((value) {
+              MemoriesModel memoriesModel = value.data()!;
+              memoriesModel.commentCount = commentsList.length;
+              print('CommentCount ${commentsList.length}');
+              // memoriesModel = memoryRef
+
+              memoryRef
+                  .doc(commentsModel.memoryId)
+                  .set(memoriesModel)
+                  .then((value) => {
+                        print('Comment Count updated  '),
+                      })
+                  .onError((error, stackTrace) => {});
+            });
+          }
         });
-        print('OutSide ${commentsList.length}');
       }
     });
   }
