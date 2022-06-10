@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -8,21 +9,21 @@ import 'package:get/route_manager.dart';
 import 'package:stasht/firebase_options.dart';
 import 'package:stasht/login_signup/bindings/signup_binding.dart';
 import 'package:stasht/routes/app_pages.dart';
-import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 
 void main() async {
-  
-
   await runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-     configLoading();
+    configLoading();
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-    runApp(MyApp());
+    runApp(const MyApp());
+        // await FirebaseFirestore.instance.clearPersistence();
+
+    FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: false);
   }, (error, stackTrace) {
     FirebaseCrashlytics.instance.recordError(error, stackTrace);
   });

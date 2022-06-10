@@ -156,7 +156,9 @@ class Memories extends GetView<MemoriesController> {
                                                           image:
                                                               CachedNetworkImageProvider(
                                                             controller
-                                                                    .memoriesList
+                                                                    .memoriesList[
+                                                                        index]
+                                                                    .imagesCaption
                                                                     .isNotEmpty
                                                                 ? controller
                                                                     .memoriesList[
@@ -495,7 +497,8 @@ class Memories extends GetView<MemoriesController> {
                                 color: Colors.grey,
                                 image: DecorationImage(
                                     image: NetworkImage(
-                                      controller.sharedMemoriesList.isNotEmpty
+                                      controller.sharedMemoriesList[index]
+                                              .imagesCaption.isNotEmpty
                                           ? controller.sharedMemoriesList[index]
                                               .imagesCaption[0].image
                                           : "",

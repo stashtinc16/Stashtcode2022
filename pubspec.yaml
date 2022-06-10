@@ -58,6 +58,8 @@ dependencies:
   firebase_dynamic_links: ^4.2.5
   flutter_share: ^2.0.0
   firebase_crashlytics: ^2.8.1
+  numberpicker: ^2.1.1
+  multi_image_picker: ^4.7.14
 
 
 

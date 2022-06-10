@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stasht/comments/domain/comments_model.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
+import 'package:stasht/main.dart';
 import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/utils/constants.dart';
 
@@ -13,6 +14,9 @@ class CommentsController extends GetxController {
   TextEditingController commentController = TextEditingController();
   StreamController<CommentsModel> streamController =
       StreamController<CommentsModel>();
+  int imageIndex = Get.arguments["imageIndex"];
+  int mainIndex = Get.arguments["mainIndex"];
+  MemoriesModel memoriesModel = Get.arguments["list"];
 
   final commentsRef = FirebaseFirestore.instance
       .collection(commentsCollection)
@@ -44,9 +48,12 @@ class CommentsController extends GetxController {
   }
 
   void startStreamAndGetList() {
+    print('ImageID ${memoriesModel.imagesCaption![imageIndex].imageId}');
     FirebaseFirestore.instance
         .collection(commentsCollection)
         .where('memory_id', isEqualTo: Get.arguments['memoryId'])
+        .where('image_id',
+            isEqualTo: memoriesModel.imagesCaption![imageIndex].imageId)
         .orderBy('created_at', descending: false)
         .withConverter<CommentsModel>(
           fromFirestore: (snapshots, _) =>
@@ -96,11 +103,29 @@ class CommentsController extends GetxController {
         comment: commentController.text.toString(),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        memoryId: memoryId);
-    commentsRef.add(commentsModel).then((value) =>
-        {print('CommentAdded $value'), commentController.text = "", update()});
+        memoryId: memoryId,
+        imageId: memoriesModel.imagesCaption![mainIndex].imageId);
+    commentsRef.add(commentsModel).then((value) => {
+          print('CommentAdded $value'),
+          commentController.text = "",
+          addCommentCountToMemories(memoryId),
+          update(),
+        });
+  }
 
-    print('CommentsListSize ${commentsList.length}');
+  void addCommentCountToMemories(String memoryId) {
+    MemoriesModel memoriesModels = MemoriesModel();
+    memoriesModels = memoriesModel;
+    print(
+        'memoriesModels.imagesCaption![imageIndex].commentCount! ${memoriesModels.imagesCaption![imageIndex].commentCount!}');
+
+    memoryRef
+        .doc(memoryId)
+        .set(memoriesModel)
+        .then((value) => {
+              print('UpdateCaption '),
+            })
+        .onError((error, stackTrace) => {});
   }
 
   @override

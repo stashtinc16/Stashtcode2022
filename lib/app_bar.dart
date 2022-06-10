@@ -90,17 +90,21 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
               pageSelected(false, false, false, true);
             },
             child: ValueListenableBuilder(
-               valueListenable: userImage,
+              valueListenable: userImage,
               builder: (BuildContext context, value, Widget? child) {
                 return CircleAvatar(
                   radius: 18,
+                  backgroundColor: Colors.white,
                   child: ClipRRect(
                     child: userImage.value.isNotEmpty
-                        ? CachedNetworkImage(imageUrl: userImage.value,fit: BoxFit.cover,
-                         height: 34,
-                                        width: 34,)
+                        ? CachedNetworkImage(
+                            imageUrl: userImage.value,
+                            fit: BoxFit.cover,
+                            height: 34,
+                            width: 34,
+                          )
                         : Image.asset(
-                            "assets/images/photo.jpeg",
+                            userIcon,
                             fit: BoxFit.cover,
                             height: 34,
                             width: 34,

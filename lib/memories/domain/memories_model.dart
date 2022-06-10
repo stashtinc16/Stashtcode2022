@@ -71,18 +71,24 @@ class MemoriesModel {
 class ImagesCaption {
   String? caption;
   String? image;
+  int? commentCount;
+  String? imageId;
 
-  ImagesCaption({this.caption, this.image});
+  ImagesCaption({this.caption, this.image, this.commentCount,this.imageId});
 
   ImagesCaption.fromJson(Map<String, dynamic> json) {
     caption = json['caption'];
     image = json['image'];
+    commentCount = json['comment_count'];
+    imageId = json['image_id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['caption'] = caption;
     data['image'] = image;
+    data['comment_count'] = commentCount;
+    data['image_id'] = imageId;
     return data;
   }
 }

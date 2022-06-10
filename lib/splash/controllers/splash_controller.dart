@@ -142,6 +142,7 @@ class SplashController extends GetxController {
   }
 
   handleNavigation(bool fromDeepLink) async {
+    
     Future.delayed(const Duration(milliseconds: 2500), () async {
       _isLogged = await facebookAuth.accessToken != null;
 

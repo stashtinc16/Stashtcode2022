@@ -4,6 +4,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
@@ -12,10 +13,12 @@ import 'package:stasht/utils/assets_images.dart';
 
 class Step_2 extends GetView<MemoriesController> {
 
-  
   @override
   Widget build(BuildContext context) {
+    print(
+        'ScreenDimensions ${MediaQuery.of(context).size.width} => ${MediaQuery.of(context).size.height}');
     var data = Get.arguments;
+  
     return GetBuilder(
       builder: (MemoriesController controller) => Scaffold(
           body: SafeArea(
@@ -86,12 +89,33 @@ class Step_2 extends GetView<MemoriesController> {
                                       crossAxisCount: 3,
                                       crossAxisSpacing: 1,
                                       mainAxisSpacing: 1,
-                                      childAspectRatio: (1 / 1),
+                                      childAspectRatio: 1,
                                     ),
                                     itemBuilder: (
                                       context,
                                       index,
                                     ) {
+                                      final double _screenWidth =
+                                          MediaQuery.of(context).size.width;
+                                      final double _screenHeight =
+                                          MediaQuery.of(context).size.height;
+                                      var _imageWidth = controller
+                                          .mediaPages
+                                          .value[index]
+                                          .width; //Here is the question: how to get the width of this imageProvider?
+                                      var _imageHeight = controller
+                                          .mediaPages
+                                          .value[index]
+                                          .height; //Here is the question: how to get the width of this imageProvider?
+                                      var _minScale =
+                                          _screenWidth / _imageWidth;
+                                      var _minHeightScale =
+                                          _screenHeight / _imageHeight;
+                                      var getItemWidth = _screenWidth / 3;
+                                      var getItemHeight =
+                                          getItemWidth / _minHeightScale;
+                                      print(
+                                          '_minScale $_minScale $getItemWidth $getItemHeight');
                                       return Obx(() => GestureDetector(
                                           onTap: () {
                                             if (!controller
@@ -126,10 +150,11 @@ class Step_2 extends GetView<MemoriesController> {
                                                             .value[index]
                                                             .id,
                                                       ),
-                                                      height: 200,
-                                                      width: 200,
-                                                      allowUpscaling: true),
-                                                  fit: BoxFit.contain,
+                                                      height:
+                                                          getItemHeight.toInt(),
+                                                      width:
+                                                          getItemWidth.toInt()),
+                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
                                               if (controller
@@ -220,7 +245,8 @@ class Step_2 extends GetView<MemoriesController> {
                 controller.uploadImagesToMemories(0);
               },
               child: Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.only(
+                    left: 15.0, right: 15.0, bottom: 30, top: 15.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
@@ -244,4 +270,5 @@ class Step_2 extends GetView<MemoriesController> {
               ))),
     );
   }
+
 }

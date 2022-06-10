@@ -2,13 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stasht/comments/controller/comment_controller.dart';
-import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:intl/intl.dart';
 
 class Comments extends GetView<CommentsController> {
   String memoryId = Get.arguments["memoryId"];
   String imagePath = Get.arguments!["memoryImage"];
+  // MemoriesModel memoriesModel = Get.arguments["list"];
+  // int imageIndex = Get.arguments["imageIndex"];
 
   Comments({Key? key}) : super(key: key);
   @override
@@ -51,8 +52,8 @@ class Comments extends GetView<CommentsController> {
                             return Column(
                               children: [
                                 Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 15),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15),
                                   child: Row(
                                     children: [
                                       Container(
@@ -66,10 +67,20 @@ class Comments extends GetView<CommentsController> {
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(30)),
-                                          child: controller.commentsList[index].userModel.profileImage.isNotEmpty
+                                          child: controller
+                                                  .commentsList[index]
+                                                  .userModel
+                                                  .profileImage
+                                                  .isNotEmpty
                                               ? CachedNetworkImage(
-                                                  imageUrl: controller.commentsList[index].userModel.profileImage, height: 30,
-                                        width: 30, fit: BoxFit.cover,)
+                                                  imageUrl: controller
+                                                      .commentsList[index]
+                                                      .userModel
+                                                      .profileImage,
+                                                  height: 30,
+                                                  width: 30,
+                                                  fit: BoxFit.cover,
+                                                )
                                               : Image.asset(
                                                   userIcon,
                                                   fit: BoxFit.fill,
@@ -83,8 +94,9 @@ class Comments extends GetView<CommentsController> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.stretch,
                                         children: [
-                                           Text(
-                                            controller.commentsList[index].userModel.displayName,
+                                          Text(
+                                            controller.commentsList[index]
+                                                .userModel.displayName,
                                             style: const TextStyle(
                                                 fontSize: 11.0,
                                                 color: Colors.white,
@@ -114,13 +126,13 @@ class Comments extends GetView<CommentsController> {
                                 Container(
                                   height: 0.7,
                                   color: Colors.white,
-                                  margin: const EdgeInsets.symmetric(vertical: 7),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 7),
                                 )
                               ],
                             );
                           },
                           itemCount: controller.commentsList.length,
-                          
                           shrinkWrap: true,
                         )),
                   ),
@@ -143,16 +155,20 @@ class Comments extends GetView<CommentsController> {
                           hintStyle:
                               TextStyle(fontSize: 16.0, color: Colors.white)),
                       onChanged: (commentText) {
-                       
-                          controller.update();
-                        
+                        controller.update();
                       },
-                      style: const TextStyle(fontSize: 16.0, color: Colors.white),
+                      style:
+                          const TextStyle(fontSize: 16.0, color: Colors.white),
                     )),
                     if (controller.commentController.text.trim().isNotEmpty)
                       IconButton(
                           onPressed: () {
                             controller.addComment(memoryId);
+                            controller
+                                    .memoriesModel
+                                    .imagesCaption![controller.imageIndex]
+                                    .commentCount =
+                                controller.commentsList.length + 1;
                           },
                           icon: const Icon(Icons.arrow_circle_right_outlined,
                               color: Colors.white))

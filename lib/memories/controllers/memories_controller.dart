@@ -9,6 +9,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:get/get.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
@@ -17,7 +19,7 @@ import 'package:stasht/routes/app_routes.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:stasht/utils/constants.dart';
 
-class MemoriesController extends GetxController with WidgetsBindingObserver {
+class MemoriesController extends GetxController {
   RxBool showNext = false.obs;
   var mediaPages = List.empty(growable: true).obs;
   var memoriesList = List.empty(growable: true).obs;
@@ -38,28 +40,19 @@ class MemoriesController extends GetxController with WidgetsBindingObserver {
   Rx<PermissionStatus> permissionStatus = PermissionStatus.denied.obs;
   RxBool hasFocus = false.obs;
   FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
+  List<Asset> images = List<Asset>.empty(growable: true).obs;
 
   String URI_PREFIX_FIREBASE = "https://stasht.page.link";
   String DEFAULT_FALLBACK_URL_ANDROID = "https://stasht.page.link";
-
+  List<Asset> resultList = List<Asset>.empty(growable: true);
   @override
   void onInit() {
     super.onInit();
 
     promptPermissionSetting();
     getMyMemories();
-    print('Memory=> fromShare $fromShare    ');
-
     sharedMemoriesExpand.value = fromShare;
-
     getSharedMemories();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    print('state = $state');
   }
 
   //get Shared memories
@@ -100,20 +93,11 @@ class MemoriesController extends GetxController with WidgetsBindingObserver {
     print('ImageCaption ${removeItemList[0]}');
     MemoriesModel memoriesModels = memoriesModel;
     memoriesModels.imagesCaption!.removeAt(removeIndex);
-    memoriesRef
-        .doc(memoryId)
-        .update(memoriesModels.toJson())
-        .then((value) => print('Deleted Successfully!'))
-        .whenComplete(() {
-      print('Field Deleted');
-    });
-    // memoriesRef
-    //     .doc(memoryId)
-    //     .update({'images_caption': FieldValue.arrayRemove(removeItemList)})
-    //     .then((value) => print('Deleted Successfully!'))
-    //     .whenComplete(() {
-    //       print('Field Deleted');
-    //     });
+    memoriesRef.doc(memoryId).update(memoriesModels.toJson()).then((value) => {
+          print('Deleted Successfully!'),
+          update(),
+          if (memoriesModels.imagesCaption!.isEmpty) {Get.back()}
+        });
   }
 
   void updateJoinStatus(
@@ -129,8 +113,6 @@ class MemoriesController extends GetxController with WidgetsBindingObserver {
               sharedMemoriesList[index].sharedWith[shareIndex].status = 1,
               print('update Join Status '),
               update()
-
-              // Get.back()
             })
         .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }
@@ -228,6 +210,23 @@ class MemoriesController extends GetxController with WidgetsBindingObserver {
     share(memoryId, url.toString(), index);
   }
 
+  // Pick Images from gallery
+  Future<void> pickImages() async {
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 10,
+        enableCamera: false,
+        selectedAssets: images,
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    // images = resultList;
+
+    uploadImagesToMemories(0);
+  }
+
   // Share Dynamic Link
   Future<void> share(String memoryId, String shareText, int indexValue) async {
     await FlutterShare.share(
@@ -260,24 +259,50 @@ class MemoriesController extends GetxController with WidgetsBindingObserver {
   // check and request permission
   Future<bool> promptPermissionSetting() async {
     var status;
+    Permission permission;
     if (Platform.isIOS) {
-      status = await Permission.photos.request();
+      permission = Permission.photos;
+      if (await permission.isGranted) {
+        // Either the permission was already granted before or the user just granted it.
+        status = await permission.status;
+        permissionStatus.value = status;
+        getAlbums();
+        return true;
+      } else if (await permission.isLimited) {
+        // Either the permission was already granted before or the user just granted it.
+        status = await permission.status;
+        permissionStatus.value = status;
+        getAlbums();
+        return true;
+      } else {
+        status = await Permission.photos.status;
+        permissionStatus.value = status;
+        getAlbums();
+        return true;
+      }
+      // status = await Permission.photos.status;
     } else {
-      status = await Permission.storage.request();
+      permission = Permission.storage;
+      permission.status.then((value) => {print('Permsission $value')});
     }
     permissionStatus.value = status;
     print('promptPermissionSetting $status');
 
-    if (status == PermissionStatus.granted ||
-        status == PermissionStatus.limited) {
-      print('granteddd');
-      update();
-      getAlbums();
-      return true;
-    } else if (status == PermissionStatus.permanentlyDenied) {
+    // if (status == PermissionStatus.granted ||
+    //     status == PermissionStatus.limited) {
+    //   print('granteddd');
+    //   // update();
+    //   getAlbums();
+    //   return true;
+    // } else
+    if (status == PermissionStatus.permanentlyDenied) {
+      print('checkkkkkk $status');
+      checkPermission();
+    } else {
+      print('checkkkkkk_Else $status');
       checkPermission();
     }
-    // checkPermission();
+
     return false;
   }
 
@@ -285,9 +310,13 @@ class MemoriesController extends GetxController with WidgetsBindingObserver {
   checkPermission() async {
     var status;
     if (Platform.isIOS) {
-      status = await Permission.photos.request();
+      await Permission.photos
+          .request()
+          .then((value) => print('Request_photos ${value}'));
     } else {
-      status = await Permission.storage.request();
+      await Permission.storage
+          .request()
+          .then((value) => print('Request_storage ${value}'));
     }
     permissionStatus.value = status;
     print('checkPermission $status');
@@ -331,12 +360,14 @@ class MemoriesController extends GetxController with WidgetsBindingObserver {
 
   // get Images from albums
   void getListData(Album album) async {
+    mediaPages.value.clear();
     MediaPage imagePage = await album.listMedia(
       newest: true,
     );
 
     totalCount = imagePage.total;
     selectionList = List.filled(totalCount, false).obs;
+    print('imagePage.items ${imagePage.items}');
     mediaPages.value.addAll(imagePage.items);
     update();
   }
@@ -366,6 +397,37 @@ class MemoriesController extends GetxController with WidgetsBindingObserver {
   }
 
   Future<void> uploadImagesToMemories(int imageIndex) async {
+    if (resultList.isNotEmpty) {
+      if (imageIndex == 0) {
+        EasyLoading.show(status: 'Uploading...');
+      }
+      //selectedIndexList = index of selected items from main photos list
+      final dir = await path_provider.getTemporaryDirectory();
+      final File file = await getImageFileFromAssets(resultList[imageIndex]);
+      String fileName = "/temp${DateTime.now().millisecond}.jpg";
+      final targetPath = dir.absolute.path + fileName;
+
+      final File? newFile = await testCompressAndGetFile(file, targetPath);
+      final UploadTask? uploadTask = await uploadFile(newFile!, fileName);
+    } else {
+      Get.snackbar('Error', "Please select images");
+    }
+  }
+
+  Future<File> getImageFileFromAssets(Asset asset) async {
+    final byteData = await asset.getByteData();
+
+    final tempFile =
+        File("${(await getTemporaryDirectory()).path}/${asset.name}");
+    final file = await tempFile.writeAsBytes(
+      byteData.buffer
+          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
+    );
+
+    return file;
+  }
+
+  Future<void> uploadImagesToMemoriesOld(int imageIndex) async {
     if (selectedIndexList.length > 0) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
@@ -407,8 +469,13 @@ class MemoriesController extends GetxController with WidgetsBindingObserver {
     uploadTask.whenComplete(() => {
           uploadTask.snapshot.ref.getDownloadURL().then((value) => {
                 print('URl $value'),
-                imageCaptionUrls.add(ImagesCaption(caption: "", image: value)),
-                if (imageCaptionUrls.length < selectedIndexList.length)
+                imageCaptionUrls.add(ImagesCaption(
+                    caption: "",
+                    image: value,
+                    commentCount: 0,
+                    imageId:
+                        Timestamp.now().millisecondsSinceEpoch.toString())),
+                if (imageCaptionUrls.length < resultList.length)
                   {
                     uploadCount += 1,
                     uploadImagesToMemories(uploadCount),

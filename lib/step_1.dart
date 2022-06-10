@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
@@ -114,7 +115,8 @@ class Step1 extends GetView<MemoriesController> {
                               Get.back();
                             },
                             child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 3.0,vertical: 8),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 3.0, vertical: 8),
                               child: Text(
                                 "Cancel",
                                 textAlign: TextAlign.center,
@@ -127,10 +129,13 @@ class Step1 extends GetView<MemoriesController> {
                           ),
                           InkWell(
                             onTap: () {
-                              Get.toNamed(AppRoutes.memoriesStep2, arguments: {
-                                "title": controller.titleController.value.text,
-                                "fromSignup": argument
-                              });
+                              // controller.promptPermissionSetting();
+                              // controller.update();
+                              // Get.toNamed(AppRoutes.memoriesStep2, arguments: {
+                              //   "title": controller.titleController.value.text,
+                              //   "fromSignup": argument
+                              // });
+                              controller.pickImages();
                             },
                             child: Center(
                               child: Container(
