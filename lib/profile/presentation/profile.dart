@@ -94,16 +94,16 @@ class Profile extends GetView<ProfileController> {
                                   builder: (context, value, child) {
                                     return ClipRRect(
                                       borderRadius: const BorderRadius.all(
-                                          Radius.circular(65)),
+                                          Radius.circular(100)),
                                       child: Container(
                                         height: 108,
                                         width: 108,
                                         decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
+                                          
                                           border: Border.all(
-                                            color: const Color.fromRGBO(
-                                                207, 216, 220, 1),
-                                          ),
+                                            color: Color.fromARGB(255, 25, 86, 112),
+                                          ), borderRadius: const BorderRadius.all(
+                                          Radius.circular(100)),
                                         ),
                                         margin: const EdgeInsets.all(1.0),
                                         child: CachedNetworkImage(

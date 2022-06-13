@@ -45,6 +45,8 @@
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>App needs media access to upload images to memories</string>
+	<key>NSCameraUsageDescription</key>
+	<string>App needs camera access to upload images for memories</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App needs photo gallery access to upload images to memories</string>
 	<key>UILaunchStoryboardName</key>

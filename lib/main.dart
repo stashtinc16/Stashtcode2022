@@ -20,8 +20,9 @@ void main() async {
     );
     configLoading();
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+     await FirebaseFirestore.instance.clearPersistence();
     runApp(const MyApp());
-        // await FirebaseFirestore.instance.clearPersistence();
+       
 
     FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: false);
   }, (error, stackTrace) {

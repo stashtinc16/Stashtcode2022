@@ -266,18 +266,18 @@ class MemoriesController extends GetxController {
         // Either the permission was already granted before or the user just granted it.
         status = await permission.status;
         permissionStatus.value = status;
-        getAlbums();
+        // getAlbums();
         return true;
       } else if (await permission.isLimited) {
         // Either the permission was already granted before or the user just granted it.
         status = await permission.status;
         permissionStatus.value = status;
-        getAlbums();
+        // getAlbums();
         return true;
       } else {
         status = await Permission.photos.status;
         permissionStatus.value = status;
-        getAlbums();
+        // getAlbums();
         return true;
       }
       // status = await Permission.photos.status;

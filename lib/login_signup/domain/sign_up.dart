@@ -11,11 +11,13 @@ import 'package:stasht/utils/constants.dart';
 class Signup extends GetView<SignupController> {
   int val = -1;
   bool isEmail = false;
+  
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
+    controller.emailController.text =
+        Get.arguments != null ? Get.arguments["email"] : "";
     return Scaffold(
         body: SingleChildScrollView(
       child: Container(
@@ -310,7 +312,7 @@ class Signup extends GetView<SignupController> {
                                       } else if (value !=
                                           controller.passwordController.text
                                               .toString()) {
-                                       return "Password mismatch";
+                                        return "Password mismatch";
                                       }
                                       return null;
                                     },

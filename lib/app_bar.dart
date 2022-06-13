@@ -102,7 +102,10 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                             fit: BoxFit.cover,
                             height: 34,
                             width: 34,
-                          )
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                    CircularProgressIndicator(
+                                        value: downloadProgress.progress))
                         : Image.asset(
                             userIcon,
                             fit: BoxFit.cover,

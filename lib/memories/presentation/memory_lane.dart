@@ -31,11 +31,12 @@ class Memory_Lane extends GetView<MemoriesController> {
                     width: MediaQuery.of(context).size.width,
                     height: 170,
                     padding: const EdgeInsets.only(top: 45),
-                    decoration: BoxDecoration(
+                    decoration:  memoriesModel!.imagesCaption!.isNotEmpty ?  BoxDecoration(
                         image: DecorationImage(
                             image: CachedNetworkImageProvider(
                                 memoriesModel!.imagesCaption![0].image!),
-                            fit: BoxFit.cover)),
+                            fit: BoxFit.cover)) : null,
+                            color:  memoriesModel!.imagesCaption!.isNotEmpty ?null :Colors.grey,
                   ),
                   Container(
                       width: MediaQuery.of(context).size.width,
@@ -447,13 +448,17 @@ class Memory_Lane extends GetView<MemoriesController> {
     showModalBottomSheet(
         context: context,
         isScrollControlled: false,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15), topLeft: Radius.circular(15))),
         builder: (context) {
           return Container(
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(15),
-                    topLeft: Radius.circular(15))),
-            height: MediaQuery.of(context).size.height * 0.23,
+                    topLeft: Radius.circular(15)),
+                color: Colors.white),
+            height: 200,
             child: Column(
               children: [
                 const Padding(
@@ -498,19 +503,24 @@ class Memory_Lane extends GetView<MemoriesController> {
                       width: 20,
                     ),
                     Expanded(
-                        child: Container(
-                      padding: const EdgeInsets.all(40),
-                      child: const Text(
-                        'No',
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: AppColors.primaryColor,
-                            fontFamily: robotoBold),
-                        textAlign: TextAlign.center,
+                        child: InkWell(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(40),
+                        child: const Text(
+                          'No',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: AppColors.primaryColor,
+                              fontFamily: robotoBold),
+                          textAlign: TextAlign.center,
+                        ),
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            color: AppColors.hintTextColor),
                       ),
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          color: AppColors.hintTextColor),
                     )),
                     const SizedBox(
                       width: 20,

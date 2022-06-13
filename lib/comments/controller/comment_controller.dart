@@ -44,6 +44,7 @@ class CommentsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('InitCommentController ');
     startStreamAndGetList();
   }
 
@@ -98,13 +99,15 @@ class CommentsController extends GetxController {
 
   // Add comment to memory
   void addComment(String memoryId) {
+    print(
+        'memoriesModel.imagesCaption![mainIndex].imageId ${memoriesModel.imagesCaption![imageIndex].imageId}');
     CommentsModel commentsModel = CommentsModel(
         userId: userId,
         comment: commentController.text.toString(),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         memoryId: memoryId,
-        imageId: memoriesModel.imagesCaption![mainIndex].imageId);
+        imageId: memoriesModel.imagesCaption![imageIndex].imageId);
     commentsRef.add(commentsModel).then((value) => {
           print('CommentAdded $value'),
           commentController.text = "",

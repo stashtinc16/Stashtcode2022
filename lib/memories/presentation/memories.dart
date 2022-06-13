@@ -152,23 +152,36 @@ class Memories extends GetView<MemoriesController> {
                                                             .size
                                                             .width,
                                                     decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          image:
-                                                              CachedNetworkImageProvider(
-                                                            controller
-                                                                    .memoriesList[
-                                                                        index]
-                                                                    .imagesCaption
-                                                                    .isNotEmpty
-                                                                ? controller
-                                                                    .memoriesList[
-                                                                        index]
-                                                                    .imagesCaption[
-                                                                        0]
-                                                                    .image
-                                                                : "",
-                                                          ),
-                                                          fit: BoxFit.cover),
+                                                      image: controller
+                                                              .memoriesList[
+                                                                  index]
+                                                              .imagesCaption
+                                                              .isNotEmpty
+                                                          ? DecorationImage(
+                                                              image:
+                                                                  CachedNetworkImageProvider(
+                                                                controller
+                                                                        .memoriesList[
+                                                                            index]
+                                                                        .imagesCaption
+                                                                        .isNotEmpty
+                                                                    ? controller
+                                                                        .memoriesList[
+                                                                            index]
+                                                                        .imagesCaption[
+                                                                            0]
+                                                                        .image
+                                                                    : "",
+                                                              ),
+                                                              fit: BoxFit.cover)
+                                                          : null,
+                                                      color: controller
+                                                              .memoriesList[
+                                                                  index]
+                                                              .imagesCaption
+                                                              .isNotEmpty
+                                                          ? null
+                                                          : Colors.grey,
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               15),
@@ -234,7 +247,10 @@ class Memories extends GetView<MemoriesController> {
                                                                   fit: BoxFit
                                                                       .cover,
                                                                   height: 45,
-                                                                  width: 45,
+                                                                  width: 45,progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                    CircularProgressIndicator(
+                                        value: downloadProgress.progress)
                                                                 )
                                                               : Image.asset(
                                                                   userIcon,
@@ -493,18 +509,20 @@ class Memories extends GetView<MemoriesController> {
                             height: 100,
                             margin: const EdgeInsets.only(top: 20),
                             width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                image: DecorationImage(
-                                    image: NetworkImage(
-                                      controller.sharedMemoriesList[index]
-                                              .imagesCaption.isNotEmpty
-                                          ? controller.sharedMemoriesList[index]
-                                              .imagesCaption[0].image
-                                          : "",
-                                    ),
-                                    fit: BoxFit.cover),
-                                borderRadius: BorderRadius.circular(15)),
+                            decoration: controller.sharedMemoriesList[index]
+                                    .imagesCaption.isNotEmpty
+                                ? BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    image: DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                            controller.sharedMemoriesList[index]
+                                                .imagesCaption.isNotEmpty),
+                                        fit: BoxFit.cover))
+                                : null,
+                            color: controller.sharedMemoriesList[index]
+                                    .imagesCaption.isNotEmpty
+                                ? null
+                                : Colors.grey,
                           ),
                           Container(
                             height: 100,

@@ -136,8 +136,10 @@ class SignupController extends GetxController {
         if (e.code == 'user-not-found') {
           print("User not found");
 
-          Get.snackbar("Error", "User not found",
+          Get.snackbar("Error", "User not found, Please signup new user",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
+          Get.toNamed(AppRoutes.signup,
+              arguments: {"email": email1Controller.text.toString()});
           return Future.error(
               "User Not Found", StackTrace.fromString("User Not Found"));
         } else if (e.code == 'wrong-password') {
