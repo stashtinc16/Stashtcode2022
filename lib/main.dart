@@ -17,14 +17,16 @@ void main() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
-    );
+    ).then((value) => {
+          FirebaseFirestore.instance.terminate(),
+          FirebaseFirestore.instance.clearPersistence().then(
+              (value) => {print('clearPersistence'), runApp(const MyApp())}),
+        });
     configLoading();
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-     await FirebaseFirestore.instance.clearPersistence();
-    runApp(const MyApp());
-       
 
-    FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: false);
+    FirebaseFirestore.instance.settings =
+        const Settings(persistenceEnabled: false);
   }, (error, stackTrace) {
     FirebaseCrashlytics.instance.recordError(error, stackTrace);
   });

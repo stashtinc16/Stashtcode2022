@@ -43,7 +43,7 @@ class Memories extends GetView<MemoriesController> {
                             maintainAnimation: true,
                             maintainSize: false,
                             maintainState: true,
-                            visible: controller.memoriesList.isEmpty,
+                            visible: !controller.noData.value,
                             child: Column(
                               children: [
                                 Image.asset(
@@ -247,11 +247,13 @@ class Memories extends GetView<MemoriesController> {
                                                                   fit: BoxFit
                                                                       .cover,
                                                                   height: 45,
-                                                                  width: 45,progressIndicatorBuilder:
-                                (context, url, downloadProgress) =>
-                                    CircularProgressIndicator(
-                                        value: downloadProgress.progress)
-                                                                )
+                                                                  width: 45,
+                                                                  progressIndicatorBuilder: (context,
+                                                                          url,
+                                                                          downloadProgress) =>
+                                                                      CircularProgressIndicator(
+                                                                          value:
+                                                                              downloadProgress.progress))
                                                               : Image.asset(
                                                                   userIcon,
                                                                   fit: BoxFit
@@ -394,7 +396,7 @@ class Memories extends GetView<MemoriesController> {
                         ),
                         InkWell(
                           onTap: () {
-                            // showInviteRepondDialog(context);
+                            // showInviteRepondDialog(context,index,s);
                             // isCheck = !isCheck;
                           },
                           child: Container(
@@ -472,9 +474,6 @@ class Memories extends GetView<MemoriesController> {
                 primary: false,
                 scrollDirection: Axis.vertical,
                 itemBuilder: (BuildContext context, int index) {
-                  // List<SharedWith> shareList = List.empty(growable: true);
-                  // shareList
-                  //     .addAll(controller.sharedMemoriesList[index].sharedWith);
                   int shareIndex = 0;
                   int isJoined = 0;
 
@@ -486,14 +485,13 @@ class Memories extends GetView<MemoriesController> {
                         shareIndex = controller
                             .sharedMemoriesList[index].sharedWith
                             .indexOf(element);
-                        print(
-                            'IndexOfElement ${controller.sharedMemoriesList[index].sharedWith.indexOf(element)}');
+
                         return element.userId == userId;
                       },
                     );
-                    isJoined = shareObject.first.status;
-                    print(
-                        'isjoined ${controller.sharedMemoriesList[index].sharedWith.indexOf(shareObject)} => ${shareObject.first.status}');
+                    if (shareObject.length > 0) {
+                      isJoined = shareObject.first.status;
+                    }
                   }
 
                   return InkWell(
@@ -516,11 +514,11 @@ class Memories extends GetView<MemoriesController> {
                                     image: DecorationImage(
                                         image: CachedNetworkImageProvider(
                                             controller.sharedMemoriesList[index]
-                                                .imagesCaption.isNotEmpty),
+                                                .imagesCaption![0].image),
                                         fit: BoxFit.cover))
                                 : null,
                             color: controller.sharedMemoriesList[index]
-                                    .imagesCaption.isNotEmpty
+                                    .imagesCaption!.isNotEmpty
                                 ? null
                                 : Colors.grey,
                           ),
@@ -530,7 +528,7 @@ class Memories extends GetView<MemoriesController> {
                               borderRadius: BorderRadius.circular(15),
                               color: isJoined == 0
                                   ? AppColors.primaryColor.withOpacity(0.62)
-                                  : AppColors.shadowColor,
+                                  : Colors.black.withOpacity(0.22),
                             ),
                             margin: const EdgeInsets.only(top: 20),
                             child: Row(
@@ -549,17 +547,17 @@ class Memories extends GetView<MemoriesController> {
                                   child: ClipRRect(
                                     borderRadius: const BorderRadius.all(
                                         Radius.circular(30)),
-                                    child: controller.memoriesList[index]
+                                    child: controller.sharedMemoriesList[index]
                                                     .userModel !=
                                                 null &&
                                             controller
-                                                .memoriesList[index]
+                                                .sharedMemoriesList[index]
                                                 .userModel!
                                                 .profileImage!
                                                 .isNotEmpty
                                         ? CachedNetworkImage(
                                             imageUrl: controller
-                                                .memoriesList[index]
+                                                .sharedMemoriesList[index]
                                                 .userModel!
                                                 .profileImage!,
                                             fit: BoxFit.cover,
@@ -599,14 +597,9 @@ class Memories extends GetView<MemoriesController> {
                                   child: isJoined == 0
                                       ? InkWell(
                                           onTap: () {
-                                            // showInviteRepondDialog(context);
-                                            controller.updateJoinStatus(
-                                                controller
-                                                    .sharedMemoriesList[index]
-                                                    .memoryId,
-                                                1,
-                                                index,
-                                                shareIndex);
+                                            showInviteRepondDialog(
+                                                context, index, shareIndex);
+
                                             controller.update();
                                           },
                                           child: Container(
@@ -646,95 +639,126 @@ class Memories extends GetView<MemoriesController> {
             : Container());
   }
 
-  showInviteRepondDialog(BuildContext context) {
-    Get.defaultDialog(
-        title: '',
-        radius: 9,
-        content: Container(
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: Stack(
-                  children: [
-                    const Text(
-                      'Join a shared memory',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: robotoMedium,
-                          color: Colors.black),
-                      textAlign: TextAlign.center,
-                    ),
-                    Positioned(
-                      right: 40,
-                      top: 10,
-                      child: IconButton(
-                          onPressed: () {
-                            Get.back();
-                          },
-                          icon: const Icon(
-                            Icons.close,
-                            size: 25,
-                            color: AppColors.darkColor,
-                          )),
-                    )
-                  ],
-                ),
+  showInviteRepondDialog(BuildContext context, int index, int shareIndex) {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        useRootNavigator: true,
+        useSafeArea: true,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 150,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(9)),
+                color: Colors.white,
               ),
-              Container(
-                height: 1,
-                color: AppColors.hintTextColor,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: 45,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        const Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Join a shared memory',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: robotoMedium,
+                                color: Colors.black),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                size: 25,
+                                color: AppColors.darkColor,
+                              )),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 1,
+                    color: AppColors.hintTextColor,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              controller.updateJoinStatus(
+                                  controller.sharedMemoriesList[index].memoryId,
+                                  1,
+                                  index,
+                                  shareIndex);
+                              Get.back();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: AppColors.primaryColor, width: 2),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(12))),
+                              child: const Text(
+                                'Accept',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: robotoBold,
+                                    color: AppColors.primaryColor),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: AppColors.redBorder, width: 2),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(12))),
+                              child: const Text(
+                                'Deny',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: robotoBold,
+                                    color: AppColors.redBorder),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
               ),
-              Container(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: AppColors.primaryColor, width: 2),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(12))),
-                        child: const Text(
-                          'Accept',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: robotoBold,
-                              color: AppColors.primaryColor),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: AppColors.redBorder, width: 2),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(12))),
-                        child: const Text(
-                          'Deny',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: robotoBold,
-                              color: AppColors.redBorder),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        ));
+            ),
+          );
+        });
   }
 }

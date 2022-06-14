@@ -23,6 +23,7 @@ class MemoriesController extends GetxController {
   RxBool showNext = false.obs;
   var mediaPages = List.empty(growable: true).obs;
   var memoriesList = List.empty(growable: true).obs;
+  var noData = false.obs;
   RxList sharedMemoriesList = List.empty(growable: true).obs;
   RxList selectionList = List.empty(growable: true).obs;
   RxList selectedIndexList = List.empty(growable: true).obs;
@@ -45,6 +46,7 @@ class MemoriesController extends GetxController {
   String URI_PREFIX_FIREBASE = "https://stasht.page.link";
   String DEFAULT_FALLBACK_URL_ANDROID = "https://stasht.page.link";
   List<Asset> resultList = List<Asset>.empty(growable: true);
+  Rx<Uri> shareLink = Uri().obs;
   @override
   void onInit() {
     super.onInit();
@@ -96,7 +98,14 @@ class MemoriesController extends GetxController {
     memoriesRef.doc(memoryId).update(memoriesModels.toJson()).then((value) => {
           print('Deleted Successfully!'),
           update(),
-          if (memoriesModels.imagesCaption!.isEmpty) {Get.back()}
+          if (memoriesModels.imagesCaption!.isEmpty)
+            {
+              Get.back(),
+              memoriesRef
+                  .doc(memoryId)
+                  .delete()
+                  .then((value) => {print('Delete')})
+            }
         });
   }
 
@@ -141,6 +150,7 @@ class MemoriesController extends GetxController {
         .get()
         .then((value) => {
               print('value $userId => ${value.docs.length}'),
+            noData.value =value.docs.isNotEmpty,
               value.docs.forEach((element) {
                 // getUserData(element.data().createdBy!);
                 usersRef.doc(userId).get().then(
@@ -184,30 +194,29 @@ class MemoriesController extends GetxController {
 
 // Create Dynamic Link
   Future<void> createDynamicLink(String memoryId, bool short, int index) async {
-    String link =
-        "$DEFAULT_FALLBACK_URL_ANDROID?memory_id=${memoriesList[index].memoryId}";
+    String link = "$DEFAULT_FALLBACK_URL_ANDROID?memory_id=$memoryId";
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: URI_PREFIX_FIREBASE,
       link: Uri.parse(link),
       androidParameters: const AndroidParameters(
         packageName: 'com.app.stasht',
-        minimumVersion: 0,
+        minimumVersion: 1,
       ),
       iosParameters: const IOSParameters(
         bundleId: 'com.app.stasht2',
-        minimumVersion: '0',
+        minimumVersion: '1',
       ),
     );
 
-    Uri url;
     if (short) {
       final ShortDynamicLink shortLink =
           await dynamicLinks.buildShortLink(parameters);
-      url = shortLink.shortUrl;
+      shareLink.value = shortLink.shortUrl;
     } else {
-      url = await dynamicLinks.buildLink(parameters);
+      shareLink.value = await dynamicLinks.buildLink(parameters);
     }
-    share(memoryId, url.toString(), index);
+
+    // share(memoryId, url.toString(), index);
   }
 
   // Pick Images from gallery
@@ -253,7 +262,32 @@ class MemoriesController extends GetxController {
 
   // Get User Data
   getUserData(String userId) async {
-    // await usersRef.doc(userId).get().then((value) => userModel = value.data()!);
+    return await usersRef.doc(userId).get();
+  }
+
+  void deleteCollaborator(String memoryId, MemoriesModel memoriesModel,
+      int shareIndex, int mainIndex) {
+    memoriesModel.sharedWith!.removeAt(shareIndex);
+    memoriesRef
+        .doc(memoryId)
+        .set(memoriesModel)
+        .then((value) => print('DeleteCollaborator'));
+    sharedMemoriesList[mainIndex] = memoriesModel;
+  }
+
+  List<SharedWith> getSharedUsers(MemoriesModel memoriesModels) {
+    List<SharedWith> sharedModels = List.empty(growable: true);
+    if (memoriesModels.sharedWith!.isNotEmpty) {
+      int index = 0;
+      var shareObject = memoriesModels.sharedWith!.where(
+        (element) {
+          index = memoriesModels.sharedWith!.indexOf(element);
+          return element.status == 1;
+        },
+      );
+      sharedModels.add(shareObject.elementAt(index));
+    }
+    return sharedModels;
   }
 
   // check and request permission

@@ -8,6 +8,7 @@ import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:stasht/utils/constants.dart';
 
 class Memory_Lane extends GetView<MemoriesController> {
   int? mainIndex;
@@ -61,12 +62,12 @@ class Memory_Lane extends GetView<MemoriesController> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    // Get.toNamed(AppRoutes.collaborators,
-                                    //     arguments: {
-                                    //       'mainIndex': mainIndex,
-                                    //       'imageIndex': 0,
-                                    //       'list': memoriesModel
-                                    //     });
+                                    Get.toNamed(AppRoutes.collaborators,
+                                        arguments: {
+                                          'mainIndex': mainIndex,
+                                          'imageIndex': 0,
+                                          'list': memoriesModel
+                                        });
                                     controller.createDynamicLink(
                                         memoriesModel!.memoryId!,
                                         true,
@@ -75,6 +76,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   child: const Icon(
                                     Icons.person_add_alt_1_outlined,
                                     color: Colors.white,
+                                    size: 25,
                                   ),
                                 )
                               ],
@@ -291,7 +293,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   //       Icons.more_horiz,
                                   //       size: 25,
                                   //     )),
-                                  moreButton(
+                                if(memoriesModel!.createdBy==userId)  moreButton(
                                       context,
                                       memoriesModel!.memoryId!,
                                       index,
