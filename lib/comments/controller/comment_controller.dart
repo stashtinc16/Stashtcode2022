@@ -49,10 +49,11 @@ class CommentsController extends GetxController {
   }
 
   void startStreamAndGetList() {
-    print('ImageID ${memoriesModel.imagesCaption![imageIndex].imageId}');
+    print(
+        'ImageID ${memoriesModel.imagesCaption![imageIndex].imageId} memoryId: ${memoriesModel.memoryId} imageIndex: $imageIndex');
     FirebaseFirestore.instance
         .collection(commentsCollection)
-        .where('memory_id', isEqualTo: Get.arguments['memoryId'])
+        .where('memory_id', isEqualTo: memoriesModel.memoryId)
         .where('image_id',
             isEqualTo: memoriesModel.imagesCaption![imageIndex].imageId)
         .orderBy('created_at', descending: false)
@@ -64,8 +65,12 @@ class CommentsController extends GetxController {
         .snapshots()
         .listen((event) {
       // here count is a field name in firestore database
-      print('OutSide => ${commentsList.length}');
+      print(
+          'OutSide => ${event.docs.length} ListLength ${commentsList.length}');
       commentsList.clear();
+      print(
+          'OutSide After=> ${event.docs.length} ListLength ${commentsList.length}');
+
       for (var element in event.docs) {
         usersRef.doc(element.data().userId).get().then((userValue) {
           CommentsModel commentsModel = CommentsModel();
@@ -79,16 +84,19 @@ class CommentsController extends GetxController {
           if (element.id == event.docs[event.docs.length - 1].id) {
             memoryRef.doc(commentsModel.memoryId).get().then((value) {
               MemoriesModel memoriesModel = value.data()!;
-              memoriesModel.commentCount = commentsList.length;
-              print('CommentCount ${commentsList.length}');
+              print(
+                  'MemoryId ${memoriesModel.memoryId} CommentsMemoryId: ${commentsModel.memoryId} ImageIndex: $imageIndex');
+              memoriesModel.imagesCaption![imageIndex].commentCount =
+                  commentsList.length;
+              // memoriesModel.commentCount = commentsList.length;
+              print(
+                  'CommentCount== ${commentsList.length} =>> ${memoriesModel.imagesCaption![imageIndex].commentCount}');
               // memoriesModel = memoryRef
 
               memoryRef
                   .doc(commentsModel.memoryId)
                   .set(memoriesModel)
-                  .then((value) => {
-                        print('Comment Count updated  '),
-                      })
+                  .then((value) => {print('Comment Count updated  '), update()})
                   .onError((error, stackTrace) => {});
             });
           }

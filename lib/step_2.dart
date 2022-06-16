@@ -8,17 +8,17 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
+import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 
 class Step_2 extends GetView<MemoriesController> {
-
   @override
   Widget build(BuildContext context) {
     print(
         'ScreenDimensions ${MediaQuery.of(context).size.width} => ${MediaQuery.of(context).size.height}');
     var data = Get.arguments;
-  
+
     return GetBuilder(
       builder: (MemoriesController controller) => Scaffold(
           body: SafeArea(
@@ -242,7 +242,8 @@ class Step_2 extends GetView<MemoriesController> {
           )),
           bottomSheet: InkWell(
               onTap: () {
-                controller.uploadImagesToMemories(0);
+                MemoriesModel? memoriesModel;
+                controller.uploadImagesToMemories(0, "", memoriesModel!);
               },
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -270,5 +271,4 @@ class Step_2 extends GetView<MemoriesController> {
               ))),
     );
   }
-
 }

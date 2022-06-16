@@ -117,6 +117,9 @@ class SignupController extends GetxController {
                     EasyLoading.dismiss(),
                     if (value.docs.isNotEmpty)
                       {
+                        if(value.docs[0].data().deviceToken!.isEmpty){
+                        usersRef.doc(value.docs[0].id).update({"device_token":globalNotificationToken})
+                        },
                         saveSession(
                             value.docs[0].id,
                             value.docs[0].data().displayName!,
@@ -168,7 +171,7 @@ class SignupController extends GetxController {
         userName: username,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        deviceToken: "",
+        deviceToken: globalNotificationToken,
         deviceType: Platform.isAndroid ? "Android" : "IOS",
         displayName: username,
         email: user!.email,
@@ -269,7 +272,7 @@ class SignupController extends GetxController {
         userName: name!,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        deviceToken: "",
+        deviceToken: globalNotificationToken,
         deviceType: Platform.isAndroid ? "Android" : "IOS",
         displayName: name,
         email: email,

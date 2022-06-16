@@ -13,13 +13,22 @@ import 'package:stasht/utils/constants.dart';
 class Memory_Lane extends GetView<MemoriesController> {
   int? mainIndex;
   MemoriesModel? memoriesModel;
+  String? type;
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     mainIndex = Get.arguments['mainIndex'];
-    memoriesModel = Get.arguments['list'];
+    // memoriesModel = Get.arguments['list'];
+    type = Get.arguments['type'];
+    print('mainIndex $mainIndex');
+    if (type == "1") {
+      memoriesModel = controller.memoriesList[mainIndex!];
+    } else {
+      memoriesModel = controller.sharedMemoriesList[mainIndex!];
+    }
+    print('memoryId ====>  ${memoriesModel!.memoryId}');
     return GetBuilder(
       builder: (MemoriesController controller) {
         return Scaffold(
@@ -32,12 +41,16 @@ class Memory_Lane extends GetView<MemoriesController> {
                     width: MediaQuery.of(context).size.width,
                     height: 170,
                     padding: const EdgeInsets.only(top: 45),
-                    decoration:  memoriesModel!.imagesCaption!.isNotEmpty ?  BoxDecoration(
-                        image: DecorationImage(
-                            image: CachedNetworkImageProvider(
-                                memoriesModel!.imagesCaption![0].image!),
-                            fit: BoxFit.cover)) : null,
-                            color:  memoriesModel!.imagesCaption!.isNotEmpty ?null :Colors.grey,
+                    decoration: memoriesModel!.imagesCaption!.isNotEmpty
+                        ? BoxDecoration(
+                            image: DecorationImage(
+                                image: CachedNetworkImageProvider(
+                                    memoriesModel!.imagesCaption![0].image!),
+                                fit: BoxFit.cover))
+                        : null,
+                    color: memoriesModel!.imagesCaption!.isNotEmpty
+                        ? null
+                        : Colors.grey,
                   ),
                   Container(
                       width: MediaQuery.of(context).size.width,
@@ -51,22 +64,28 @@ class Memory_Lane extends GetView<MemoriesController> {
                         child: Stack(
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                IconButton(
-                                  onPressed: () => Get.back(),
-                                  icon: const Icon(
-                                    Icons.arrow_back_ios_outlined,
-                                    color: Colors.white,
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () => Get.back(),
+                                        icon: const Icon(
+                                          Icons.arrow_back_ios_outlined,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                InkWell(
+                                if(userId==memoriesModel!.createdBy)InkWell(
                                   onTap: () {
                                     Get.toNamed(AppRoutes.collaborators,
                                         arguments: {
                                           'mainIndex': mainIndex,
                                           'imageIndex': 0,
-                                          'list': memoriesModel
+                                          'list': memoriesModel,
+                                          'type': type
                                         });
                                     controller.createDynamicLink(
                                         memoriesModel!.memoryId!,
@@ -75,6 +94,21 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   },
                                   child: const Icon(
                                     Icons.person_add_alt_1_outlined,
+                                    color: Colors.white,
+                                    size: 25,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 15,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    controller.pickImages(
+                                        memoriesModel!.memoryId!,
+                                        memoriesModel!);
+                                  },
+                                  child: const Icon(
+                                    Icons.add_box_rounded,
                                     color: Colors.white,
                                     size: 25,
                                   ),
@@ -135,6 +169,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                 child: ListView.builder(
                   itemCount: memoriesModel!.imagesCaption!.length,
                   itemBuilder: (context, index) {
+                    print(
+                        'object ${memoriesModel!.imagesCaption![index].commentCount}');
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -251,7 +287,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   .imagesCaption![index].image,
                                               'list': memoriesModel,
                                               'mainIndex': mainIndex,
-                                              'imageIndex': index
+                                              'imageIndex': index,
+                                              'type': type
                                             });
                                       }
                                     },
@@ -293,13 +330,14 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   //       Icons.more_horiz,
                                   //       size: 25,
                                   //     )),
-                                if(memoriesModel!.createdBy==userId)  moreButton(
-                                      context,
-                                      memoriesModel!.memoryId!,
-                                      index,
-                                      controller,
-                                      memoriesModel!,
-                                      memoriesModel!.imagesCaption![index]),
+                                  if (memoriesModel!.createdBy == userId)
+                                    moreButton(
+                                        context,
+                                        memoriesModel!.memoryId!,
+                                        index,
+                                        controller,
+                                        memoriesModel!,
+                                        memoriesModel!.imagesCaption![index]),
                                   const SizedBox(
                                     width: 6,
                                   ),
@@ -365,7 +403,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   Get.toNamed(AppRoutes.addCaption, arguments: {
                                     'mainIndex': mainIndex,
                                     'imageIndex': index,
-                                    'list': memoriesModel
+                                    'list': memoriesModel,
+                                    'type': type
                                   });
                                 },
                                 child: Container(

@@ -74,7 +74,7 @@ class ImagesCaption {
   int? commentCount;
   String? imageId;
 
-  ImagesCaption({this.caption, this.image, this.commentCount,this.imageId});
+  ImagesCaption({this.caption, this.image, this.commentCount, this.imageId});
 
   ImagesCaption.fromJson(Map<String, dynamic> json) {
     caption = json['caption'];

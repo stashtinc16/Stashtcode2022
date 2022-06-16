@@ -18,448 +18,440 @@ class Memories extends GetView<MemoriesController> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.white));
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
     return GetBuilder(
-        builder: (MemoriesController controller) => SafeArea(
-              child: Container(
-                color: Colors.white,
-                child: Scaffold(
-                  backgroundColor: Colors.white,
-                  appBar: commonAppbar(
-                    context,
-                    memoriesTitle,
-                    pageSelected:
-                        (isMemory, isPhotos, isNotification, isSettings) => {
-                      print('isSettings $isSettings'),
-                      if (isSettings) {Get.toNamed(AppRoutes.profile)}
-                    },
-                  ),
-                  body: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Obx(
-                          () => Visibility(
-                            maintainAnimation: true,
-                            maintainSize: false,
-                            maintainState: true,
-                            visible: !controller.noData.value,
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  noMemoriesPlaceholder,
-                                  height: 230,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Text("You haven't created a memory yet!",
+        builder: (MemoriesController controller) => Container(
+              color: Colors.white,
+              child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                backgroundColor: Colors.white,
+                appBar: commonAppbar(
+                  context,
+                  memoriesTitle,
+                  pageSelected:
+                      (isMemory, isPhotos, isNotification, isSettings) => {
+                    print('isSettings $isSettings'),
+                    if (isSettings) {Get.toNamed(AppRoutes.profile)}
+                  },
+                ),
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Obx(
+                        () => Visibility(
+                          maintainAnimation: true,
+                          maintainSize: false,
+                          maintainState: true,
+                          visible: !controller.noData.value,
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                noMemoriesPlaceholder,
+                                height: 230,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text("You haven't created a memory yet!",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 16)),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  controller.createMemoriesStep1();
+                                },
+                                child: const Text("Create your first memory!",
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 16)),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    controller.createMemoriesStep1();
-                                  },
-                                  child: const Text("Create your first memory!",
-                                      style: TextStyle(
-                                          color: AppColors.primaryColor,
-                                          fontSize: 15,
-                                          decoration:
-                                              TextDecoration.underline)),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            if (controller.memoriesList.isNotEmpty) {
-                              controller.myMemoriesExpand.value =
-                                  !controller.myMemoriesExpand.value;
-                            }
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            margin: const EdgeInsets.only(top: 15),
-                            child: Row(
-                              children: [
-                                Obx(
-                                  () => Icon(
-                                    controller.myMemoriesExpand.value
-                                        ? Icons.arrow_drop_down
-                                        : Icons.arrow_right,
-                                    color: Colors.black,
-                                    size: 30,
-                                  ),
-                                ),
-                                Obx(
-                                  () => Text(
-                                    "My Memories (${controller.memoriesList.length}) ",
-                                    style: const TextStyle(
-                                        color: Colors.black,
+                                        color: AppColors.primaryColor,
                                         fontSize: 15,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
+                                        decoration: TextDecoration.underline)),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                            ],
                           ),
                         ),
-                        Obx(() => Container(
-                            color: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: controller.myMemoriesExpand.value
-                                ? ListView.builder(
-                                    itemCount: controller.memoriesList.length,
-                                    shrinkWrap: true,
-                                    primary: false,
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return InkWell(
-                                          onTap: () {
-                                            Get.toNamed(AppRoutes.memoryList,
-                                                arguments: {
-                                                  'mainIndex': index,
-                                                  'list': controller
-                                                      .memoriesList[index]
-                                                });
-                                          },
-                                          child: Container(
-                                            margin:
-                                                const EdgeInsets.only(top: 20),
-                                            child: Stack(
-                                              children: [
-                                                Card(
-                                                  elevation: 1,
-                                                  shape:
-                                                      const RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          15))),
-                                                  child: Container(
-                                                    height: 100,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    decoration: BoxDecoration(
-                                                      image: controller
-                                                              .memoriesList[
-                                                                  index]
-                                                              .imagesCaption
-                                                              .isNotEmpty
-                                                          ? DecorationImage(
-                                                              image:
-                                                                  CachedNetworkImageProvider(
-                                                                controller
-                                                                        .memoriesList[
-                                                                            index]
-                                                                        .imagesCaption
-                                                                        .isNotEmpty
-                                                                    ? controller
-                                                                        .memoriesList[
-                                                                            index]
-                                                                        .imagesCaption[
-                                                                            0]
-                                                                        .image
-                                                                    : "",
-                                                              ),
-                                                              fit: BoxFit.cover)
-                                                          : null,
-                                                      color: controller
-                                                              .memoriesList[
-                                                                  index]
-                                                              .imagesCaption
-                                                              .isNotEmpty
-                                                          ? null
-                                                          : Colors.grey,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  height: 100,
-                                                  margin:
-                                                      const EdgeInsets.all(5),
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  decoration: BoxDecoration(
-                                                    color: AppColors.shadowColor
-                                                        .withOpacity(0.27),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        height: 45,
-                                                        width: 45,
-                                                        margin: const EdgeInsets
-                                                                .symmetric(
-                                                            horizontal: 15),
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.grey,
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .white,
-                                                                width: 1)),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                      .all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          30)),
-                                                          child: controller
-                                                                          .memoriesList[
-                                                                              index]
-                                                                          .userModel !=
-                                                                      null &&
-                                                                  controller
-                                                                      .memoriesList[
-                                                                          index]
-                                                                      .userModel!
-                                                                      .profileImage!
-                                                                      .isNotEmpty
-                                                              ? CachedNetworkImage(
-                                                                  imageUrl: controller
-                                                                      .memoriesList[
-                                                                          index]
-                                                                      .userModel!
-                                                                      .profileImage!,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  height: 45,
-                                                                  width: 45,
-                                                                  progressIndicatorBuilder: (context,
-                                                                          url,
-                                                                          downloadProgress) =>
-                                                                      CircularProgressIndicator(
-                                                                          value:
-                                                                              downloadProgress.progress))
-                                                              : Image.asset(
-                                                                  userIcon,
-                                                                  fit: BoxFit
-                                                                      .fill,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                              controller
-                                                                      .memoriesList
-                                                                      .isNotEmpty
-                                                                  ? controller
-                                                                      .memoriesList[
-                                                                          index]
-                                                                      .title!
-                                                                  : "",
-                                                              style: const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontSize: 18),
-                                                            ),
-                                                            Text(
-                                                              controller.memoriesList[index]
-                                                                          .userModel !=
-                                                                      null
-                                                                  ? "Author : ${controller.memoriesList[index].userModel!.userName!}"
-                                                                  : "",
-                                                              style: const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 12),
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        height: 35,
-                                                        width: 35,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        margin: const EdgeInsets
-                                                                .symmetric(
-                                                            horizontal: 10),
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                shape: BoxShape
-                                                                    .circle),
-                                                        child: Text(
-                                                          controller
-                                                                  .memoriesList
-                                                                  .isNotEmpty
-                                                              ? "${controller.memoriesList[index].imagesCaption!.length}"
-                                                              : "0",
-                                                          style: const TextStyle(
-                                                              color: AppColors
-                                                                  .primaryColor,
-                                                              fontSize: 14),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ));
-                                    },
-                                  )
-                                : Container())),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 2,
-                          width: MediaQuery.of(context).size.width,
-                          color: AppColors.bgColor,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            controller.sharedMemoriesExpand.value =
-                                !controller.sharedMemoriesExpand.value;
-                            if (controller.sharedMemoriesExpand.value) {
-                              controller.getSharedMemories();
-                            }
-                            controller.update();
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: Row(
-                              children: [
-                                Obx(
-                                  () => Icon(
-                                    controller.sharedMemoriesExpand.value
-                                        ? Icons.arrow_drop_down
-                                        : Icons.arrow_right,
-                                    color: Colors.black,
-                                    size: 30,
-                                  ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          if (controller.memoriesList.isNotEmpty) {
+                            controller.myMemoriesExpand.value =
+                                !controller.myMemoriesExpand.value;
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          margin: const EdgeInsets.only(top: 15),
+                          child: Row(
+                            children: [
+                              Obx(
+                                () => Icon(
+                                  controller.myMemoriesExpand.value
+                                      ? Icons.arrow_drop_down
+                                      : Icons.arrow_right,
+                                  color: Colors.black,
+                                  size: 30,
                                 ),
-                                Text(
-                                  "Shared Memories (${controller.sharedMemoriesList.length}) ",
+                              ),
+                              Obx(
+                                () => Text(
+                                  "My Memories (${controller.memoriesList.length}) ",
                                   style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        sharedMemoryUI(),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 2,
-                          width: MediaQuery.of(context).size.width,
-                          color: AppColors.bgColor,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            // showInviteRepondDialog(context,index,s);
-                            // isCheck = !isCheck;
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: Row(
-                              children: [
-                                isCheck
-                                    ? const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black,
-                                        size: 30,
-                                      )
-                                    : const Icon(
-                                        Icons.arrow_right,
-                                        color: Colors.black,
-                                        size: 30,
-                                      ),
-                                const Text(
-                                  "My Published (0) ",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
+                      ),
+                      Obx(() => Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: controller.myMemoriesExpand.value
+                              ? ListView.builder(
+                                  itemCount: controller.memoriesList.length,
+                                  shrinkWrap: true,
+                                  primary: false,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return InkWell(
+                                        onTap: () {
+                                          Get.toNamed(AppRoutes.memoryList,
+                                              arguments: {
+                                                'mainIndex': index,
+                                                'list': controller
+                                                    .memoriesList[index],
+                                                'type': "1"
+                                              });
+                                        },
+                                        child: Container(
+                                          margin:
+                                              const EdgeInsets.only(top: 20),
+                                          child: Stack(
+                                            children: [
+                                              Card(
+                                                elevation: 1,
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                child: Container(
+                                                  height: 100,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  decoration: BoxDecoration(
+                                                    image: controller
+                                                            .memoriesList[index]
+                                                            .imagesCaption
+                                                            .isNotEmpty
+                                                        ? DecorationImage(
+                                                            image:
+                                                                CachedNetworkImageProvider(
+                                                              controller
+                                                                      .memoriesList[
+                                                                          index]
+                                                                      .imagesCaption
+                                                                      .isNotEmpty
+                                                                  ? controller
+                                                                      .memoriesList[
+                                                                          index]
+                                                                      .imagesCaption[
+                                                                          0]
+                                                                      .image
+                                                                  : "",
+                                                            ),
+                                                            fit: BoxFit.cover)
+                                                        : null,
+                                                    color: controller
+                                                            .memoriesList[index]
+                                                            .imagesCaption
+                                                            .isNotEmpty
+                                                        ? null
+                                                        : Colors.grey,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                height: 100,
+                                                margin: const EdgeInsets.all(5),
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.shadowColor
+                                                      .withOpacity(0.27),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      height: 45,
+                                                      width: 45,
+                                                      margin: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 15),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.grey,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          border: Border.all(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: 1)),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                    .all(
+                                                                Radius.circular(
+                                                                    30)),
+                                                        child: controller
+                                                                        .memoriesList[
+                                                                            index]
+                                                                        .userModel !=
+                                                                    null &&
+                                                                controller
+                                                                    .memoriesList[
+                                                                        index]
+                                                                    .userModel!
+                                                                    .profileImage!
+                                                                    .isNotEmpty
+                                                            ? CachedNetworkImage(
+                                                                imageUrl: controller
+                                                                    .memoriesList[
+                                                                        index]
+                                                                    .userModel!
+                                                                    .profileImage!,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                height: 45,
+                                                                width: 45,
+                                                                progressIndicatorBuilder: (context,
+                                                                        url,
+                                                                        downloadProgress) =>
+                                                                    CircularProgressIndicator(
+                                                                        value: downloadProgress
+                                                                            .progress))
+                                                            : Image.asset(
+                                                                userIcon,
+                                                                fit:
+                                                                    BoxFit.fill,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            controller
+                                                                    .memoriesList
+                                                                    .isNotEmpty
+                                                                ? controller
+                                                                    .memoriesList[
+                                                                        index]
+                                                                    .title!
+                                                                : "",
+                                                            style: const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 18),
+                                                          ),
+                                                          Text(
+                                                            controller
+                                                                        .memoriesList[
+                                                                            index]
+                                                                        .userModel !=
+                                                                    null
+                                                                ? "Author : ${controller.memoriesList[index].userModel!.userName!}"
+                                                                : "",
+                                                            style: const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 12),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      margin: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 10),
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              shape: BoxShape
+                                                                  .circle),
+                                                      child: Text(
+                                                        controller.memoriesList
+                                                                .isNotEmpty
+                                                            ? "${controller.memoriesList[index].imagesCaption!.length}"
+                                                            : "0",
+                                                        style: const TextStyle(
+                                                            color: AppColors
+                                                                .primaryColor,
+                                                            fontSize: 14),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ));
+                                  },
+                                )
+                              : Container())),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 2,
+                        width: MediaQuery.of(context).size.width,
+                        color: AppColors.bgColor,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          controller.sharedMemoriesExpand.value =
+                              !controller.sharedMemoriesExpand.value;
+                          if (controller.sharedMemoriesExpand.value) {
+                            controller.getSharedMemories();
+                          }
+                          controller.update();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Row(
+                            children: [
+                              Obx(
+                                () => Icon(
+                                  controller.sharedMemoriesExpand.value
+                                      ? Icons.arrow_drop_down
+                                      : Icons.arrow_right,
+                                  color: Colors.black,
+                                  size: 30,
+                                ),
+                              ),
+                              Text(
+                                "Shared Memories (${controller.sharedMemoriesList.length}) ",
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
                         ),
-                        Container(
-                          height: 2,
-                          width: MediaQuery.of(context).size.width,
-                          color: AppColors.bgColor,
+                      ),
+                      sharedMemoryUI(),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 2,
+                        width: MediaQuery.of(context).size.width,
+                        color: AppColors.bgColor,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          // showInviteRepondDialog(context,index,s);
+                          // isCheck = !isCheck;
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Row(
+                            children: [
+                              isCheck
+                                  ? const Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.black,
+                                      size: 30,
+                                    )
+                                  : const Icon(
+                                      Icons.arrow_right,
+                                      color: Colors.black,
+                                      size: 30,
+                                    ),
+                              const Text(
+                                "My Published (0) ",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 2,
+                        width: MediaQuery.of(context).size.width,
+                        color: AppColors.bgColor,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                    ],
                   ),
-                  floatingActionButton: SizedBox(
-                      height: 70,
-                      width: 70,
-                      child: FittedBox(
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            Get.toNamed(AppRoutes.memoriesStep1,
-                                arguments: "no");
-                          },
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                          backgroundColor: Colors.deepPurpleAccent,
-                          elevation: 0,
-                        ),
-                      )),
-                  floatingActionButtonLocation:
-                      FloatingActionButtonLocation.centerFloat,
                 ),
+                floatingActionButton: SizedBox(
+                    height: 70,
+                    width: 70,
+                    child: FittedBox(
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          Get.toNamed(AppRoutes.memoriesStep1, arguments: "no");
+                        },
+                        child: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 25,
+                        ),
+                        backgroundColor: Colors.deepPurpleAccent,
+                        elevation: 0,
+                      ),
+                    )),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.centerFloat,
               ),
             ));
   }
@@ -496,10 +488,14 @@ class Memories extends GetView<MemoriesController> {
 
                   return InkWell(
                       onTap: () {
-                        Get.toNamed(AppRoutes.memoryList, arguments: {
-                          'mainIndex': index,
-                          'list': controller.sharedMemoriesList[index]
-                        });
+                        print('index $index');
+                        if (isJoined == 1) {
+                          Get.toNamed(AppRoutes.memoryList, arguments: {
+                            'mainIndex': index,
+                            'list': controller.sharedMemoriesList[index],
+                            'type': "2"
+                          });
+                        }
                       },
                       child: Stack(
                         children: [
@@ -640,123 +636,121 @@ class Memories extends GetView<MemoriesController> {
   }
 
   showInviteRepondDialog(BuildContext context, int index, int shareIndex) {
-    showDialog(
+    showModalBottomSheet(
         context: context,
-        barrierDismissible: true,
-        useRootNavigator: true,
-        useSafeArea: true,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 150,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(9)),
-                color: Colors.white,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: 45,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        const Align(
-                          alignment: Alignment.center,
+        isScrollControlled: false,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+        builder: (context) {
+          return Container(
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    topLeft: Radius.circular(15)),
+                color: Colors.white),
+            height: 200,
+            child: Column(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Stack(
+                    children: [
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(25.0),
                           child: Text(
                             'Join a shared memory',
                             style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: robotoMedium,
-                                color: Colors.black),
+                                fontSize: 18,
+                                color: AppColors.darkColor,
+                                fontFamily: robotoBold),
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                              onPressed: () {
-                                Get.back();
-                              },
-                              icon: const Icon(
-                                Icons.close,
-                                size: 25,
-                                color: AppColors.darkColor,
-                              )),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: 1,
-                    color: AppColors.hintTextColor,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              controller.updateJoinStatus(
-                                  controller.sharedMemoriesList[index].memoryId,
-                                  1,
-                                  index,
-                                  shareIndex);
-                              Get.back();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: AppColors.primaryColor, width: 2),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(12))),
-                              child: const Text(
-                                'Accept',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: robotoBold,
-                                    color: AppColors.primaryColor),
-                              ),
-                            ),
+                      ),
+                      Positioned(
+                        top: 0,
+                        bottom: 0,
+                        right: 10,
+                        child: IconButton(
+                          onPressed: () {
+                            Get.back();
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                            color: AppColors.darkColor,
+                            size: 20,
                           ),
                         ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: AppColors.redBorder, width: 2),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(12))),
-                              child: const Text(
-                                'Deny',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: robotoBold,
-                                    color: AppColors.redBorder),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
+                      )
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
                     ),
-                  )
-                ],
-              ),
+                    Expanded(
+                        child: InkWell(
+                      onTap: () {
+                        controller.updateJoinStatus(
+                            controller.sharedMemoriesList[index].memoryId,
+                            1,
+                            index,
+                            shareIndex);
+                        controller.acceptInviteNotification(
+                            controller.sharedMemoriesList[index].createdBy,
+                            controller.sharedMemoriesList[index].memoryId);
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(40),
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: AppColors.primaryColor,
+                              fontFamily: robotoBold),
+                          textAlign: TextAlign.center,
+                        ),
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            color: AppColors.hintTextColor),
+                      ),
+                    )),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                        child: InkWell(
+                      onTap: () {
+                        controller
+                            .deleteInvite(controller.sharedMemoriesList[index]);
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(40),
+                        child: const Text(
+                          'No',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: AppColors.primaryColor,
+                              fontFamily: robotoBold),
+                          textAlign: TextAlign.center,
+                        ),
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            color: AppColors.hintTextColor),
+                      ),
+                    )),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                )
+              ],
             ),
           );
         });

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:io' as io;
 
@@ -52,8 +53,10 @@ class MemoriesController extends GetxController {
     super.onInit();
 
     promptPermissionSetting();
-    getMyMemories();
+
+    print('fromShare $fromShare');
     sharedMemoriesExpand.value = fromShare;
+    getMyMemories();
     getSharedMemories();
   }
 
@@ -126,12 +129,12 @@ class MemoriesController extends GetxController {
         .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }
 
-  void updateInviteLink(String memoryID, String inviteLink, int index) {
+  void updateInviteLink(MemoriesModel model, String inviteLink) {
     MemoriesModel memoriesModel = MemoriesModel();
-    memoriesModel = memoriesList[index];
+    memoriesModel = model;
     memoriesModel.inviteLink = inviteLink;
     memoriesRef
-        .doc(memoryID)
+        .doc(model.memoryId)
         .set(memoriesModel)
         .then((value) => {
               print('update Invite Link '),
@@ -144,13 +147,15 @@ class MemoriesController extends GetxController {
   void getMyMemories() {
     memoriesList.clear();
     print('userId $userId');
+
     memoriesRef
         .where('created_by', isEqualTo: userId)
         .orderBy('created_at', descending: true)
-        .get()
-        .then((value) => {
+        .snapshots()
+        .listen((value) => {
               print('value $userId => ${value.docs.length}'),
-            noData.value =value.docs.isNotEmpty,
+              noData.value = value.docs.isNotEmpty,
+              memoriesList.clear(),
               value.docs.forEach((element) {
                 // getUserData(element.data().createdBy!);
                 usersRef.doc(userId).get().then(
@@ -158,14 +163,19 @@ class MemoriesController extends GetxController {
                     MemoriesModel memoriesModel = element.data();
                     memoriesModel.memoryId = element.id;
                     memoriesModel.userModel = userValue.data()!;
-                    print('commentCount ${element.data().commentCount}');
+                    for (int k = 0;
+                        k < element.data().imagesCaption!.length;
+                        k++) {
+                      print(
+                          'getMyMemories $k ${element.id} => ${element.data().imagesCaption![k].commentCount}');
+                    }
 
                     memoriesList.add(memoriesModel);
                     if (element.id == value.docs[value.docs.length - 1].id) {
                       print('Shared ${memoriesList.length}');
-                      if (!fromShare) {
-                        myMemoriesExpand.value = true;
-                      }
+                      // if (!fromShare) {
+                      myMemoriesExpand.value = !sharedMemoriesExpand.value;
+                      // }
                       update();
                     }
                   },
@@ -220,7 +230,7 @@ class MemoriesController extends GetxController {
   }
 
   // Pick Images from gallery
-  Future<void> pickImages() async {
+  Future<void> pickImages(String memoryId, MemoriesModel memoriesModel) async {
     try {
       resultList = await MultiImagePicker.pickImages(
         maxImages: 10,
@@ -230,19 +240,17 @@ class MemoriesController extends GetxController {
     } on Exception catch (e) {
       print(e);
     }
-
     // images = resultList;
-
-    uploadImagesToMemories(0);
+    uploadImagesToMemories(0, memoryId, memoriesModel);
   }
 
   // Share Dynamic Link
-  Future<void> share(String memoryId, String shareText, int indexValue) async {
+  Future<void> share(MemoriesModel memoriesModel, String shareText) async {
     await FlutterShare.share(
-        title: memoriesList[indexValue].title,
+        title: memoriesModel.title!,
         linkUrl: shareText,
         chooserTitle: 'Share memory folder via..');
-    updateInviteLink(memoryId, shareText, indexValue);
+    updateInviteLink(memoriesModel, shareText);
   }
 
   final memoriesRef = FirebaseFirestore.instance
@@ -266,13 +274,65 @@ class MemoriesController extends GetxController {
   }
 
   void deleteCollaborator(String memoryId, MemoriesModel memoriesModel,
-      int shareIndex, int mainIndex) {
+      int shareIndex, int mainIndex, String type) {
     memoriesModel.sharedWith!.removeAt(shareIndex);
     memoriesRef
         .doc(memoryId)
         .set(memoriesModel)
-        .then((value) => print('DeleteCollaborator'));
-    sharedMemoriesList[mainIndex] = memoriesModel;
+        .then((value) => debugPrint('DeleteCollaborator'));
+    if (type == "1") {
+      memoriesList[mainIndex] = memoriesModel;
+    } else {
+      sharedMemoriesList[mainIndex] = memoriesModel;
+    }
+  }
+
+  Future<void> acceptInviteNotification(
+      String receiverId, String memoryID) async {
+    var receiverToken = "";
+    var db = await FirebaseFirestore.instance
+        .collection("users")
+        .where("user_id", isEqualTo: receiverId)
+        .get();
+    db.docs.forEach((element) {
+      receiverToken = element.data()['firebase_token'];
+    });
+    String title = "Invite Accepted";
+    String description = "$userName has accepted your invite for memory.";
+    // String receiverToken = globalNotificationToken;
+    var dataPayload = jsonEncode({
+      'to': receiverToken,
+      'data': {
+        "type": "message",
+        "priority": "high",
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "sound": "default",
+        "senderId": userId,
+        "memoryID": memoryID
+      },
+      'notification': {
+        'title': title,
+        'body': description,
+        "badge": "1",
+        "sound": "default"
+      },
+      // 'to': receiverToken,
+      // 'data': {
+      //   "type": "message",
+      //   "priority": "high",
+      //   "click_action": "FLUTTER_NOTIFICATION_CLICK",
+      //   "sound": "default",
+      //   "senderId": userId,
+      // },
+      // 'notification': {
+      //   'title': title,
+      //   'body': description,
+      //   "badge": "1",
+      //   "sound": "default"
+      // },
+    });
+    sendPushMessage(receiverToken, dataPayload);
+    // saveNotificationData( title, description);
   }
 
   List<SharedWith> getSharedUsers(MemoriesModel memoriesModels) {
@@ -317,7 +377,9 @@ class MemoriesController extends GetxController {
       // status = await Permission.photos.status;
     } else {
       permission = Permission.storage;
-      permission.status.then((value) => {print('Permsission $value')});
+      status = await Permission.storage.status;
+      permissionStatus.value = status;
+      return true;
     }
     permissionStatus.value = status;
     print('promptPermissionSetting $status');
@@ -430,7 +492,8 @@ class MemoriesController extends GetxController {
     }
   }
 
-  Future<void> uploadImagesToMemories(int imageIndex) async {
+  Future<void> uploadImagesToMemories(
+      int imageIndex, String memoryId, MemoriesModel memoriesModel) async {
     if (resultList.isNotEmpty) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
@@ -442,7 +505,8 @@ class MemoriesController extends GetxController {
       final targetPath = dir.absolute.path + fileName;
 
       final File? newFile = await testCompressAndGetFile(file, targetPath);
-      final UploadTask? uploadTask = await uploadFile(newFile!, fileName);
+      final UploadTask? uploadTask =
+          await uploadFile(newFile!, fileName, memoryId, memoriesModel);
     } else {
       Get.snackbar('Error', "Please select images");
     }
@@ -461,7 +525,8 @@ class MemoriesController extends GetxController {
     return file;
   }
 
-  Future<void> uploadImagesToMemoriesOld(int imageIndex) async {
+  Future<void> uploadImagesToMemoriesOld(
+      int imageIndex, String memoryId, MemoriesModel memoriesModel) async {
     if (selectedIndexList.length > 0) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
@@ -476,14 +541,18 @@ class MemoriesController extends GetxController {
 
       final File? newFile = await testCompressAndGetFile(file, targetPath);
       final UploadTask? uploadTask = await uploadFile(
-          newFile!, mediaPages[selectedIndexList[imageIndex]].filename);
+          newFile!,
+          mediaPages[selectedIndexList[imageIndex]].filename,
+          memoryId,
+          memoriesModel);
     } else {
       Get.snackbar('Error', "Please select images");
     }
   }
 
   /// The user selects a file, and the task is added to the list.
-  Future<UploadTask?> uploadFile(File file, String fileName) async {
+  Future<UploadTask?> uploadFile(File file, String fileName, String memoryId,
+      MemoriesModel memoriesModel) async {
     UploadTask uploadTask;
     print('fileName $fileName');
     // Create a Reference to the file
@@ -512,19 +581,39 @@ class MemoriesController extends GetxController {
                 if (imageCaptionUrls.length < resultList.length)
                   {
                     uploadCount += 1,
-                    uploadImagesToMemories(uploadCount),
+                    uploadImagesToMemories(
+                        uploadCount, memoryId, memoriesModel),
                   }
                 else
-                  {EasyLoading.dismiss(), createMemories()}
+                  {
+                    EasyLoading.dismiss(),
+                    if (value.isEmpty)
+                      {createMemories()}
+                    else
+                      {updateMemory(memoryId, memoriesModel)}
+                  }
               })
         });
 
     return Future.value(uploadTask);
   }
 
+// Update or Add images to existing memory
+  void updateMemory(String memoryId, MemoriesModel memoriesModel) {
+    MemoriesModel memoriesModels = memoriesModel;
+
+    memoriesModels.imagesCaption!.addAll(imageCaptionUrls);
+    memoriesRef.doc(memoryId).update(memoriesModels.toJson()).then((value) => {
+          print('Updated Successfully!'),
+          update(),
+          if (memoriesModels.imagesCaption!.isEmpty)
+            {
+              Get.back(),
+            }
+        });
+  }
+
   Future<File?> testCompressAndGetFile(File file, String targetPath) async {
-    print("testCompressAndGetFile ${file.path}");
-    print('Exists ${file.lengthSync()}');
     final result = await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       targetPath,
@@ -532,7 +621,6 @@ class MemoriesController extends GetxController {
       minWidth: 600,
       minHeight: 600,
     );
-
     return result;
   }
 
@@ -574,5 +662,25 @@ class MemoriesController extends GetxController {
         .then((value) =>
             {print('UpdateCaption '), EasyLoading.dismiss(), Get.back()})
         .onError((error, stackTrace) => {EasyLoading.dismiss()});
+  }
+
+  void deleteInvite(MemoriesModel sharedMemories) {
+    MemoriesModel memoriesModel = sharedMemories;
+    print('MemoryID: ${memoriesModel.memoryId}');
+    int shareIndex = 0;
+
+    var shareObject = sharedMemories.sharedWith!.where(
+      (element) {
+        shareIndex = sharedMemories.sharedWith!.indexOf(element);
+
+        return element.userId == userId;
+      },
+    );
+
+    memoriesModel.sharedWith!.removeAt(shareIndex);
+    memoriesRef
+        .doc(sharedMemories.memoryId)
+        .set(memoriesModel)
+        .then((value) => {print('MemoryDeleted'), update()});
   }
 }

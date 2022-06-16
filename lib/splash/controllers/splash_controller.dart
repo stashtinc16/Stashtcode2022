@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
@@ -14,6 +17,8 @@ import 'package:stasht/memories/presentation/memories.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/constants.dart';
 import 'package:connectivity/connectivity.dart';
+
+import '../../main.dart';
 
 class SplashController extends GetxController {
   User? firebaseAuth = FirebaseAuth.instance.currentUser;
@@ -38,8 +43,45 @@ class SplashController extends GetxController {
   void onInit() {
     super.onInit();
     initDynamicLinks();
+    initializeFirebaseNotification();
     // _connectivitySubscription =
     //     _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  void initializeFirebaseNotification() {
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (message != null) {}
+    });
+
+    FirebaseMessaging.instance.getToken().then((value) =>
+        {globalNotificationToken = value!, print('GetToken $value')});
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              // TODO add a proper drawable resource to android, for now using
+              //      one that already exists in example app.
+              icon: '@mipmap/ic_launcher',
+            ),
+          ),
+        );
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+    });
   }
 
   Future<void> initDynamicLinks() async {
@@ -142,7 +184,6 @@ class SplashController extends GetxController {
   }
 
   handleNavigation(bool fromDeepLink) async {
-    
     Future.delayed(const Duration(milliseconds: 2500), () async {
       _isLogged = await facebookAuth.accessToken != null;
 
