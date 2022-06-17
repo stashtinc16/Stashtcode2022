@@ -8,8 +8,6 @@ import 'package:intl/intl.dart';
 class Comments extends GetView<CommentsController> {
   String memoryId = Get.arguments["memoryId"];
   String imagePath = Get.arguments!["memoryImage"];
-  // MemoriesModel memoriesModel = Get.arguments["list"];
-  // int imageIndex = Get.arguments["imageIndex"];
 
   Comments({Key? key}) : super(key: key);
   @override

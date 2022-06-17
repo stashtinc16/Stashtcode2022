@@ -16,4 +16,5 @@ abstract class AppRoutes {
   static const memoryList = "/memory_list";
   static const comments = "/comments";
   static const collaborators = "/collaborators";
+  static const notifications = "/notifications";
 }

@@ -4,17 +4,22 @@ import 'package:http/http.dart' as http;
 String userId = "";
 String userName = "";
 var userImage = ValueNotifier<String>("");
+var notificationCount = ValueNotifier<int>(0);
 String userEmail = "";
 String globalNotificationToken = "";
 bool isSocailUser = false;
 
 bool fromShare = false;
+//collections
 String memoriesCollection = "memories";
 String userCollection = "users";
 String commentsCollection = "comments";
+String notificationsCollection = "notifications";
 
+// App bar Titles
 String memoriesTitle = "Memories";
 String settingsTitle = "Settings";
+String notifications = "Notifications";
 
 bool checkValidEmail(String email) {
   return RegExp(

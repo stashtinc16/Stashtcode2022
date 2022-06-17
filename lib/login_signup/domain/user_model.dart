@@ -10,6 +10,7 @@ class UserModel {
   bool? status;
   String? deviceType;
   String? deviceToken;
+  int? notificationCount;
 
   UserModel(
       {this.userName,
@@ -20,7 +21,8 @@ class UserModel {
       this.updatedAt,
       this.status,
       this.deviceType,
-      this.deviceToken});
+      this.deviceToken,
+      this.notificationCount});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     userName = json['user_name'];
@@ -32,10 +34,11 @@ class UserModel {
     status = json['status'];
     deviceType = json['device_type'];
     deviceToken = json['device_token'];
+    notificationCount = json['notification_count'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['user_name'] = userName;
     data['email'] = email;
     data['display_name'] = displayName;
@@ -45,6 +48,7 @@ class UserModel {
     data['status'] = status;
     data['device_type'] = deviceType;
     data['device_token'] = deviceToken;
+    data['notification_count'] = notificationCount;
     return data;
   }
 }

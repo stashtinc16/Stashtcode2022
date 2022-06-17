@@ -69,7 +69,10 @@ class Profile extends GetView<ProfileController> {
             context,
             settingsTitle,
             pageSelected: (isMemory, isPhotos, isNotification, isSettings) => {
-              if (isMemory) {Get.toNamed(AppRoutes.memories)}
+              if (isMemory)
+                {Get.toNamed(AppRoutes.memories)}
+              else if (isNotification)
+                {Get.toNamed(AppRoutes.notifications)}
             },
           ),
           body: SingleChildScrollView(
@@ -99,11 +102,12 @@ class Profile extends GetView<ProfileController> {
                                         height: 108,
                                         width: 108,
                                         decoration: BoxDecoration(
-                                          
                                           border: Border.all(
-                                            color: Color.fromARGB(255, 25, 86, 112),
-                                          ), borderRadius: const BorderRadius.all(
-                                          Radius.circular(100)),
+                                            color: Color.fromARGB(
+                                                255, 25, 86, 112),
+                                          ),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(100)),
                                         ),
                                         margin: const EdgeInsets.all(1.0),
                                         child: CachedNetworkImage(
@@ -112,7 +116,8 @@ class Profile extends GetView<ProfileController> {
                                         ),
                                       ),
                                     );
-                                  }, valueListenable: userImage,
+                                  },
+                                  valueListenable: userImage,
                                 )
                               : Padding(
                                   padding: const EdgeInsets.only(top: 0),

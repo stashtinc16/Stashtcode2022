@@ -33,6 +33,9 @@ class Memories extends GetView<MemoriesController> {
                       (isMemory, isPhotos, isNotification, isSettings) => {
                     print('isSettings $isSettings'),
                     if (isSettings) {Get.toNamed(AppRoutes.profile)}
+                    else if(isNotification){
+                      Get.toNamed(AppRoutes.notifications)
+                    }
                   },
                 ),
                 body: SingleChildScrollView(
@@ -115,6 +118,7 @@ class Memories extends GetView<MemoriesController> {
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: controller.myMemoriesExpand.value
                               ? ListView.builder(
+                                  padding: EdgeInsets.zero,
                                   itemCount: controller.memoriesList.length,
                                   shrinkWrap: true,
                                   primary: false,
@@ -463,6 +467,7 @@ class Memories extends GetView<MemoriesController> {
             ? ListView.builder(
                 itemCount: controller.sharedMemoriesList.length,
                 shrinkWrap: true,
+                padding: EdgeInsets.zero,
                 primary: false,
                 scrollDirection: Axis.vertical,
                 itemBuilder: (BuildContext context, int index) {
@@ -702,7 +707,8 @@ class Memories extends GetView<MemoriesController> {
                             shareIndex);
                         controller.acceptInviteNotification(
                             controller.sharedMemoriesList[index].createdBy,
-                            controller.sharedMemoriesList[index].memoryId);
+                            controller.sharedMemoriesList[index].memoryId, controller.sharedMemoriesList[index]);
+
                         Get.back();
                       },
                       child: Container(
@@ -726,8 +732,9 @@ class Memories extends GetView<MemoriesController> {
                     Expanded(
                         child: InkWell(
                       onTap: () {
-                        controller
-                            .deleteInvite(controller.sharedMemoriesList[index]);
+                        controller.deleteInvite(
+                            controller.sharedMemoriesList[index], index);
+
                         Get.back();
                       },
                       child: Container(

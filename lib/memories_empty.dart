@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:stasht/all_photos.dart';
 import 'package:stasht/app_bar.dart';
-import 'package:stasht/notifications.dart';
+import 'package:stasht/notifications/presentation/notifications.dart';
 import 'package:stasht/profile/presentation/profile.dart';
 import 'package:stasht/login_signup/domain/sign_up.dart';
 

@@ -73,11 +73,21 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                 onTap: () {
                   pageSelected(false, false, true, false);
                 },
-                child: SvgPicture.asset(
-                  "assets/images/bell.svg",
-                  height: 22,
-                  width: 21,
-                  color: const Color.fromRGBO(108, 96, 255, 1),
+                child: Container(
+                  decoration: title == notifications
+                      ? const BoxDecoration(
+                          image:
+                              DecorationImage(image: AssetImage(eclipseImage)))
+                      : null,
+                  width: 50,
+                  height: 50,
+                  child: SvgPicture.asset(
+                    "assets/images/bell.svg",
+                    height: 22,
+                    width: 21,
+                    fit: BoxFit.scaleDown,
+                    color: const Color.fromRGBO(108, 96, 255, 1),
+                  ),
                 ),
               ),
             ],

@@ -16,6 +16,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/memories/domain/memories_model.dart';
+import 'package:stasht/notifications/domain/notification_model.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:stasht/utils/constants.dart';
@@ -163,19 +164,13 @@ class MemoriesController extends GetxController {
                     MemoriesModel memoriesModel = element.data();
                     memoriesModel.memoryId = element.id;
                     memoriesModel.userModel = userValue.data()!;
-                    for (int k = 0;
-                        k < element.data().imagesCaption!.length;
-                        k++) {
-                      print(
-                          'getMyMemories $k ${element.id} => ${element.data().imagesCaption![k].commentCount}');
-                    }
-
-                    memoriesList.add(memoriesModel);
+                    memoriesList.value.add(memoriesModel);
+                    
                     if (element.id == value.docs[value.docs.length - 1].id) {
-                      print('Shared ${memoriesList.length}');
-                      // if (!fromShare) {
+
                       myMemoriesExpand.value = !sharedMemoriesExpand.value;
-                      // }
+                      print('MyMemoriesExpanded ${myMemoriesExpand.value}');
+
                       update();
                     }
                   },
@@ -230,7 +225,7 @@ class MemoriesController extends GetxController {
   }
 
   // Pick Images from gallery
-  Future<void> pickImages(String memoryId, MemoriesModel memoriesModel) async {
+  Future<void> pickImages(String memoryId, MemoriesModel? memoriesModel) async {
     try {
       resultList = await MultiImagePicker.pickImages(
         maxImages: 10,
@@ -261,6 +256,14 @@ class MemoriesController extends GetxController {
         toFirestore: (memories, _) => memories.toJson(),
       );
 
+  final notificationsRef = FirebaseFirestore.instance
+      .collection(notificationsCollection)
+      .withConverter<NotificationsModel>(
+        fromFirestore: (snapshots, _) =>
+            NotificationsModel.fromJson(snapshots.data()!),
+        toFirestore: (notifications, _) => notifications.toJson(),
+      );
+
   final usersRef = FirebaseFirestore.instance
       .collection(userCollection)
       .withConverter<UserModel>(
@@ -288,7 +291,7 @@ class MemoriesController extends GetxController {
   }
 
   Future<void> acceptInviteNotification(
-      String receiverId, String memoryID) async {
+      String receiverId, String memoryID, MemoriesModel memoriesModel) async {
     var receiverToken = "";
     var db = await FirebaseFirestore.instance
         .collection("users")
@@ -316,23 +319,28 @@ class MemoriesController extends GetxController {
         "badge": "1",
         "sound": "default"
       },
-      // 'to': receiverToken,
-      // 'data': {
-      //   "type": "message",
-      //   "priority": "high",
-      //   "click_action": "FLUTTER_NOTIFICATION_CLICK",
-      //   "sound": "default",
-      //   "senderId": userId,
-      // },
-      // 'notification': {
-      //   'title': title,
-      //   'body': description,
-      //   "badge": "1",
-      //   "sound": "default"
-      // },
     });
     sendPushMessage(receiverToken, dataPayload);
-    // saveNotificationData( title, description);
+    saveNotificationData(receiverId, memoriesModel);
+  }
+
+  // Save Notification data in DB
+  void saveNotificationData(String receivedId, MemoriesModel memoriesModel) {
+    String memoryCover = memoriesModel.imagesCaption!.isNotEmpty
+        ? memoriesModel.imagesCaption![0].image!
+        : "";
+    NotificationsModel notificationsModel = NotificationsModel(
+        memoryTitle: memoriesModel.title,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        isRead: false,
+        memoryCover: memoryCover,
+        memoryId: memoriesModel.memoryId,
+        receiverId: receivedId,
+        userId: userId);
+    notificationsRef
+        .add(notificationsModel)
+        .then((value) => print('SaveNotification $value'));
   }
 
   List<SharedWith> getSharedUsers(MemoriesModel memoriesModels) {
@@ -493,7 +501,7 @@ class MemoriesController extends GetxController {
   }
 
   Future<void> uploadImagesToMemories(
-      int imageIndex, String memoryId, MemoriesModel memoriesModel) async {
+      int imageIndex, String memoryId, MemoriesModel? memoriesModel) async {
     if (resultList.isNotEmpty) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
@@ -552,7 +560,7 @@ class MemoriesController extends GetxController {
 
   /// The user selects a file, and the task is added to the list.
   Future<UploadTask?> uploadFile(File file, String fileName, String memoryId,
-      MemoriesModel memoriesModel) async {
+      MemoriesModel? memoriesModel) async {
     UploadTask uploadTask;
     print('fileName $fileName');
     // Create a Reference to the file
@@ -587,7 +595,7 @@ class MemoriesController extends GetxController {
                 else
                   {
                     EasyLoading.dismiss(),
-                    if (value.isEmpty)
+                    if (memoriesModel == null)
                       {createMemories()}
                     else
                       {updateMemory(memoryId, memoriesModel)}
@@ -599,8 +607,8 @@ class MemoriesController extends GetxController {
   }
 
 // Update or Add images to existing memory
-  void updateMemory(String memoryId, MemoriesModel memoriesModel) {
-    MemoriesModel memoriesModels = memoriesModel;
+  void updateMemory(String memoryId, MemoriesModel? memoriesModel) {
+    MemoriesModel memoriesModels = memoriesModel!;
 
     memoriesModels.imagesCaption!.addAll(imageCaptionUrls);
     memoriesRef.doc(memoryId).update(memoriesModels.toJson()).then((value) => {
@@ -664,7 +672,7 @@ class MemoriesController extends GetxController {
         .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }
 
-  void deleteInvite(MemoriesModel sharedMemories) {
+  void deleteInvite(MemoriesModel sharedMemories, int mainIndex) {
     MemoriesModel memoriesModel = sharedMemories;
     print('MemoryID: ${memoriesModel.memoryId}');
     int shareIndex = 0;
@@ -678,9 +686,11 @@ class MemoriesController extends GetxController {
     );
 
     memoriesModel.sharedWith!.removeAt(shareIndex);
-    memoriesRef
-        .doc(sharedMemories.memoryId)
-        .set(memoriesModel)
-        .then((value) => {print('MemoryDeleted'), update()});
+    memoriesRef.doc(sharedMemories.memoryId).set(memoriesModel).then((value) =>
+        {
+          print('MemoryDeleted'),
+          sharedMemoriesList.removeAt(mainIndex),
+          update()
+        });
   }
 }

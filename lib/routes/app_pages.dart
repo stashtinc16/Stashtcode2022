@@ -10,6 +10,8 @@ import 'package:stasht/memories/presentation/add_caption.dart';
 import 'package:stasht/memories/presentation/collaborators.dart';
 import 'package:stasht/memories/presentation/memories.dart';
 import 'package:stasht/memories/presentation/memory_lane.dart';
+import 'package:stasht/notifications/binding/notification_bindings.dart';
+import 'package:stasht/notifications/presentation/notifications.dart';
 import 'package:stasht/profile/bindings/profile_binding.dart';
 import 'package:stasht/profile/presentation/profile.dart';
 import 'package:stasht/routes/app_routes.dart';
@@ -23,28 +25,52 @@ class AppPages {
   static const initial = AppRoutes.splashScreen;
   static final routes = [
     GetPage(
-      name: AppRoutes.splashScreen, page: () => const SplashScreen(), binding: SplashBindings()),
+        name: AppRoutes.splashScreen,
+        page: () => const SplashScreen(),
+        binding: SplashBindings()),
     GetPage(
         name: AppRoutes.signIn, page: () => SignIn(), binding: SignupBinding()),
     GetPage(
         name: AppRoutes.signup, page: () => Signup(), binding: SignupBinding()),
     GetPage(
-        name: AppRoutes.memoriesStep1, page: () => Step1(), binding: MemoriesBinding()),
+        name: AppRoutes.memoriesStep1,
+        page: () => Step1(),
+        binding: MemoriesBinding()),
     GetPage(
-        name: AppRoutes.memoriesStep2, page: () => Step_2(), binding: MemoriesBinding()),
+        name: AppRoutes.memoriesStep2,
+        page: () => Step_2(),
+        binding: MemoriesBinding()),
     GetPage(
-        name: AppRoutes.memories, page: () => Memories(), binding: MemoriesBinding()),
+        name: AppRoutes.memories,
+        page: () => Memories(),
+        binding: MemoriesBinding()),
     GetPage(
-        name: AppRoutes.profile, page: () => Profile(), binding: ProfileBinding()),
+        name: AppRoutes.profile,
+        page: () => Profile(),
+        binding: ProfileBinding()),
     GetPage(
-        name: AppRoutes.forgotPassword, page: () => ForgotPassword(), binding: ForgotPasswordBindings()),
+        name: AppRoutes.forgotPassword,
+        page: () => ForgotPassword(),
+        binding: ForgotPasswordBindings()),
     GetPage(
-        name: AppRoutes.memoryList, page: () => Memory_Lane(), binding: MemoriesBinding()),
+        name: AppRoutes.memoryList,
+        page: () => Memory_Lane(),
+        binding: MemoriesBinding()),
     GetPage(
-        name: AppRoutes.addCaption, page: () => AddCaption(), binding: MemoriesBinding()),
-         GetPage(
-        name: AppRoutes.comments, page: () => Comments(), binding: CommentsBindings()),
-         GetPage(
-        name: AppRoutes.collaborators, page: () => Collaborators(), binding: MemoriesBinding())
+        name: AppRoutes.addCaption,
+        page: () => AddCaption(),
+        binding: MemoriesBinding()),
+    GetPage(
+        name: AppRoutes.comments,
+        page: () => Comments(),
+        binding: CommentsBindings()),
+    GetPage(
+        name: AppRoutes.collaborators,
+        page: () => Collaborators(),
+        binding: MemoriesBinding()),
+    GetPage(
+        name: AppRoutes.notifications,
+        page: () => Notifications(),
+        binding: NotificationsBinding())
   ];
 }

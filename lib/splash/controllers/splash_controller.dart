@@ -146,7 +146,7 @@ class SplashController extends GetxController {
                       print('UpdateCaption '),
 
                       EasyLoading.dismiss(),
-                      fromShare = false,
+                      fromShare = true,
                       handleNavigation(true),
                       // Get.back()
                     })

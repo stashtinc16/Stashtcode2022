@@ -139,8 +139,8 @@ class Step1 extends GetView<MemoriesController> {
                               //   "title": controller.titleController.value.text,
                               //   "fromSignup": argument
                               // });
-                              MemoriesModel? memoriesModel;
-                              controller.pickImages("", memoriesModel!);
+                              MemoriesModel? memoriesModel= null;
+                              controller.pickImages("", memoriesModel);
                             },
                             child: Center(
                               child: Container(

@@ -65,11 +65,8 @@ class CommentsController extends GetxController {
         .snapshots()
         .listen((event) {
       // here count is a field name in firestore database
-      print(
-          'OutSide => ${event.docs.length} ListLength ${commentsList.length}');
+
       commentsList.clear();
-      print(
-          'OutSide After=> ${event.docs.length} ListLength ${commentsList.length}');
 
       for (var element in event.docs) {
         usersRef.doc(element.data().userId).get().then((userValue) {
@@ -80,18 +77,11 @@ class CommentsController extends GetxController {
 
           commentsList.add(commentsModel);
           // streamController.sink.add(commentsModel);
-          print('Inside ${commentsList.length}');
           if (element.id == event.docs[event.docs.length - 1].id) {
             memoryRef.doc(commentsModel.memoryId).get().then((value) {
               MemoriesModel memoriesModel = value.data()!;
-              print(
-                  'MemoryId ${memoriesModel.memoryId} CommentsMemoryId: ${commentsModel.memoryId} ImageIndex: $imageIndex');
               memoriesModel.imagesCaption![imageIndex].commentCount =
                   commentsList.length;
-              // memoriesModel.commentCount = commentsList.length;
-              print(
-                  'CommentCount== ${commentsList.length} =>> ${memoriesModel.imagesCaption![imageIndex].commentCount}');
-              // memoriesModel = memoryRef
 
               memoryRef
                   .doc(commentsModel.memoryId)
