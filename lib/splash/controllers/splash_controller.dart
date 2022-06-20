@@ -204,7 +204,7 @@ class SplashController extends GetxController {
                   {
                     facebookAuth.logOut(),
                     print('Inside_2'),
-                    Get.offNamed(AppRoutes.signIn)
+                    Get.offNamed(AppRoutes.signup)
                   }
                 else
                   {
@@ -216,7 +216,7 @@ class SplashController extends GetxController {
         }
       } else {
         print('InSide_1 ');
-        Get.offNamed(AppRoutes.signIn);
+        Get.offNamed(AppRoutes.signup);
       }
       // Navigator.pushReplacement(
       //     context, MaterialPageRoute(builder: (cotext) => const SignUp()));
@@ -252,7 +252,7 @@ class SplashController extends GetxController {
                       })
                 }
               else
-                {Get.offNamed(AppRoutes.signIn)}
+                {Get.offNamed(AppRoutes.signup)}
             })
         .onError((error, stackTrace) => {});
   }

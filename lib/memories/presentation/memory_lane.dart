@@ -14,7 +14,6 @@ class Memory_Lane extends GetView<MemoriesController> {
   int? mainIndex;
   MemoriesModel? memoriesModel;
   String? type;
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -27,6 +26,8 @@ class Memory_Lane extends GetView<MemoriesController> {
     } else {
       memoriesModel = controller.sharedMemoriesList[mainIndex!];
     }
+    print('memoriesModel ${memoriesModel!.memoryId}');
+
     return GetBuilder(
       builder: (MemoriesController controller) {
         return Scaffold(
@@ -43,7 +44,11 @@ class Memory_Lane extends GetView<MemoriesController> {
                           ? BoxDecoration(
                               image: DecorationImage(
                                   image: CachedNetworkImageProvider(
-                                      memoriesModel!.imagesCaption![0].image!),
+                                      memoriesModel!
+                                          .imagesCaption![memoriesModel!
+                                                  .imagesCaption!.length -
+                                              1]
+                                          .image!),
                                   fit: BoxFit.cover))
                           : null,
                       color: memoriesModel!.imagesCaption!.isNotEmpty
@@ -100,7 +105,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   const SizedBox(
                                     width: 15,
                                   ),
-                                  if (memoriesModel!.createdBy == userId)
+                                  // if (memoriesModel!.createdBy == userId)
                                     InkWell(
                                       onTap: () {
                                         controller.pickImages(
@@ -171,6 +176,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
                     itemCount: memoriesModel!.imagesCaption!.length,
+                    reverse: false,
+                    controller: controller.scrollController,
                     itemBuilder: (context, index) {
                       if (type == "1") {
                         memoriesModel = controller.memoriesList[mainIndex!];
@@ -565,6 +572,7 @@ class Memory_Lane extends GetView<MemoriesController> {
       color: Colors.white,
       splashRadius: 5,
       elevation: 2,
+      icon: Icon(Icons.more_vert),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
       onSelected: (value) {

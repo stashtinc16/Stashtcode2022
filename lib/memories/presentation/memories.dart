@@ -170,7 +170,10 @@ class Memories extends GetView<MemoriesController> {
                                                                       .memoriesList[
                                                                           index]
                                                                       .imagesCaption[
-                                                                          0]
+                                                                          controller
+                                                                      .memoriesList[
+                                                                          index]
+                                                                      .imagesCaption.length-1]
                                                                       .image
                                                                   : "",
                                                             ),
@@ -515,7 +518,8 @@ class Memories extends GetView<MemoriesController> {
                                     image: DecorationImage(
                                         image: CachedNetworkImageProvider(
                                             controller.sharedMemoriesList[index]
-                                                .imagesCaption![0].image),
+                                                .imagesCaption![controller.sharedMemoriesList[index]
+                                    .imagesCaption.length-1].image),
                                         fit: BoxFit.cover))
                                 : null,
                             color: controller.sharedMemoriesList[index]

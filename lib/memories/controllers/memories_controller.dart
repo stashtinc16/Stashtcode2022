@@ -31,11 +31,12 @@ class MemoriesController extends GetxController {
   RxList selectedIndexList = List.empty(growable: true).obs;
   final titleController = TextEditingController();
   List<Medium> selectedList = List.empty(growable: true);
+  ScrollController scrollController = ScrollController();
+
   int pageCount = 50;
   int totalCount = 0;
   int skip = 0;
   RxInt selectedCount = 0.obs;
-  ScrollController controller = ScrollController();
   List<ImagesCaption> imageCaptionUrls = List.empty(growable: true);
   int uploadCount = 0;
   RxBool myMemoriesExpand = false.obs;
@@ -73,13 +74,20 @@ class MemoriesController extends GetxController {
         .orderBy('created_at', descending: true)
         .get()
         .then((value) => {
-              print('sharedvalue $userId => ${value.docs.length}'),
               sharedMemoriesList.clear(),
               value.docs.forEach((element) {
                 usersRef.doc(element.data().createdBy!).get().then((userValue) {
                   MemoriesModel memoriesModel = element.data();
                   memoriesModel.memoryId = element.id;
                   memoriesModel.userModel = userValue.data()!;
+                  try {
+                    memoriesModel.imagesCaption!.sort((first, second) {
+                      return first.createdAt!.compareTo(second.createdAt!);
+                    });
+                  } catch (e) {
+                    print('Exception $e');
+                  }
+
                   sharedMemoriesList.add(memoriesModel);
                   print('sharedMemoriesList ${sharedMemoriesList.length}');
                   if (element.id == value.docs[value.docs.length - 1].id) {
@@ -105,10 +113,10 @@ class MemoriesController extends GetxController {
           if (memoriesModels.imagesCaption!.isEmpty)
             {
               Get.back(),
-              memoriesRef
-                  .doc(memoryId)
-                  .delete()
-                  .then((value) => {print('Delete')})
+              // memoriesRef
+              //     .doc(memoryId)
+              //     .delete()
+              //     .then((value) => {print('Delete')})
             }
         });
   }
@@ -164,10 +172,21 @@ class MemoriesController extends GetxController {
                     MemoriesModel memoriesModel = element.data();
                     memoriesModel.memoryId = element.id;
                     memoriesModel.userModel = userValue.data()!;
+                     try {
+                    memoriesModel.imagesCaption!.sort((first, second) {
+                      return first.createdAt!.compareTo(second.createdAt!);
+                    });
+                  } catch (e) {
+                    print('Exception $e');
+                  }
+                    // memoriesModel.imagesCaption!.sort((first, second) {
+                    //   return first.createdAt!.compareTo(second.createdAt!);
+                    // });
+                    // memoriesModel.imagesCaption =
+                    //     element.data().imagesCaption!.reversed.toList();
                     memoriesList.value.add(memoriesModel);
-                    
-                    if (element.id == value.docs[value.docs.length - 1].id) {
 
+                    if (element.id == value.docs[value.docs.length - 1].id) {
                       myMemoriesExpand.value = !sharedMemoriesExpand.value;
                       print('MyMemoriesExpanded ${myMemoriesExpand.value}');
 
@@ -297,9 +316,9 @@ class MemoriesController extends GetxController {
         .collection("users")
         .where("user_id", isEqualTo: receiverId)
         .get();
-    db.docs.forEach((element) {
+    for (var element in db.docs) {
       receiverToken = element.data()['firebase_token'];
-    });
+    }
     String title = "Invite Accepted";
     String description = "$userName has accepted your invite for memory.";
     // String receiverToken = globalNotificationToken;
@@ -389,42 +408,6 @@ class MemoriesController extends GetxController {
       permissionStatus.value = status;
       return true;
     }
-    permissionStatus.value = status;
-    print('promptPermissionSetting $status');
-
-    // if (status == PermissionStatus.granted ||
-    //     status == PermissionStatus.limited) {
-    //   print('granteddd');
-    //   // update();
-    //   getAlbums();
-    //   return true;
-    // } else
-    if (status == PermissionStatus.permanentlyDenied) {
-      print('checkkkkkk $status');
-      checkPermission();
-    } else {
-      print('checkkkkkk_Else $status');
-      checkPermission();
-    }
-
-    return false;
-  }
-
-// Check Photos and gallery permission
-  checkPermission() async {
-    var status;
-    if (Platform.isIOS) {
-      await Permission.photos
-          .request()
-          .then((value) => print('Request_photos ${value}'));
-    } else {
-      await Permission.storage
-          .request()
-          .then((value) => print('Request_storage ${value}'));
-    }
-    permissionStatus.value = status;
-    print('checkPermission $status');
-    return status = PermissionStatus.granted;
   }
 
 // Go To Step 1
@@ -445,21 +428,6 @@ class MemoriesController extends GetxController {
         // paginationData(imageAlbums[i]);
       }
     }
-  }
-
-  void paginationData(Album album) {
-    controller.addListener(() {
-      if (controller.position.maxScrollExtent == controller.position.pixels) {
-        if (album.name == "All" || album.name == "Recent") {
-          if (skip < totalCount) {
-            skip = skip + pageCount;
-            getListData(album);
-          }
-
-          // pageCount+=50;
-        }
-      }
-    });
   }
 
   // get Images from albums
@@ -535,7 +503,7 @@ class MemoriesController extends GetxController {
 
   Future<void> uploadImagesToMemoriesOld(
       int imageIndex, String memoryId, MemoriesModel memoriesModel) async {
-    if (selectedIndexList.length > 0) {
+    if (selectedIndexList.isNotEmpty) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
       }
@@ -548,7 +516,7 @@ class MemoriesController extends GetxController {
           dir.absolute.path + "/temp${DateTime.now().millisecond}.jpg";
 
       final File? newFile = await testCompressAndGetFile(file, targetPath);
-      final UploadTask? uploadTask = await uploadFile(
+      await uploadFile(
           newFile!,
           mediaPages[selectedIndexList[imageIndex]].filename,
           memoryId,
@@ -562,7 +530,6 @@ class MemoriesController extends GetxController {
   Future<UploadTask?> uploadFile(File file, String fileName, String memoryId,
       MemoriesModel? memoriesModel) async {
     UploadTask uploadTask;
-    print('fileName $fileName');
     // Create a Reference to the file
     Reference ref =
         FirebaseStorage.instance.ref().child('memories').child('/$fileName');
@@ -574,16 +541,14 @@ class MemoriesController extends GetxController {
       },
     );
 
-    print('metaData ${metadata.customMetadata}');
-
     uploadTask = ref.putFile(io.File(file.path), metadata);
     uploadTask.whenComplete(() => {
           uploadTask.snapshot.ref.getDownloadURL().then((value) => {
-                print('URl $value'),
                 imageCaptionUrls.add(ImagesCaption(
                     caption: "",
                     image: value,
                     commentCount: 0,
+                    createdAt: Timestamp.now(),
                     imageId:
                         Timestamp.now().millisecondsSinceEpoch.toString())),
                 if (imageCaptionUrls.length < resultList.length)
@@ -611,8 +576,15 @@ class MemoriesController extends GetxController {
     MemoriesModel memoriesModels = memoriesModel!;
 
     memoriesModels.imagesCaption!.addAll(imageCaptionUrls);
+    memoriesModels.imagesCaption =
+        memoriesModels.imagesCaption!.reversed.toList();
     memoriesRef.doc(memoryId).update(memoriesModels.toJson()).then((value) => {
           print('Updated Successfully!'),
+          scrollController.animateTo(
+            0.0,
+            curve: Curves.easeOut,
+            duration: const Duration(milliseconds: 300),
+          ),
           update(),
           if (memoriesModels.imagesCaption!.isEmpty)
             {

@@ -10,6 +10,7 @@ import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/utils/constants.dart';
 
 class CommentsController extends GetxController {
+  // RxList   List<CommentsModel>
   RxList commentsList = List.empty(growable: true).obs;
   TextEditingController commentController = TextEditingController();
   StreamController<CommentsModel> streamController =
@@ -44,13 +45,11 @@ class CommentsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('InitCommentController ');
+    // getCommentsAtOnce();
     startStreamAndGetList();
   }
 
-  void startStreamAndGetList() {
-    print(
-        'ImageID ${memoriesModel.imagesCaption![imageIndex].imageId} memoryId: ${memoriesModel.memoryId} imageIndex: $imageIndex');
+  void getCommentsAtOnce() {
     FirebaseFirestore.instance
         .collection(commentsCollection)
         .where('memory_id', isEqualTo: memoriesModel.memoryId)
@@ -62,22 +61,37 @@ class CommentsController extends GetxController {
               CommentsModel.fromJson(snapshots.data()!),
           toFirestore: (comments, _) => comments.toJson(),
         )
-        .snapshots()
-        .listen((event) {
+        .get()
+        .then((event) async {
       // here count is a field name in firestore database
 
-      commentsList.clear();
+      List<CommentsModel> _commentList = List.empty(growable: true);
+      print('EventDocs ${event.docs.length}');
+      print('EventDocsChanged ${event.docChanges.length}');
+      event.docChanges.forEach((element) {
+        print('DocChangesId ${element.doc.id}');
+      });
 
       for (var element in event.docs) {
+        print(
+            'elementId ${element.id} => ${event.docs[event.docs.length - 1].id}');
         usersRef.doc(element.data().userId).get().then((userValue) {
           CommentsModel commentsModel = CommentsModel();
           commentsModel = element.data();
           commentsModel.commentId = element.id;
           commentsModel.userModel = userValue.data()!;
 
-          commentsList.add(commentsModel);
+          _commentList.add(commentsModel);
+          print(
+              'element.id ${element.id} => ${event.docs[event.docs.length - 1].id}');
           // streamController.sink.add(commentsModel);
           if (element.id == event.docs[event.docs.length - 1].id) {
+            commentsList.clear();
+            commentsList.value = _commentList;
+            commentsList.sort((first, second) {
+              return first.createdAt!.compareTo(second.createdAt!);
+            });
+            print('CommentList ${commentsList.length}');
             memoryRef.doc(commentsModel.memoryId).get().then((value) {
               MemoriesModel memoriesModel = value.data()!;
               memoriesModel.imagesCaption![imageIndex].commentCount =
@@ -92,6 +106,54 @@ class CommentsController extends GetxController {
           }
         });
       }
+    });
+  }
+
+  void startStreamAndGetList() {
+    FirebaseFirestore.instance
+        .collection(commentsCollection)
+        .where('memory_id', isEqualTo: memoriesModel.memoryId)
+        .where('image_id',
+            isEqualTo: memoriesModel.imagesCaption![imageIndex].imageId)
+        .orderBy('created_at', descending: false)
+        .withConverter<CommentsModel>(
+          fromFirestore: (snapshots, _) =>
+              CommentsModel.fromJson(snapshots.data()!),
+          toFirestore: (comments, _) => comments.toJson(),
+        )
+        .snapshots()
+        .listen((event) async {
+      // here count is a field name in firestore database
+
+      for (var element in event.docChanges) {
+        usersRef.doc(element.doc.data()!.userId!).get().then((userValue) {
+          CommentsModel commentsModel = CommentsModel();
+          commentsModel = element.doc.data()!;
+          commentsModel.commentId = element.doc.id;
+          commentsModel.userModel = userValue.data()!;
+
+          commentsList.value.add(commentsModel);
+          if (element.doc.id == event.docs[event.docs.length - 1].id) {
+            commentsList.sort((first, second) {
+              return first.createdAt!.compareTo(second.createdAt!);
+            });
+            print('CommentList ${commentsList.length}');
+            memoryRef.doc(commentsModel.memoryId).get().then((value) {
+              MemoriesModel memoriesModel = value.data()!;
+              memoriesModel.imagesCaption![imageIndex].commentCount =
+                  commentsList.length;
+
+              memoryRef
+                  .doc(commentsModel.memoryId)
+                  .set(memoriesModel)
+                  .then((value) => {print('Comment Count updated  '), update()})
+                  .onError((error, stackTrace) => {});
+            });
+          }
+        });
+      }
+    }).onDone(() {
+      print('onDone ');
     });
   }
 

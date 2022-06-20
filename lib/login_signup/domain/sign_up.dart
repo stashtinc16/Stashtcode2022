@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/controllers/signup_controller.dart';
+import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:stasht/utils/constants.dart';
@@ -11,7 +12,6 @@ import 'package:stasht/utils/constants.dart';
 class Signup extends GetView<SignupController> {
   int val = -1;
   bool isEmail = false;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -51,18 +51,13 @@ class Signup extends GetView<SignupController> {
                         flex: 3,
                         child: Column(
                           children: [
-                            InkWell(
-                              onTap: (() {
-                                Get.back();
-                              }),
-                              child: const Center(
-                                child: Text(
-                                  "Sign-in",
-                                  style: TextStyle(
-                                    fontSize: 21,
-                                    color: Colors.white,
-                                    fontFamily: gibsonSemiBold,
-                                  ),
+                            const Center(
+                              child: Text(
+                                "Sign-up",
+                                style: TextStyle(
+                                  fontSize: 21,
+                                  color: Colors.white,
+                                  fontFamily: gibsonSemiBold,
                                 ),
                               ),
                             ),
@@ -358,6 +353,25 @@ class Signup extends GetView<SignupController> {
                             const SizedBox(
                               height: 15,
                             ),
+                            InkWell(
+                              onTap: () {
+                                Get.toNamed(AppRoutes.signIn);
+                              },
+                              child: const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Already a user? Click here",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: AppColors.fieldBorderColor,
+                                      fontSize: 16,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       )

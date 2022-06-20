@@ -73,22 +73,30 @@ class ImagesCaption {
   String? image;
   int? commentCount;
   String? imageId;
+  Timestamp? createdAt;
 
-  ImagesCaption({this.caption, this.image, this.commentCount, this.imageId});
+  ImagesCaption(
+      {this.caption,
+      this.image,
+      this.commentCount,
+      this.imageId,
+      this.createdAt});
 
   ImagesCaption.fromJson(Map<String, dynamic> json) {
     caption = json['caption'];
     image = json['image'];
     commentCount = json['comment_count'];
     imageId = json['image_id'];
+    createdAt = json['created_at'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['caption'] = caption;
     data['image'] = image;
     data['comment_count'] = commentCount;
     data['image_id'] = imageId;
+    data['created_at'] = createdAt;
     return data;
   }
 }

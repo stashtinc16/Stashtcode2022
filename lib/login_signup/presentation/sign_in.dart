@@ -55,19 +55,14 @@ class SignIn extends GetView<SignupController> {
                           flex: 3,
                           child: Column(
                             children: [
-                              InkWell(
-                                onTap: () {
-                                  Get.toNamed(AppRoutes.signup);
-                                },
-                                child: const Center(
-                                  child: Text(
-                                    "Sign-up",
-                                    style: TextStyle(
-                                      fontSize: 21,
-                                      fontFamily: "gibsonsemibold",
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w100,
-                                    ),
+                              const Center(
+                                child: Text(
+                                  "Sign-in",
+                                  style: TextStyle(
+                                    fontSize: 21,
+                                    fontFamily: "gibsonsemibold",
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w100,
                                   ),
                                 ),
                               ),

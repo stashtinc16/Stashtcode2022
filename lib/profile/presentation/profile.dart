@@ -88,55 +88,57 @@ class Profile extends GetView<ProfileController> {
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 150,
-                          color: AppColors.bgColor,
-                          alignment: Alignment.center,
-                          child: userImage.value.isNotEmpty
-                              ? ValueListenableBuilder(
-                                  builder: (context, value, child) {
-                                    return ClipRRect(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(100)),
-                                      child: Container(
-                                        height: 108,
-                                        width: 108,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Color.fromARGB(
-                                                255, 25, 86, 112),
-                                          ),
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(100)),
-                                        ),
-                                        margin: const EdgeInsets.all(1.0),
-                                        child: CachedNetworkImage(
-                                          imageUrl: userImage.value,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  valueListenable: userImage,
-                                )
-                              : Padding(
-                                  padding: const EdgeInsets.only(top: 0),
+                            width: MediaQuery.of(context).size.width,
+                            height: 150,
+                            color: AppColors.bgColor,
+                            alignment: Alignment.center,
+                            child: ValueListenableBuilder(
+                              builder: (context, value, child) {
+                                return ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(100)),
                                   child: Container(
                                     height: 108,
                                     width: 108,
                                     decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: const Color.fromRGBO(
-                                          234, 243, 248, 1),
                                       border: Border.all(
-                                        color: const Color.fromRGBO(
-                                            207, 216, 220, 1),
+                                        color: const Color.fromARGB(255, 25, 86, 112),
                                       ),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(100)),
                                     ),
-                                    child: Image.asset(userIcon),
+                                    margin: const EdgeInsets.all(1.0),
+                                    child: userImage.value.isNotEmpty
+                                        ? CachedNetworkImage(
+                                            imageUrl: userImage.value,
+                                            fit: BoxFit.cover,progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                    CircularProgressIndicator(
+                                        value: downloadProgress.progress)
+                                          )
+                                        : Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 0),
+                                            child: Container(
+                                              height: 108,
+                                              width: 108,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: const Color.fromRGBO(
+                                                    234, 243, 248, 1),
+                                                border: Border.all(
+                                                  color: const Color.fromRGBO(
+                                                      207, 216, 220, 1),
+                                                ),
+                                              ),
+                                              child: Image.asset(userIcon),
+                                            ),
+                                          ),
                                   ),
-                                ),
-                        ),
+                                );
+                              },
+                              valueListenable: userImage,
+                            )),
                         const Padding(
                           padding: EdgeInsets.only(top: 30),
                           child: Icon(
