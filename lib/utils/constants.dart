@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:stasht/utils/app_colors.dart';
 
 String userId = "";
 String userName = "";
@@ -8,6 +10,7 @@ var notificationCount = ValueNotifier<int>(0);
 String userEmail = "";
 String globalNotificationToken = "";
 bool isSocailUser = false;
+String changePassword = "Change Password";
 
 bool fromShare = false;
 //collections
@@ -59,4 +62,14 @@ Future<void> sendPushMessage(var receiverFBToken, String payload) async {
   } catch (e) {
     print(e);
   }
+}
+
+getOutlineBorder() {
+  return const OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+      borderSide: BorderSide(color: AppColors.hintTextColor, width: 0.1));
+}
+
+getNormalTextStyle() {
+  return const TextStyle(fontSize: 12.0, color: AppColors.greyColor);
 }

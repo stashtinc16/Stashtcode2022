@@ -117,9 +117,11 @@ class SignupController extends GetxController {
                     EasyLoading.dismiss(),
                     if (value.docs.isNotEmpty)
                       {
-                        if(value.docs[0].data().deviceToken!.isEmpty){
-                        usersRef.doc(value.docs[0].id).update({"device_token":globalNotificationToken})
-                        },
+                        if (value.docs[0].data().deviceToken!.isEmpty)
+                          {
+                            usersRef.doc(value.docs[0].id).update(
+                                {"device_token": globalNotificationToken})
+                          },
                         saveSession(
                             value.docs[0].id,
                             value.docs[0].data().displayName!,

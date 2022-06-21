@@ -13,6 +13,7 @@ import 'package:stasht/memories/presentation/memory_lane.dart';
 import 'package:stasht/notifications/binding/notification_bindings.dart';
 import 'package:stasht/notifications/presentation/notifications.dart';
 import 'package:stasht/profile/bindings/profile_binding.dart';
+import 'package:stasht/profile/presentation/change_password.dart';
 import 'package:stasht/profile/presentation/profile.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/login_signup/domain/sign_up.dart';
@@ -70,7 +71,11 @@ class AppPages {
         binding: MemoriesBinding()),
     GetPage(
         name: AppRoutes.notifications,
-        page: () => Notifications(),
-        binding: NotificationsBinding())
+        page: () => const Notifications(),
+        binding: NotificationsBinding()),
+    GetPage(
+        name: AppRoutes.changePassword,
+        page: () => ChangePassword(),
+        binding: ProfileBinding())
   ];
 }

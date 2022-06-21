@@ -59,6 +59,11 @@
 	<string>App needs camera access to upload images for memories</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App needs photo gallery access to upload images to memories</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

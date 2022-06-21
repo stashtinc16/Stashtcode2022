@@ -56,7 +56,7 @@ class MemoriesController extends GetxController {
 
     promptPermissionSetting();
 
-    print('fromShare $fromShare');
+    print('fromShare $fromShare $userId');
     sharedMemoriesExpand.value = fromShare;
     getMyMemories();
     getSharedMemories();
@@ -172,13 +172,13 @@ class MemoriesController extends GetxController {
                     MemoriesModel memoriesModel = element.data();
                     memoriesModel.memoryId = element.id;
                     memoriesModel.userModel = userValue.data()!;
-                     try {
-                    memoriesModel.imagesCaption!.sort((first, second) {
-                      return first.createdAt!.compareTo(second.createdAt!);
-                    });
-                  } catch (e) {
-                    print('Exception $e');
-                  }
+                    try {
+                      memoriesModel.imagesCaption!.sort((first, second) {
+                        return first.createdAt!.compareTo(second.createdAt!);
+                      });
+                    } catch (e) {
+                      print('Exception $e');
+                    }
                     // memoriesModel.imagesCaption!.sort((first, second) {
                     //   return first.createdAt!.compareTo(second.createdAt!);
                     // });
@@ -314,18 +314,24 @@ class MemoriesController extends GetxController {
     var receiverToken = "";
     var db = await FirebaseFirestore.instance
         .collection("users")
-        .where("user_id", isEqualTo: receiverId)
+        .withConverter<UserModel>(
+          fromFirestore: (snapshots, _) =>
+              UserModel.fromJson(snapshots.data()!),
+          toFirestore: (users, _) => users.toJson(),
+        )
+        .doc(receiverId)
         .get();
-    for (var element in db.docs) {
-      receiverToken = element.data()['firebase_token'];
-    }
+
+    receiverToken = db.data()!.deviceToken!;
+
+    print('receiverId $receiverId => receiverToken $receiverToken ');
     String title = "Invite Accepted";
     String description = "$userName has accepted your invite for memory.";
     // String receiverToken = globalNotificationToken;
     var dataPayload = jsonEncode({
       'to': receiverToken,
       'data': {
-        "type": "message",
+        "type": "invite-accept",
         "priority": "high",
         "click_action": "FLUTTER_NOTIFICATION_CLICK",
         "sound": "default",

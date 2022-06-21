@@ -17,4 +17,5 @@ abstract class AppRoutes {
   static const comments = "/comments";
   static const collaborators = "/collaborators";
   static const notifications = "/notifications";
+  static const changePassword = "/change_password";
 }

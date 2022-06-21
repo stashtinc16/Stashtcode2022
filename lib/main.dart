@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -39,11 +38,7 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     runApp(const MyApp());
-    // ).then((value) => {
-    //       FirebaseFirestore.instance.terminate(),
-    //       FirebaseFirestore.instance.clearPersistence().then(
-    //           (value) => {print('clearPersistence'), runApp(const MyApp())}),
-    //     });
+   
     configLoading();
 
     if (!kIsWeb) {

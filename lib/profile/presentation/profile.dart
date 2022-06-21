@@ -102,7 +102,8 @@ class Profile extends GetView<ProfileController> {
                                     width: 108,
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color: const Color.fromARGB(255, 25, 86, 112),
+                                        color: const Color.fromARGB(
+                                            255, 25, 86, 112),
                                       ),
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(100)),
@@ -111,11 +112,12 @@ class Profile extends GetView<ProfileController> {
                                     child: userImage.value.isNotEmpty
                                         ? CachedNetworkImage(
                                             imageUrl: userImage.value,
-                                            fit: BoxFit.cover,progressIndicatorBuilder:
-                                (context, url, downloadProgress) =>
-                                    CircularProgressIndicator(
-                                        value: downloadProgress.progress)
-                                          )
+                                            fit: BoxFit.cover,
+                                            progressIndicatorBuilder: (context,
+                                                    url, downloadProgress) =>
+                                                CircularProgressIndicator(
+                                                    value: downloadProgress
+                                                        .progress))
                                         : Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 0),
@@ -239,59 +241,6 @@ class Profile extends GetView<ProfileController> {
                           color: Colors.grey,
                           margin: const EdgeInsets.only(bottom: 15),
                         ),
-                        // if (!isSocailUser)
-                        //   Row(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //     children: [
-                        //       Expanded(
-                        //           child: Obx(
-                        //         () => TextFormField(
-                        //           obscureText: controller.isObscure.value,
-                        //           autovalidateMode:
-                        //               AutovalidateMode.onUserInteraction,
-                        //           controller: controller.passwordcontroller,
-                        //           decoration: InputDecoration(
-                        //               labelText: "Password",
-                        //               labelStyle: const TextStyle(
-                        //                 color: Colors.grey,
-                        //                 fontSize: 12,
-                        //                 fontWeight: FontWeight.w400,
-                        //               ),
-                        //               border: InputBorder.none,
-                        //               contentPadding: const EdgeInsets.only(
-                        //                   bottom: 10, top: 5),
-                        //               suffixIcon: IconButton(
-                        //                 icon: Icon(
-                        //                   controller.isObscure.value
-                        //                       ? Icons.visibility_outlined
-                        //                       : Icons.visibility_off,
-                        //                   color: Colors.grey,
-                        //                 ),
-                        //                 onPressed: () {
-                        //                   controller.isObscure.value =
-                        //                       !controller.isObscure.value;
-                        //                 },
-                        //               )),
-                        //           style: const TextStyle(
-                        //               color: Colors.black, fontSize: 14),
-                        //         ),
-                        //       )),
-                        //       const Text(
-                        //         "Change",
-                        //         style: TextStyle(
-                        //           color: AppColors.primaryColor,
-                        //           fontSize: 11,
-                        //           fontWeight: FontWeight.w400,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // if (!isSocailUser)
-                        //   Container(
-                        //     width: MediaQuery.of(context).size.width,
-                        //     height: 1,
-                        //     color: Colors.grey,
-                        //   ),
                         const SizedBox(
                           height: 60,
                         ),
@@ -308,7 +257,24 @@ class Profile extends GetView<ProfileController> {
                                     fontSize: 14.0, color: Colors.white)),
                             color: AppColors.primaryColor,
                           ),
-                        )
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Get.toNamed(AppRoutes.changePassword);
+                          },
+                          child: Text(
+                            changePassword,
+                            style: const TextStyle(
+                                color: AppColors.primaryColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                decoration: TextDecoration.underline),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ],
                     ),
                   )

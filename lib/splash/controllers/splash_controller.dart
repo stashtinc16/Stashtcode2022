@@ -49,6 +49,7 @@ class SplashController extends GetxController {
   }
 
   void initializeFirebaseNotification() {
+    FirebaseMessaging.instance.requestPermission();
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage? message) {
@@ -59,6 +60,7 @@ class SplashController extends GetxController {
         {globalNotificationToken = value!, print('GetToken $value')});
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('onFirebaseMessaging ${message.data}');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null && !kIsWeb) {
@@ -80,6 +82,8 @@ class SplashController extends GetxController {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      String memoryId = message.data["memoryID"];
+      // Get.toNamed(AppRoutes.memoryList, {});
       print('A new onMessageOpenedApp event was published!');
     });
   }

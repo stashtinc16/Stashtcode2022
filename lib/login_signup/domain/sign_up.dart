@@ -247,8 +247,8 @@ class Signup extends GetView<SignupController> {
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return "Please enter password";
-                                      } else if (value.length < 6) {
-                                        return "Please enter at least 6 characters";
+                                      } else if (value.length < 8) {
+                                        return "Please enter at least 8 characters";
                                       }
                                       return null;
                                     },
