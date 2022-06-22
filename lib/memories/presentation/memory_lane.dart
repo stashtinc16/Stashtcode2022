@@ -489,7 +489,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                     Expanded(
                         child: InkWell(
                       onTap: () {
-                        controller.deleteMemory(
+                        controller.deleteMemoryImages(
                             memoryId, index, memoriesModel, imagesCaption);
 
                         Get.back();

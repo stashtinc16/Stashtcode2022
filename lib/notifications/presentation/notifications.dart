@@ -10,7 +10,7 @@ import 'package:stasht/utils/assets_images.dart';
 import 'package:stasht/utils/constants.dart';
 
 class Notifications extends GetView<NotificationController> {
-  const Notifications({Key? key}) : super(key: key);
+  Notifications({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +34,22 @@ class Notifications extends GetView<NotificationController> {
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
+                      print(
+                          'MemoryId ${controller.notificationList[index].memoryId}');
                       return Column(
                         children: [
                           InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                if (!controller
+                                    .notificationList[index].isRead) {
+                                  controller.notificationList[index].isRead =
+                                      !controller
+                                          .notificationList[index].isRead;
+                                  controller.updateReadStatus(
+                                      controller.notificationList[index]);
+                                  controller.update();
+                                }
+                              },
                               child: Stack(
                                 children: [
                                   Container(
@@ -57,7 +69,13 @@ class Notifications extends GetView<NotificationController> {
                                                   imageUrl: controller
                                                       .notificationList[index]
                                                       .memoryCover!,
-                                                )
+                                                  progressIndicatorBuilder: (context,
+                                                          url,
+                                                          downloadProgress) =>
+                                                      CircularProgressIndicator(
+                                                          value:
+                                                              downloadProgress
+                                                                  .progress))
                                               : Image.asset(userIcon),
                                           borderRadius:
                                               BorderRadius.circular(50.0),
@@ -99,15 +117,20 @@ class Notifications extends GetView<NotificationController> {
                                       ],
                                     ),
                                   ),
-                                  // if (photosList[index].isTap)
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    color: !controller
-                                            .notificationList[index].isRead!
-                                        ? const Color.fromRGBO(108, 96, 255, 1)
-                                            .withOpacity(0.3)
-                                        : Colors.transparent,
-                                  ),
+                                  if (!controller
+                                      .notificationList[index].isRead)
+                                    Positioned.fill(
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        color: !controller
+                                                .notificationList[index].isRead!
+                                            ? const Color.fromRGBO(
+                                                    108, 96, 255, 1)
+                                                .withOpacity(0.3)
+                                            : Colors.transparent,
+                                      ),
+                                    ),
                                 ],
                               )),
                           const SizedBox(

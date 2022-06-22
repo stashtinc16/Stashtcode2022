@@ -62,6 +62,7 @@ dependencies:
   multi_image_picker: ^4.7.14
   firebase_messaging: ^11.4.1
   flutter_local_notifications: ^9.6.0
+  exif: ^3.1.1
 
 
 

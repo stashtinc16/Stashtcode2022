@@ -96,7 +96,7 @@ class Collaborators extends GetView<MemoriesController> {
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(
-                  'Collaborators (${memoriesModel!.sharedWith!.length})',
+                  'Collaborators (${controller.getSharedUsers(memoriesModel!).length})',
                   style: const TextStyle(
                       fontSize: 16,
                       fontFamily: robotoBold,

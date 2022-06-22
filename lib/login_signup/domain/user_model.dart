@@ -10,7 +10,7 @@ class UserModel {
   bool? status;
   String? deviceType;
   String? deviceToken;
-  int? notificationCount;
+  int? notificationCount = 0;
 
   UserModel(
       {this.userName,

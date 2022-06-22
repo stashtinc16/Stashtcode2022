@@ -61,7 +61,9 @@ class SplashController extends GetxController {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('onFirebaseMessaging ${message.data}');
+      notificationCount.value = notificationCount.value + 1;
       RemoteNotification? notification = message.notification;
+      saveNotificationCount();
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null && !kIsWeb) {
         flutterLocalNotificationsPlugin.show(
@@ -86,6 +88,17 @@ class SplashController extends GetxController {
       // Get.toNamed(AppRoutes.memoryList, {});
       print('A new onMessageOpenedApp event was published!');
     });
+  }
+
+// Update notification Count for a user
+  saveNotificationCount() {
+    // usersRef
+    //     .doc(userId)
+    //     .update({"notification_count": notificationCount.value})
+    //     .then((value) => print('NotificationCount Updated'))
+    //     .catchError((onError) {
+    //       print('onError $onError');
+    //     });
   }
 
   Future<void> initDynamicLinks() async {
@@ -188,6 +201,7 @@ class SplashController extends GetxController {
   }
 
   handleNavigation(bool fromDeepLink) async {
+    firebaseAuth = FirebaseAuth.instance.currentUser;
     Future.delayed(const Duration(milliseconds: 2500), () async {
       _isLogged = await facebookAuth.accessToken != null;
 
@@ -242,7 +256,10 @@ class SplashController extends GetxController {
                             element.id,
                             element.data().displayName!,
                             element.data().email!,
-                            element.data().profileImage!),
+                            element.data().profileImage!,
+                            element.data().notificationCount != null
+                                ? element.data().notificationCount!
+                                : 0),
                         if (fromDeepLink)
                           {
                             Get.off(() => Memories(),
@@ -262,12 +279,13 @@ class SplashController extends GetxController {
   }
 
 // Save User Session
-  void saveSession(
-      String _userId, String _userName, String _userEmail, String _userImage) {
+  void saveSession(String _userId, String _userName, String _userEmail,
+      String _userImage, int _notificationCount) {
     print('saveSession userId $_userId => $_userImage');
     userId = _userId;
     userEmail = _userEmail;
     userName = _userName;
     userImage.value = _userImage;
+    notificationCount.value = _notificationCount;
   }
 }

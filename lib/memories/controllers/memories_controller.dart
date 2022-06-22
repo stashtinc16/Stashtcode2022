@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:io' as io;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exif/exif.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
@@ -100,7 +101,7 @@ class MemoriesController extends GetxController {
         .onError((error, stackTrace) => {print('onError $error')});
   }
 
-  void deleteMemory(String memoryId, int removeIndex,
+  void deleteMemoryImages(String memoryId, int removeIndex,
       MemoriesModel memoriesModel, ImagesCaption imagesCaption) {
     List<int> removeItemList = List.empty(growable: true);
     removeItemList.add(removeIndex);
@@ -113,12 +114,15 @@ class MemoriesController extends GetxController {
           if (memoriesModels.imagesCaption!.isEmpty)
             {
               Get.back(),
-              // memoriesRef
-              //     .doc(memoryId)
-              //     .delete()
-              //     .then((value) => {print('Delete')})
             }
         });
+  }
+
+  void deleteMemory(MemoriesModel memoriesModel) {
+    memoriesRef
+        .doc(memoriesModel.memoryId)
+        .delete()
+        .then((value) => {print('Delete')});
   }
 
   void updateJoinStatus(
@@ -366,19 +370,24 @@ class MemoriesController extends GetxController {
     notificationsRef
         .add(notificationsModel)
         .then((value) => print('SaveNotification $value'));
+    usersRef.doc(receivedId).get().then((value) => {
+          usersRef.doc(receivedId).update({
+            "notification_count": value.data()!.notificationCount != null
+                ? value.data()!.notificationCount! + 1
+                : 1
+          })
+        });
   }
 
   List<SharedWith> getSharedUsers(MemoriesModel memoriesModels) {
     List<SharedWith> sharedModels = List.empty(growable: true);
     if (memoriesModels.sharedWith!.isNotEmpty) {
-      int index = 0;
-      var shareObject = memoriesModels.sharedWith!.where(
-        (element) {
-          index = memoriesModels.sharedWith!.indexOf(element);
-          return element.status == 1;
-        },
-      );
-      sharedModels.add(shareObject.elementAt(index));
+      var itemToAdd;
+      for (int i = 0; i < memoriesModels.sharedWith!.length; i++) {
+        if (memoriesModels.sharedWith![i].status == 1) {
+          sharedModels.add(memoriesModels.sharedWith![i]);
+        }
+      }
     }
     return sharedModels;
   }
@@ -487,6 +496,9 @@ class MemoriesController extends GetxController {
       final targetPath = dir.absolute.path + fileName;
 
       final File? newFile = await testCompressAndGetFile(file, targetPath);
+      // final data = await readExifFromFile(newFile!);
+
+      // print('ExifInterface_data $data');
       final UploadTask? uploadTask =
           await uploadFile(newFile!, fileName, memoryId, memoriesModel);
     } else {

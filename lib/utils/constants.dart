@@ -24,6 +24,7 @@ String memoriesTitle = "Memories";
 String settingsTitle = "Settings";
 String notifications = "Notifications";
 
+
 bool checkValidEmail(String email) {
   return RegExp(
           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")

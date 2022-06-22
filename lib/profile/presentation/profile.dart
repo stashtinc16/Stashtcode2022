@@ -47,7 +47,6 @@ class Profile extends GetView<ProfileController> {
       },
     );
 
-    print('metaData ${metadata.customMetadata}');
 
     uploadTask = ref.putFile(io.File(image.path), metadata);
     uploadTask.whenComplete(() => {
@@ -76,209 +75,221 @@ class Profile extends GetView<ProfileController> {
             },
           ),
           body: SingleChildScrollView(
-              child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 0),
-              child: Column(
-                children: [
-                  InkWell(
-                    onTap: () => getImage(),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 150,
-                            color: AppColors.bgColor,
-                            alignment: Alignment.center,
-                            child: ValueListenableBuilder(
-                              builder: (context, value, child) {
-                                return ClipRRect(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(100)),
-                                  child: Container(
-                                    height: 108,
-                                    width: 108,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: const Color.fromARGB(
-                                            255, 25, 86, 112),
+              child: Form(
+            key: controller.formkey,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 0),
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () => getImage(),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 150,
+                              color: AppColors.bgColor,
+                              alignment: Alignment.center,
+                              child: ValueListenableBuilder(
+                                builder: (context, value, child) {
+                                  return ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(100)),
+                                    child: Container(
+                                      height: 108,
+                                      width: 108,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: const Color.fromARGB(
+                                              255, 25, 86, 112),
+                                        ),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(100)),
                                       ),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(100)),
-                                    ),
-                                    margin: const EdgeInsets.all(1.0),
-                                    child: userImage.value.isNotEmpty
-                                        ? CachedNetworkImage(
-                                            imageUrl: userImage.value,
-                                            fit: BoxFit.cover,
-                                            progressIndicatorBuilder: (context,
-                                                    url, downloadProgress) =>
-                                                CircularProgressIndicator(
-                                                    value: downloadProgress
-                                                        .progress))
-                                        : Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 0),
-                                            child: Container(
-                                              height: 108,
-                                              width: 108,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: const Color.fromRGBO(
-                                                    234, 243, 248, 1),
-                                                border: Border.all(
+                                      margin: const EdgeInsets.all(1.0),
+                                      child: userImage.value.isNotEmpty
+                                          ? CachedNetworkImage(
+                                              imageUrl: userImage.value,
+                                              fit: BoxFit.cover,
+                                              progressIndicatorBuilder:
+                                                  (context, url,
+                                                          downloadProgress) =>
+                                                      CircularProgressIndicator(
+                                                          value:
+                                                              downloadProgress
+                                                                  .progress))
+                                          : Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 0),
+                                              child: Container(
+                                                height: 108,
+                                                width: 108,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
                                                   color: const Color.fromRGBO(
-                                                      207, 216, 220, 1),
+                                                      234, 243, 248, 1),
+                                                  border: Border.all(
+                                                    color: const Color.fromRGBO(
+                                                        207, 216, 220, 1),
+                                                  ),
                                                 ),
+                                                child: Image.asset(userIcon),
                                               ),
-                                              child: Image.asset(userIcon),
                                             ),
-                                          ),
-                                  ),
-                                );
-                              },
-                              valueListenable: userImage,
-                            )),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 30),
-                          child: Icon(
-                            Icons.linked_camera_outlined,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, top: 15),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                                child: Obx(() => TextFormField(
-                                      controller:
-                                          controller.nameController.value,
-                                      readOnly:
-                                          !controller.changeUserName.value,
-                                      decoration: const InputDecoration(
-                                          labelText: "Display Name",
-                                          labelStyle: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.only(
-                                              bottom: 10, top: 5)),
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 14),
-                                    ))),
-                            InkWell(
-                                onTap: () {
-                                  if (controller.changeUserName.value) {
-                                    controller.changeUserNameFunc();
-                                  }
-
-                                  controller.changeUserName.value =
-                                      !controller.changeUserName.value;
+                                    ),
+                                  );
                                 },
-                                child: Obx(() => Text(
-                                      controller.changeUserName.value
-                                          ? "Save"
-                                          : "Change",
-                                      style: TextStyle(
-                                        color: AppColors.primaryColor,
-                                        fontSize:
-                                            controller.changeUserName.value
-                                                ? 12
-                                                : 11,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ))),
-                          ],
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 1,
-                          color: Colors.grey,
-                          margin: const EdgeInsets.only(bottom: 15),
-                        ),
-                        TextFormField(
-                          controller: TextEditingController(text: userEmail),
-                          readOnly: true,
-                          decoration: const InputDecoration(
-                              labelText: "E-mail",
-                              labelStyle: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.only(bottom: 10, top: 5)),
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 14),
-                          validator: (v) {
-                            if (v!.isEmpty ||
-                                !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                    .hasMatch(v)) {
-                              return 'Enter a valid email!';
-                            }
-                            return null;
-                          },
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 1,
-                          color: Colors.grey,
-                          margin: const EdgeInsets.only(bottom: 15),
-                        ),
-                        const SizedBox(
-                          height: 60,
-                        ),
-                        Center(
-                          child: MaterialButton(
-                            onPressed: () {
-                              controller.logoutUser();
-                            },
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5))),
-                            child: const Text('Logout',
-                                style: TextStyle(
-                                    fontSize: 14.0, color: Colors.white)),
-                            color: AppColors.primaryColor,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Get.toNamed(AppRoutes.changePassword);
-                          },
-                          child: Text(
-                            changePassword,
-                            style: const TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.underline),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
+                                valueListenable: userImage,
+                              )),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 30),
+                            child: Icon(
+                              Icons.linked_camera_outlined,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  )
-                ],
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 20, right: 20, top: 15),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                  child: Obx(() => TextFormField(
+                                        controller:
+                                            controller.nameController.value,
+                                        readOnly:
+                                            !controller.changeUserName.value,
+                                        decoration: const InputDecoration(
+                                            labelText: "Display Name",
+                                            labelStyle: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.only(
+                                                bottom: 10, top: 5)),
+                                        style: const TextStyle(
+                                            color: Colors.black, fontSize: 14),
+                                        validator: (userName) {
+                                          if (userName!.isEmpty) {
+                                            return "Please enter username";
+                                          }
+                                          return null;
+                                        },
+                                      ))),
+                              InkWell(
+                                  onTap: () {
+                                    if (controller.changeUserName.value) {
+                                      controller.changeUserNameFunc();
+                                    }
+
+                                    controller.changeUserName.value =
+                                        !controller.changeUserName.value;
+                                  },
+                                  child: Obx(() => Text(
+                                        controller.changeUserName.value
+                                            ? "Save"
+                                            : "Change",
+                                        style: TextStyle(
+                                          color: AppColors.primaryColor,
+                                          fontSize:
+                                              controller.changeUserName.value
+                                                  ? 12
+                                                  : 11,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ))),
+                            ],
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 1,
+                            color: Colors.grey,
+                            margin: const EdgeInsets.only(bottom: 15),
+                          ),
+                          TextFormField(
+                            controller: TextEditingController(text: userEmail),
+                            readOnly: true,
+                            decoration: const InputDecoration(
+                                labelText: "E-mail",
+                                labelStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                border: InputBorder.none,
+                                contentPadding:
+                                    EdgeInsets.only(bottom: 10, top: 5)),
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 14),
+                            validator: (v) {
+                              if (v!.isEmpty ||
+                                  !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(v)) {
+                                return 'Enter a valid email!';
+                              }
+                              return null;
+                            },
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 1,
+                            color: Colors.grey,
+                            margin: const EdgeInsets.only(bottom: 15),
+                          ),
+                          const SizedBox(
+                            height: 60,
+                          ),
+                          Center(
+                            child: MaterialButton(
+                              onPressed: () {
+                                controller.logoutUser();
+                              },
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5))),
+                              child: const Text('Logout',
+                                  style: TextStyle(
+                                      fontSize: 14.0, color: Colors.white)),
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          if (!isSocailUser)
+                            InkWell(
+                              onTap: () {
+                                Get.toNamed(AppRoutes.changePassword);
+                              },
+                              child: Text(
+                                changePassword,
+                                style: const TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    decoration: TextDecoration.underline),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ))),

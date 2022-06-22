@@ -73,21 +73,47 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                 onTap: () {
                   pageSelected(false, false, true, false);
                 },
-                child: Container(
-                  decoration: title == notifications
-                      ? const BoxDecoration(
-                          image:
-                              DecorationImage(image: AssetImage(eclipseImage)))
-                      : null,
-                  width: 50,
-                  height: 50,
-                  child: SvgPicture.asset(
-                    "assets/images/bell.svg",
-                    height: 22,
-                    width: 21,
-                    fit: BoxFit.scaleDown,
-                    color: const Color.fromRGBO(108, 96, 255, 1),
-                  ),
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: title == notifications
+                          ? const BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage(eclipseImage)))
+                          : null,
+                      width: 50,
+                      height: 50,
+                      child: SvgPicture.asset(
+                        "assets/images/bell.svg",
+                        height: 22,
+                        width: 21,
+                        fit: BoxFit.scaleDown,
+                        color: const Color.fromRGBO(108, 96, 255, 1),
+                      ),
+                    ),
+                    Positioned(
+                      right: 7,
+                      top: 7,
+                      child: ValueListenableBuilder(
+                        builder: (BuildContext context, value, Widget? child) {
+                          return notificationCount.value>0 ?  Container(
+                            width: 18.0,
+                            height: 18.0,
+                            alignment: Alignment.center,
+                            decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30)),color: Colors.red),
+                            child: Text(
+                              '${notificationCount.value}',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.white),textAlign: TextAlign.center,
+                            ),
+                          ) : Container();
+                        },
+                        valueListenable: notificationCount,
+                      ),
+                    )
+                  ],
                 ),
               ),
             ],
@@ -104,7 +130,7 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
               builder: (BuildContext context, value, Widget? child) {
                 return CircleAvatar(
                   radius: 18,
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.grey,
                   child: ClipRRect(
                     child: userImage.value.isNotEmpty
                         ? CachedNetworkImage(

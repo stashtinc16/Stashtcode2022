@@ -18,7 +18,7 @@ class SignupController extends GetxController {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   GlobalKey<FormState> formkeySignin = GlobalKey<FormState>();
   TextEditingController userNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  Rx<TextEditingController> emailController = TextEditingController().obs;
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
@@ -54,7 +54,7 @@ class SignupController extends GetxController {
   void checkEmailExists() {
     print('checkEmailExists');
     usersRef
-        .where("email", isEqualTo: emailController.text.toString())
+        .where("email", isEqualTo: emailController.value.text.toString())
         .get()
         .then((value) => {
               value.docs.length,
@@ -77,7 +77,7 @@ class SignupController extends GetxController {
 
         await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
-          email: emailController.text,
+          email: emailController.value.text,
           password: passwordController.text,
         )
             .then((value) {
@@ -126,7 +126,10 @@ class SignupController extends GetxController {
                             value.docs[0].id,
                             value.docs[0].data().displayName!,
                             email1Controller.text,
-                            value.docs[0].data().profileImage!),
+                            value.docs[0].data().profileImage!,
+                            value.docs[0].data().notificationCount != null
+                                ? value.docs[0].data().notificationCount!
+                                : 0),
                         Get.offNamed(AppRoutes.memories)
                       }
                     else
@@ -143,8 +146,8 @@ class SignupController extends GetxController {
 
           Get.snackbar("Error", "User not found, Please signup new user",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
-          Get.toNamed(AppRoutes.signup,
-              arguments: {"email": email1Controller.text.toString()});
+          Get.back(result: {"email": email1Controller.text.toString()});
+
           return Future.error(
               "User Not Found", StackTrace.fromString("User Not Found"));
         } else if (e.code == 'wrong-password') {
@@ -182,7 +185,7 @@ class SignupController extends GetxController {
 
     usersRef.add(userModel).then((value) => {
           EasyLoading.dismiss(),
-          saveSession(value.id, username, user.email!, ""),
+          saveSession(value.id, username, user.email!, "", 0),
           clearTexts(),
           Get.snackbar('Success', "User registerd successfully",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
@@ -253,9 +256,12 @@ class SignupController extends GetxController {
                     value.docs[0].id,
                     value.docs[0].data().displayName!,
                     value.docs[0].data().email!,
-                    value.docs[0].data().profileImage!),
+                    value.docs[0].data().profileImage!,
+                    value.docs[0].data().notificationCount != null
+                        ? value.docs[0].data().notificationCount!
+                        : 0),
                 EasyLoading.dismiss(),
-                emailController.text = "",
+                emailController.value.text = "",
                 passwordController.text = "",
                 Get.snackbar('Success', "User logged-in successfully",
                     snackPosition: SnackPosition.BOTTOM,
@@ -284,7 +290,7 @@ class SignupController extends GetxController {
     usersRef.add(userModel).then((value) => {
           EasyLoading.dismiss(),
           isSocailUser = false,
-          saveSession(value.id, name, email!, profileImage!),
+          saveSession(value.id, name, email!, profileImage!, 0),
           Get.snackbar('Success', "User logged-in successfully",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
           Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
@@ -292,19 +298,20 @@ class SignupController extends GetxController {
   }
 
 // Save User Session
-  void saveSession(
-      String _userId, String _userName, String _userEmail, String _userImage) {
+  void saveSession(String _userId, String _userName, String _userEmail,
+      String _userImage, int _notificationCount) {
     userId = _userId;
     userEmail = _userEmail;
     userName = _userName;
     userImage.value = _userImage;
+    notificationCount.value = _notificationCount;
     clearTexts();
   }
 
 // Clear
   void clearTexts() {
     userNameController.text = "";
-    emailController.text = "";
+    emailController.value.text = "";
     passwordController.text = "";
     email1Controller.text = "";
     password1Controller.text = "";

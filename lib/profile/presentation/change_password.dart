@@ -32,7 +32,7 @@ class ChangePassword extends GetView<ProfileController> {
         color: Colors.white,
         padding: const EdgeInsets.all(20),
         child: Form(
-          key: controller.formkey,
+          key: controller.formkeyPassword,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -105,7 +105,7 @@ class ChangePassword extends GetView<ProfileController> {
                   validator: (newPassword) {
                     if (newPassword!.isEmpty) {
                       return 'Please enter new password';
-                    } else if (newPassword.length < 6) {
+                    } else if (newPassword.length < 8) {
                       return 'Please enter at least 8 characters';
                     }
                     return null;

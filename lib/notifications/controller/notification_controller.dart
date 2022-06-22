@@ -30,17 +30,31 @@ class NotificationController extends GetxController {
     notificationList.clear();
     notificationsRef
         .where("receiver_id", isEqualTo: userId)
+        .orderBy("created_at", descending: true)
         .snapshots()
         .listen((event) {
-      if (event.docs.isNotEmpty) {
-        for (var element in event.docs) {
-          NotificationsModel notificationsModel = element.data();
-          notificationsModel.id = element.id;
-          usersRef.doc(element.data().userId).get().then((userValue) {
-            print('userValue.data() ${userValue.data()!.displayName!}');
+      print('listenEvent ${event.docChanges.length}');
+      if (event.docChanges.isNotEmpty) {
+        for (var element in event.docChanges) {
+          NotificationsModel notificationsModel = element.doc.data()!;
+          notificationsModel.id = element.doc.id;
+          usersRef.doc(element.doc.data()!.userId).get().then((userValue) {
+            print('userValue.data() ${element.doc.id}');
             notificationsModel.userModel = userValue.data();
-            notificationList.value.add(notificationsModel);
-            if (element.id == event.docs[event.docs.length - 1].id) {
+            int index = 0;
+            var notificationValue = notificationList.where((p0) {
+              index = notificationList.indexOf(p0);
+              return p0.id == element.doc.id;
+            });
+
+            if (notificationValue.isNotEmpty) {
+              notificationList[index] = notificationsModel;
+            } else {
+              notificationList.value.add(notificationsModel);
+            }
+
+            if (element.doc.id ==
+                event.docChanges[event.docChanges.length - 1].doc.id) {
               update();
             }
           });
@@ -48,5 +62,18 @@ class NotificationController extends GetxController {
         }
       }
     });
+  }
+
+// update notification read status
+  void updateReadStatus(NotificationsModel notificationList) {
+    notificationsRef
+        .doc(notificationList.id)
+        .update({"is_read": true}).then((value) => print('updateReadStatus '));
+    notificationCount.value = notificationCount.value - 1;
+    if (notificationCount.value >= 0) {
+      usersRef
+          .doc(userId)
+          .update({"notification_count": notificationCount.value});
+    }
   }
 }

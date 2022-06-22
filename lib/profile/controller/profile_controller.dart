@@ -22,6 +22,7 @@ class ProfileController extends GetxController {
   RxBool changeUserName = false.obs;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  GlobalKey<FormState> formkeyPassword = GlobalKey<FormState>();
 
   FacebookLogin facebookAuth = FacebookLogin();
   @override
@@ -50,8 +51,8 @@ class ProfileController extends GetxController {
   }
 
   changePassword() async {
-    if (formkey.currentState!.validate()) {
-      formkey.currentState!.save();
+    if (formkeyPassword.currentState!.validate()) {
+      formkeyPassword.currentState!.save();
       EasyLoading.show(status: 'Processing..');
       final user = await FirebaseAuth.instance.currentUser;
       final cred = EmailAuthProvider.credential(
@@ -61,10 +62,9 @@ class ProfileController extends GetxController {
         user.updatePassword(newPasswordcontroller.value.text).then((_) {
           //Success, do something
           print('NewPassword');
-           EasyLoading.dismiss();
+          EasyLoading.dismiss();
           Get.back();
           Get.snackbar('Success', 'Password changed successfully.');
-         
         }).catchError((error) {
           //Error, show something
           print('catchErrorUpdate $error');
@@ -80,15 +80,19 @@ class ProfileController extends GetxController {
   }
 
   logoutUser() {
-    firebaseAuth.signOut();
-    facebookAuth.logOut();
-    userEmail = "";
-    userId = "";
-    userImage.value = "";
-    userName = "";
-    fromShare = false;
-    Get.offAllNamed(AppRoutes.signIn);
-    print('UserId==== $userId');
+    usersRef.doc(userId).update({"device_token": ""}).then((value) {
+      print('Token Removed');
+
+      firebaseAuth.signOut();
+      facebookAuth.logOut();
+      userEmail = "";
+      userId = "";
+      userImage.value = "";
+      userName = "";
+      fromShare = false;
+      Get.offAllNamed(AppRoutes.signup);
+      print('UserId==== $userId');
+    });
   }
 
   void changeUserNameFunc() {

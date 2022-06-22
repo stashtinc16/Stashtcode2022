@@ -32,10 +32,10 @@ class Memories extends GetView<MemoriesController> {
                   pageSelected:
                       (isMemory, isPhotos, isNotification, isSettings) => {
                     print('isSettings $isSettings'),
-                    if (isSettings) {Get.toNamed(AppRoutes.profile)}
-                    else if(isNotification){
-                      Get.toNamed(AppRoutes.notifications)
-                    }
+                    if (isSettings)
+                      {Get.toNamed(AppRoutes.profile)}
+                    else if (isNotification)
+                      {Get.toNamed(AppRoutes.notifications)}
                   },
                 ),
                 body: SingleChildScrollView(
@@ -170,10 +170,8 @@ class Memories extends GetView<MemoriesController> {
                                                                       .memoriesList[
                                                                           index]
                                                                       .imagesCaption[
-                                                                          controller
-                                                                      .memoriesList[
-                                                                          index]
-                                                                      .imagesCaption.length-1]
+                                                                          controller.memoriesList[index].imagesCaption.length -
+                                                                              1]
                                                                       .image
                                                                   : "",
                                                             ),
@@ -204,132 +202,160 @@ class Memories extends GetView<MemoriesController> {
                                                       BorderRadius.circular(15),
                                                 ),
                                                 child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
                                                   children: [
-                                                    Container(
-                                                      height: 45,
-                                                      width: 45,
-                                                      margin: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 15),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.grey,
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          border: Border.all(
-                                                              color:
-                                                                  Colors.white,
-                                                              width: 1)),
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                    .all(
-                                                                Radius.circular(
-                                                                    30)),
-                                                        child: controller
-                                                                        .memoriesList[
-                                                                            index]
-                                                                        .userModel !=
-                                                                    null &&
-                                                                controller
-                                                                    .memoriesList[
-                                                                        index]
-                                                                    .userModel!
-                                                                    .profileImage!
-                                                                    .isNotEmpty
-                                                            ? CachedNetworkImage(
-                                                                imageUrl: controller
-                                                                    .memoriesList[
-                                                                        index]
-                                                                    .userModel!
-                                                                    .profileImage!,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                height: 45,
-                                                                width: 45,
-                                                                progressIndicatorBuilder: (context,
-                                                                        url,
-                                                                        downloadProgress) =>
-                                                                    CircularProgressIndicator(
-                                                                        value: downloadProgress
-                                                                            .progress))
-                                                            : Image.asset(
-                                                                userIcon,
-                                                                fit:
-                                                                    BoxFit.fill,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                      ),
-                                                    ),
                                                     Expanded(
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
+                                                      child: Row(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
-                                                                .start,
+                                                                .center,
                                                         children: [
-                                                          Text(
-                                                            controller
-                                                                    .memoriesList
-                                                                    .isNotEmpty
-                                                                ? controller
-                                                                    .memoriesList[
-                                                                        index]
-                                                                    .title!
-                                                                : "",
-                                                            style: const TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize: 18),
+                                                          Container(
+                                                            height: 45,
+                                                            width: 45,
+                                                            margin:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        15),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            decoration: BoxDecoration(
+                                                                color:
+                                                                    Colors.grey,
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    width: 1)),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                          .all(
+                                                                      Radius.circular(
+                                                                          30)),
+                                                              child: controller
+                                                                              .memoriesList[
+                                                                                  index]
+                                                                              .userModel !=
+                                                                          null &&
+                                                                      controller
+                                                                          .memoriesList[
+                                                                              index]
+                                                                          .userModel!
+                                                                          .profileImage!
+                                                                          .isNotEmpty
+                                                                  ? CachedNetworkImage(
+                                                                      imageUrl: controller
+                                                                          .memoriesList[
+                                                                              index]
+                                                                          .userModel!
+                                                                          .profileImage!,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      height:
+                                                                          45,
+                                                                      width: 45,
+                                                                      progressIndicatorBuilder: (context,
+                                                                              url,
+                                                                              downloadProgress) =>
+                                                                          CircularProgressIndicator(
+                                                                              value: downloadProgress.progress))
+                                                                  : Image.asset(
+                                                                      userIcon,
+                                                                      fit: BoxFit
+                                                                          .fill,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                            ),
                                                           ),
-                                                          Text(
-                                                            controller
-                                                                        .memoriesList[
-                                                                            index]
-                                                                        .userModel !=
-                                                                    null
-                                                                ? "Author : ${controller.memoriesList[index].userModel!.userName!}"
-                                                                : "",
-                                                            style: const TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 12),
-                                                          )
+                                                          Expanded(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  controller
+                                                                          .memoriesList
+                                                                          .isNotEmpty
+                                                                      ? controller
+                                                                          .memoriesList[
+                                                                              index]
+                                                                          .title!
+                                                                      : "",
+                                                                  style: const TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      fontSize:
+                                                                          18),
+                                                                ),
+                                                                Text(
+                                                                  controller.memoriesList[index]
+                                                                              .userModel !=
+                                                                          null
+                                                                      ? "Author : ${controller.memoriesList[index].userModel!.userName!}"
+                                                                      : "",
+                                                                  style: const TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          12),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            alignment: Alignment
+                                                                .center,
+                                                            margin:
+                                                                const EdgeInsets
+                                                                        .only(left:
+                                                                        5),
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    shape: BoxShape
+                                                                        .circle),
+                                                            child: Text(
+                                                              controller
+                                                                      .memoriesList
+                                                                      .isNotEmpty
+                                                                  ? "${controller.memoriesList[index].imagesCaption!.length}"
+                                                                  : "0",
+                                                              style: const TextStyle(
+                                                                  color: AppColors
+                                                                      .primaryColor,
+                                                                  fontSize: 14),
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
                                                     ),
                                                     Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      margin: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 10),
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              shape: BoxShape
-                                                                  .circle),
-                                                      child: Text(
-                                                        controller.memoriesList
-                                                                .isNotEmpty
-                                                            ? "${controller.memoriesList[index].imagesCaption!.length}"
-                                                            : "0",
-                                                        style: const TextStyle(
-                                                            color: AppColors
-                                                                .primaryColor,
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
+                                                        alignment:
+                                                            Alignment.topRight,
+                                                        margin: const EdgeInsets
+                                                                .only(
+                                                            right: 5, top: 5),
+                                                        child: moreIcon(
+                                                            context,
+                                                            controller
+                                                                    .memoriesList[
+                                                                index]))
                                                   ],
                                                 ),
                                               ),
@@ -517,9 +543,15 @@ class Memories extends GetView<MemoriesController> {
                                     borderRadius: BorderRadius.circular(15),
                                     image: DecorationImage(
                                         image: CachedNetworkImageProvider(
-                                            controller.sharedMemoriesList[index]
-                                                .imagesCaption![controller.sharedMemoriesList[index]
-                                    .imagesCaption.length-1].image),
+                                            controller
+                                                .sharedMemoriesList[index]
+                                                .imagesCaption![controller
+                                                        .sharedMemoriesList[
+                                                            index]
+                                                        .imagesCaption
+                                                        .length -
+                                                    1]
+                                                .image),
                                         fit: BoxFit.cover))
                                 : null,
                             color: controller.sharedMemoriesList[index]
@@ -711,7 +743,8 @@ class Memories extends GetView<MemoriesController> {
                             shareIndex);
                         controller.acceptInviteNotification(
                             controller.sharedMemoriesList[index].createdBy,
-                            controller.sharedMemoriesList[index].memoryId, controller.sharedMemoriesList[index]);
+                            controller.sharedMemoriesList[index].memoryId,
+                            controller.sharedMemoriesList[index]);
 
                         Get.back();
                       },
@@ -739,6 +772,127 @@ class Memories extends GetView<MemoriesController> {
                         controller.deleteInvite(
                             controller.sharedMemoriesList[index], index);
 
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(40),
+                        child: const Text(
+                          'No',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: AppColors.primaryColor,
+                              fontFamily: robotoBold),
+                          textAlign: TextAlign.center,
+                        ),
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            color: AppColors.hintTextColor),
+                      ),
+                    )),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  moreIcon(context, memoriesModel) {
+    return PopupMenuButton<int>(
+      itemBuilder: (context) => [
+        // popupmenu item 1
+        PopupMenuItem(
+          value: 1,
+          // row has two child icon and text.
+          child: Row(
+            children: const [
+              Icon(Icons.delete),
+              SizedBox(
+                // sized box with width 10
+                width: 10,
+              ),
+              Text("Delete")
+            ],
+          ),
+        ),
+      ],
+      offset: const Offset(0, 40),
+      color: Colors.white,
+      splashRadius: 5,
+      elevation: 2,
+      icon: Icon(Icons.more_vert,color: Colors.white,),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8))),
+      onSelected: (value) {
+        showDeleteBottomSheet(context, memoriesModel);
+      },
+    );
+  }
+
+  void showDeleteBottomSheet(
+      BuildContext context, MemoriesModel memoriesModel) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: false,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+        builder: (context) {
+          return Container(
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    topLeft: Radius.circular(15)),
+                color: Colors.white),
+            height: 200,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(25.0),
+                  child: Text(
+                    'Are you sure you want to delete?',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: AppColors.darkColor,
+                        fontFamily: robotoBold),
+                  ),
+                ),
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                        child: InkWell(
+                      onTap: () {
+                        controller.deleteMemory(memoriesModel);
+
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(40),
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: AppColors.primaryColor,
+                              fontFamily: robotoBold),
+                          textAlign: TextAlign.center,
+                        ),
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            color: AppColors.hintTextColor),
+                      ),
+                    )),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                        child: InkWell(
+                      onTap: () {
                         Get.back();
                       },
                       child: Container(

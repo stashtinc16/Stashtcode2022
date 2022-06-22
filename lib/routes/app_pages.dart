@@ -71,7 +71,7 @@ class AppPages {
         binding: MemoriesBinding()),
     GetPage(
         name: AppRoutes.notifications,
-        page: () => const Notifications(),
+        page: () =>  Notifications(),
         binding: NotificationsBinding()),
     GetPage(
         name: AppRoutes.changePassword,
