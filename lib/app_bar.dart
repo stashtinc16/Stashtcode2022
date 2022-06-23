@@ -96,19 +96,23 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                       top: 7,
                       child: ValueListenableBuilder(
                         builder: (BuildContext context, value, Widget? child) {
-                          return notificationCount.value>0 ?  Container(
-                            width: 18.0,
-                            height: 18.0,
-                            alignment: Alignment.center,
-                            decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(30)),color: Colors.red),
-                            child: Text(
-                              '${notificationCount.value}',
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.white),textAlign: TextAlign.center,
-                            ),
-                          ) : Container();
+                          return notificationCount.value > 0
+                              ? Container(
+                                  width: 18.0,
+                                  height: 18.0,
+                                  alignment: Alignment.center,
+                                  decoration: const BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(30)),
+                                      color: Colors.red),
+                                  child: Text(
+                                    '${notificationCount.value}',
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              : Container();
                         },
                         valueListenable: notificationCount,
                       ),
@@ -119,7 +123,7 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
             ],
           ),
           const SizedBox(
-            width: 20,
+            width: 17,
           ),
           InkWell(
             onTap: () {
@@ -128,16 +132,19 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
             child: ValueListenableBuilder(
               valueListenable: userImage,
               builder: (BuildContext context, value, Widget? child) {
-                return CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Colors.grey,
+                return Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50.0),
+                      border: Border.all(color: Colors.grey, width: 0.3)),
+                  height: 30,
+                  width: 30,
                   child: ClipRRect(
                     child: userImage.value.isNotEmpty
                         ? CachedNetworkImage(
                             imageUrl: userImage.value,
                             fit: BoxFit.cover,
-                            height: 34,
-                            width: 34,
+                            height: 30,
+                            width: 30,
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) =>
                                     CircularProgressIndicator(
@@ -145,8 +152,8 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                         : Image.asset(
                             userIcon,
                             fit: BoxFit.cover,
-                            height: 34,
-                            width: 34,
+                            height: 30,
+                            width: 30,
                           ),
                     borderRadius: BorderRadius.circular(50.0),
                   ),

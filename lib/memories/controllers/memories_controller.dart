@@ -168,29 +168,37 @@ class MemoriesController extends GetxController {
         .listen((value) => {
               print('value $userId => ${value.docs.length}'),
               noData.value = value.docs.isNotEmpty,
-              memoriesList.clear(),
-              value.docs.forEach((element) {
+              value.docChanges.forEach((element) {
                 // getUserData(element.data().createdBy!);
                 usersRef.doc(userId).get().then(
                   (userValue) {
-                    MemoriesModel memoriesModel = element.data();
-                    memoriesModel.memoryId = element.id;
+                    MemoriesModel memoriesModel = element.doc.data()!;
+                    memoriesModel.memoryId = element.doc.id;
                     memoriesModel.userModel = userValue.data()!;
                     try {
                       memoriesModel.imagesCaption!.sort((first, second) {
-                        return first.createdAt!.compareTo(second.createdAt!);
+                        print(
+                            'CreatedAt ${first.createdAt!} => ${second.createdAt!}');
+                        return second.createdAt!.compareTo(first.createdAt!);
                       });
                     } catch (e) {
                       print('Exception $e');
                     }
-                    // memoriesModel.imagesCaption!.sort((first, second) {
-                    //   return first.createdAt!.compareTo(second.createdAt!);
-                    // });
-                    // memoriesModel.imagesCaption =
-                    //     element.data().imagesCaption!.reversed.toList();
-                    memoriesList.value.add(memoriesModel);
+                    int index = 0;
+                    var notificationValue = memoriesList.where((p0) {
+                      index = memoriesList.indexOf(p0);
+                      return p0.memoryId == element.doc.id;
+                    });
+                    print('notificationValue $notificationValue');
 
-                    if (element.id == value.docs[value.docs.length - 1].id) {
+                    if (notificationValue.isNotEmpty) {
+                      memoriesList[index] = memoriesModel;
+                    } else {
+                      memoriesList.value.add(memoriesModel);
+                    }
+
+                    if (element.doc.id ==
+                        value.docChanges[value.docChanges.length - 1].doc.id) {
                       myMemoriesExpand.value = !sharedMemoriesExpand.value;
                       print('MyMemoriesExpanded ${myMemoriesExpand.value}');
 
@@ -594,8 +602,10 @@ class MemoriesController extends GetxController {
     MemoriesModel memoriesModels = memoriesModel!;
 
     memoriesModels.imagesCaption!.addAll(imageCaptionUrls);
-    memoriesModels.imagesCaption =
-        memoriesModels.imagesCaption!.reversed.toList();
+    memoriesModels.imagesCaption!.sort((a, b) {
+      return b.createdAt!.compareTo(a.createdAt!);
+    });
+
     memoriesRef.doc(memoryId).update(memoriesModels.toJson()).then((value) => {
           print('Updated Successfully!'),
           scrollController.animateTo(

@@ -46,8 +46,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   image: CachedNetworkImageProvider(
                                       memoriesModel!
                                           .imagesCaption![memoriesModel!
-                                                  .imagesCaption!.length -
-                                              1]
+                                          .imagesCaption!.length-1]
                                           .image!),
                                   fit: BoxFit.cover))
                           : null,
@@ -106,18 +105,18 @@ class Memory_Lane extends GetView<MemoriesController> {
                                     width: 15,
                                   ),
                                   // if (memoriesModel!.createdBy == userId)
-                                    InkWell(
-                                      onTap: () {
-                                        controller.pickImages(
-                                            memoriesModel!.memoryId!,
-                                            memoriesModel!);
-                                      },
-                                      child: const Icon(
-                                        Icons.add_box_rounded,
-                                        color: Colors.white,
-                                        size: 25,
-                                      ),
-                                    )
+                                  InkWell(
+                                    onTap: () {
+                                      controller.pickImages(
+                                          memoriesModel!.memoryId!,
+                                          memoriesModel!);
+                                    },
+                                    child: const Icon(
+                                      Icons.add_box_rounded,
+                                      color: Colors.white,
+                                      size: 25,
+                                    ),
+                                  )
                                 ],
                               ),
                               Container(
@@ -182,8 +181,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                       if (type == "1") {
                         memoriesModel = controller.memoriesList[mainIndex!];
                       } else {
-                        memoriesModel =
-                            controller.sharedMemoriesList[mainIndex!];
+                        memoriesModel = controller.sharedMemoriesList[mainIndex!];
                       }
                       return Column(
                         mainAxisSize: MainAxisSize.min,
@@ -277,7 +275,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                     text:
                                                         DateFormat("MMM dd/yy")
                                                             .format(
-                                                                memoriesModel!
+                                                                memoriesModel!.imagesCaption![index]
                                                                     .createdAt!
                                                                     .toDate())
                                                             .toString(),

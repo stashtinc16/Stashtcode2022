@@ -108,6 +108,9 @@ class ChangePassword extends GetView<ProfileController> {
                     } else if (newPassword.length < 8) {
                       return 'Please enter at least 8 characters';
                     }
+                    else if (newPassword==controller.oldPasswordcontroller.value.text) {
+                      return 'New password should be different from old current password';
+                    }
                     return null;
                   },
                   obscureText: controller.isObscureNew.value,

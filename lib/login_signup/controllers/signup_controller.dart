@@ -143,10 +143,9 @@ class SignupController extends GetxController {
         EasyLoading.dismiss();
         if (e.code == 'user-not-found') {
           print("User not found");
-
+          Get.back(result: {"email": email1Controller.text.toString()});
           Get.snackbar("Error", "User not found, Please signup new user",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
-          Get.back(result: {"email": email1Controller.text.toString()});
 
           return Future.error(
               "User Not Found", StackTrace.fromString("User Not Found"));
@@ -180,6 +179,7 @@ class SignupController extends GetxController {
         deviceType: Platform.isAndroid ? "Android" : "IOS",
         displayName: username,
         email: user!.email,
+        notificationCount: 0,
         profileImage: "",
         status: true);
 
@@ -285,6 +285,7 @@ class SignupController extends GetxController {
         displayName: name,
         email: email,
         profileImage: profileImage,
+        notificationCount: 0,
         status: true);
 
     usersRef.add(userModel).then((value) => {
