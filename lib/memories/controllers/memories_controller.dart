@@ -33,6 +33,7 @@ class MemoriesController extends GetxController {
   final titleController = TextEditingController();
   List<Medium> selectedList = List.empty(growable: true);
   ScrollController scrollController = ScrollController();
+  MemoriesModel? detailMemoryModel;
 
   int pageCount = 50;
   int totalCount = 0;
@@ -66,32 +67,65 @@ class MemoriesController extends GetxController {
   //get Shared memories
   void getSharedMemories() {
     print('getSharedMemories=> $userId');
-
+    sharedMemoriesList.clear();
     memoriesRef
         .where('shared_with', arrayContainsAny: [
           {'user_id': userId, 'status': 0},
           {'user_id': userId, 'status': 1}
         ])
         .orderBy('created_at', descending: true)
-        .get()
-        .then((value) => {
-              sharedMemoriesList.clear(),
-              value.docs.forEach((element) {
-                usersRef.doc(element.data().createdBy!).get().then((userValue) {
-                  MemoriesModel memoriesModel = element.data();
-                  memoriesModel.memoryId = element.id;
+        .snapshots()
+        .listen((value) => {
+              value.docChanges.forEach((element) {
+                usersRef
+                    .doc(element.doc.data()!.createdBy!)
+                    .get()
+                    .then((userValue) {
+                  List<ImagesCaption> imagesList = List.empty(growable: true);
+                  MemoriesModel memoriesModel = element.doc.data()!;
+                  memoriesModel.memoryId = element.doc.id;
                   memoriesModel.userModel = userValue.data()!;
-                  try {
-                    memoriesModel.imagesCaption!.sort((first, second) {
-                      return first.createdAt!.compareTo(second.createdAt!);
+                  element.doc
+                      .data()!
+                      .imagesCaption!
+                      .forEach((innerElement) async {
+                    print('innerElement.userId ${innerElement.userId}');
+                    await usersRef
+                        .doc(innerElement.userId)
+                        .get()
+                        .then((imageUser) {
+                      ImagesCaption imagesCaption = innerElement;
+                      if (imageUser.data() != null) {
+                        imagesCaption.userModel = imageUser.data()!;
+                        imagesList.add(imagesCaption);
+                        if (imagesList.length ==
+                            element.doc.data()!.imagesCaption!.length) {
+                          memoriesModel.imagesCaption = imagesList;
+                          try {
+                            memoriesModel.imagesCaption!.sort((first, second) {
+                              return second.createdAt!
+                                  .compareTo(first.createdAt!);
+                            });
+                          } catch (e) {
+                            print('Exception $e');
+                          }
+                        }
+                      }
                     });
-                  } catch (e) {
-                    print('Exception $e');
-                  }
+                  });
 
-                  sharedMemoriesList.add(memoriesModel);
-                  print('sharedMemoriesList ${sharedMemoriesList.length}');
-                  if (element.id == value.docs[value.docs.length - 1].id) {
+                  int index = 0;
+                  var notificationValue = sharedMemoriesList.where((p0) {
+                    index = sharedMemoriesList.indexOf(p0);
+                    return p0.memoryId == element.doc.id;
+                  });
+
+                  if (notificationValue.isNotEmpty) {
+                    sharedMemoriesList[index] = memoriesModel;
+                  } else {
+                    sharedMemoriesList.value.add(memoriesModel);
+                  }
+                  if (sharedMemoriesList.length == value.docChanges.length) {
                     print('Shared ${sharedMemoriesList.length}');
                     update();
                   }
@@ -101,6 +135,7 @@ class MemoriesController extends GetxController {
         .onError((error, stackTrace) => {print('onError $error')});
   }
 
+  // delete memory images
   void deleteMemoryImages(String memoryId, int removeIndex,
       MemoriesModel memoriesModel, ImagesCaption imagesCaption) {
     List<int> removeItemList = List.empty(growable: true);
@@ -118,6 +153,7 @@ class MemoriesController extends GetxController {
         });
   }
 
+  // delete a memory
   void deleteMemory(MemoriesModel memoriesModel) {
     memoriesRef
         .doc(memoriesModel.memoryId)
@@ -125,6 +161,7 @@ class MemoriesController extends GetxController {
         .then((value) => {print('Delete')});
   }
 
+  // update memory invite status
   void updateJoinStatus(
       String memoryID, int isJoined, int index, int shareIndex) {
     MemoriesModel memoriesModel = MemoriesModel();
@@ -142,6 +179,7 @@ class MemoriesController extends GetxController {
         .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }
 
+  // update invite link to memory
   void updateInviteLink(MemoriesModel model, String inviteLink) {
     MemoriesModel memoriesModel = MemoriesModel();
     memoriesModel = model;
@@ -155,6 +193,33 @@ class MemoriesController extends GetxController {
               // Get.back()
             })
         .onError((error, stackTrace) => {EasyLoading.dismiss()});
+  }
+
+//get memory data for detail page
+  void getMyMemoryData(memoryId) {
+    memoriesRef.doc(memoryId).snapshots().listen((event) {
+      List<ImagesCaption> captionList = List.empty(growable: true);
+      if (event.data() != null) {
+        for (var element in event.data()!.imagesCaption!) {
+          usersRef.doc(element.userId).get().then((userValue) {
+            ImagesCaption imagesCaption = element;
+            imagesCaption.userModel = userValue.data();
+
+            captionList.add(imagesCaption);
+
+            if (captionList.length == event.data()!.imagesCaption!.length) {
+              captionList.sort(((a, b) {
+                return b.createdAt!.compareTo(a.createdAt!);
+              }));
+              detailMemoryModel = event.data()!;
+              detailMemoryModel!.memoryId = event.id;
+              detailMemoryModel!.imagesCaption = captionList;
+              update();
+            }
+          });
+        }
+      }
+    });
   }
 
   void getMyMemories() {
@@ -172,42 +237,70 @@ class MemoriesController extends GetxController {
                 // getUserData(element.data().createdBy!);
                 usersRef.doc(userId).get().then(
                   (userValue) {
+                    List<ImagesCaption> imagesList = List.empty(growable: true);
                     MemoriesModel memoriesModel = element.doc.data()!;
                     memoriesModel.memoryId = element.doc.id;
                     memoriesModel.userModel = userValue.data()!;
-                    try {
-                      memoriesModel.imagesCaption!.sort((first, second) {
-                        print(
-                            'CreatedAt ${first.createdAt!} => ${second.createdAt!}');
-                        return second.createdAt!.compareTo(first.createdAt!);
+                    element.doc
+                        .data()!
+                        .imagesCaption!
+                        .forEach((innerElement) async {
+                      await usersRef
+                          .doc(innerElement.userId)
+                          .get()
+                          .then((imageUser) {
+                        ImagesCaption imagesCaption = innerElement;
+                        imagesCaption.userModel = imageUser.data()!;
+                        imagesList.add(imagesCaption);
+                        if (imagesList.length ==
+                            element.doc.data()!.imagesCaption!.length) {
+                          print('Inee');
+                          memoriesModel.imagesCaption = imagesList;
+                          try {
+                            memoriesModel.imagesCaption!.sort((first, second) {
+                              return second.createdAt!
+                                  .compareTo(first.createdAt!);
+                            });
+                          } catch (e) {
+                            print('Exception $e');
+                          }
+
+                          updateMemoriesWithData(
+                              memoriesModel, element.doc.id, value);
+                        }
                       });
-                    } catch (e) {
-                      print('Exception $e');
-                    }
-                    int index = 0;
-                    var notificationValue = memoriesList.where((p0) {
-                      index = memoriesList.indexOf(p0);
-                      return p0.memoryId == element.doc.id;
                     });
-                    print('notificationValue $notificationValue');
-
-                    if (notificationValue.isNotEmpty) {
-                      memoriesList[index] = memoriesModel;
-                    } else {
-                      memoriesList.value.add(memoriesModel);
-                    }
-
-                    if (element.doc.id ==
-                        value.docChanges[value.docChanges.length - 1].doc.id) {
-                      myMemoriesExpand.value = !sharedMemoriesExpand.value;
-                      print('MyMemoriesExpanded ${myMemoriesExpand.value}');
-
-                      update();
+                    if (value.docChanges.isEmpty) {
+                      updateMemoriesWithData(
+                          memoriesModel, element.doc.id, value);
                     }
                   },
                 );
               })
             });
+  }
+
+  updateMemoriesWithData(MemoriesModel model, String memoryId,
+      QuerySnapshot<MemoriesModel> value) {
+    int index = 0;
+    var notificationValue = memoriesList.where((p0) {
+      index = memoriesList.indexOf(p0);
+      return p0.memoryId == memoryId;
+    });
+    print('notificationValue $notificationValue');
+
+    if (notificationValue.isNotEmpty) {
+      print('twoo');
+      memoriesList[index] = model;
+    } else {
+      memoriesList.value.add(model);
+    }
+    if (memoryId == value.docChanges[value.docChanges.length - 1].doc.id) {
+      myMemoriesExpand.value = !sharedMemoriesExpand.value;
+      print('MyMemoriesExpanded ${myMemoriesExpand.value}');
+
+      update();
+    }
   }
 
   void shareMemory(index) {
@@ -229,7 +322,7 @@ class MemoriesController extends GetxController {
   }
 
 // Create Dynamic Link
-  Future<void> createDynamicLink(String memoryId, bool short, int index) async {
+  Future<void> createDynamicLink(String memoryId, bool short) async {
     String link = "$DEFAULT_FALLBACK_URL_ANDROID?memory_id=$memoryId";
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: URI_PREFIX_FIREBASE,
@@ -257,6 +350,7 @@ class MemoriesController extends GetxController {
 
   // Pick Images from gallery
   Future<void> pickImages(String memoryId, MemoriesModel? memoriesModel) async {
+    resultList.clear();
     try {
       resultList = await MultiImagePicker.pickImages(
         maxImages: 10,
@@ -266,8 +360,11 @@ class MemoriesController extends GetxController {
     } on Exception catch (e) {
       print(e);
     }
+    print('resultList ${resultList.length}');
     // images = resultList;
-    uploadImagesToMemories(0, memoryId, memoriesModel);
+    if (resultList.isNotEmpty) {
+      uploadImagesToMemories(0, memoryId, memoriesModel);
+    }
   }
 
   // Share Dynamic Link
@@ -335,6 +432,7 @@ class MemoriesController extends GetxController {
         .get();
 
     receiverToken = db.data()!.deviceToken!;
+  
 
     print('receiverId $receiverId => receiverToken $receiverToken ');
     String title = "Invite Accepted";
@@ -371,6 +469,9 @@ class MemoriesController extends GetxController {
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         isRead: false,
+        memoryImage: "",
+        description: " added you a public memory",
+        type: 'invite-accept',
         memoryCover: memoryCover,
         memoryId: memoriesModel.memoryId,
         receiverId: receivedId,
@@ -496,6 +597,7 @@ class MemoriesController extends GetxController {
     if (resultList.isNotEmpty) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
+        imageCaptionUrls.clear();
       }
       //selectedIndexList = index of selected items from main photos list
       final dir = await path_provider.getTemporaryDirectory();
@@ -532,6 +634,7 @@ class MemoriesController extends GetxController {
     if (selectedIndexList.isNotEmpty) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
+        imageCaptionUrls.clear();
       }
       //selectedIndexList = index of selected items from main photos list
       final dir = await path_provider.getTemporaryDirectory();
@@ -575,6 +678,7 @@ class MemoriesController extends GetxController {
                     image: value,
                     commentCount: 0,
                     createdAt: Timestamp.now(),
+                    userId: userId,
                     imageId:
                         Timestamp.now().millisecondsSinceEpoch.toString())),
                 if (imageCaptionUrls.length < resultList.length)
@@ -600,13 +704,20 @@ class MemoriesController extends GetxController {
 // Update or Add images to existing memory
   void updateMemory(String memoryId, MemoriesModel? memoriesModel) {
     MemoriesModel memoriesModels = memoriesModel!;
-
     memoriesModels.imagesCaption!.addAll(imageCaptionUrls);
-    memoriesModels.imagesCaption!.sort((a, b) {
-      return b.createdAt!.compareTo(a.createdAt!);
-    });
+    try {
+      memoriesModels.imagesCaption!.sort((a, b) {
+        return b.createdAt!.compareTo(a.createdAt!);
+      });
+    } catch (ex) {
+      print('upload images exception $ex');
+    }
 
     memoriesRef.doc(memoryId).update(memoriesModels.toJson()).then((value) => {
+          // memoriesRef
+          //     .doc(memoryId)
+          //     .update({"images_caption": memoriesModels.imagesCaption!}).then(
+          // (value) => {
           print('Updated Successfully!'),
           scrollController.animateTo(
             0.0,
@@ -656,16 +767,16 @@ class MemoriesController extends GetxController {
         .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }
 
-  void saveCaption(
-      String caption, int captionIndex, String docId, int mainIndex) {
-    print('caption $caption => $docId $captionIndex');
+  void saveCaption(String caption, int captionIndex, MemoriesModel model) {
+    print('caption $caption => ${model.memoryId} $captionIndex');
     MemoriesModel memoriesModel = MemoriesModel();
-    memoriesModel = memoriesList[mainIndex];
+    memoriesModel = model;
 
+    memoriesModel.imagesCaption![captionIndex].updatedAt = Timestamp.now();
     memoriesModel.imagesCaption![captionIndex].caption = caption;
     EasyLoading.show(status: 'Processing');
     memoriesRef
-        .doc(docId)
+        .doc(model.memoryId)
         .set(memoriesModel)
         .then((value) =>
             {print('UpdateCaption '), EasyLoading.dismiss(), Get.back()})

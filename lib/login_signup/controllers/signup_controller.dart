@@ -201,7 +201,7 @@ class SignupController extends GetxController {
 //Signin to facebook
   Future<bool> facebookLogin() async {
     EasyLoading.show(status: 'Processing');
-
+    print('LoginToFacebook');
     await plugin.logIn(permissions: [
       FacebookPermission.publicProfile,
       FacebookPermission.email,
@@ -209,6 +209,8 @@ class SignupController extends GetxController {
 
     if (Platform.isAndroid) {
       final res = await plugin.expressLogin();
+          print('LoginToFacebook');
+
       if (res.status == FacebookLoginStatus.success) {
         await _updateLoginInfo();
       } else {

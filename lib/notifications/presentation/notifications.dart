@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:stasht/app_bar.dart';
 import 'package:stasht/notifications/controller/notification_controller.dart';
 import 'package:stasht/notifications/domain/notification_model.dart';
+import 'package:stasht/routes/app_pages.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
@@ -48,6 +49,21 @@ class Notifications extends GetView<NotificationController> {
                                   controller.updateReadStatus(
                                       controller.notificationList[index]);
                                   controller.update();
+                                }
+                                print('ontroller.notificationList[index].type ${controller.notificationList[index].type}');
+                                if (controller.notificationList[index].type ==
+                                    "comment") {
+                                  Get.toNamed(AppRoutes.memoryList, arguments: {
+                                    "memoryId": controller
+                                        .notificationList[index].memoryId,
+                                    "memoryImage": controller
+                                        .notificationList[index].memoryImage
+                                  });
+                                } else {
+                                  Get.toNamed(AppRoutes.memoryList, arguments: {
+                                    "memoryId": controller
+                                        .notificationList[index].memoryId
+                                  });
                                 }
                               },
                               child: Stack(
@@ -95,10 +111,10 @@ class Notifications extends GetView<NotificationController> {
                                                     108, 96, 255, 1),
                                                 fontSize: 12),
                                             children: <TextSpan>[
-                                              const TextSpan(
+                                              TextSpan(
                                                   text:
-                                                      ' added you a public memory\n',
-                                                  style: TextStyle(
+                                                      " ${controller.notificationList[index].description!}\n",
+                                                  style: const TextStyle(
                                                       fontFamily: robotoRegular,
                                                       color: Colors.black,
                                                       fontSize: 12)),

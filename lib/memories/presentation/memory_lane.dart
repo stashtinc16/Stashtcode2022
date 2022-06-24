@@ -11,26 +11,33 @@ import 'package:intl/intl.dart';
 import 'package:stasht/utils/constants.dart';
 
 class Memory_Lane extends GetView<MemoriesController> {
-  int? mainIndex;
+  // int? mainIndex;
   MemoriesModel? memoriesModel;
-  String? type;
+  // String? type;
+  String? memoryId;
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
-    mainIndex = Get.arguments['mainIndex'];
+    // mainIndex = Get.arguments['mainIndex'];
+    print('AAAAAAAAAAAAAAAA_AAAAAAA');
     // memoriesModel = Get.arguments['list'];
-    type = Get.arguments['type'];
-    if (type == "1") {
-      memoriesModel = controller.memoriesList[mainIndex!];
-    } else {
-      memoriesModel = controller.sharedMemoriesList[mainIndex!];
-    }
-    print('memoriesModel ${memoriesModel!.memoryId}');
+    // type = Get.arguments['type'];
+    memoryId = Get.arguments['memoryId'];
+    // if (type == "1") {
+      // memoriesModel = controller.memoriesList[mainIndex!];
+    // } else {
+      // memoriesModel = controller.sharedMemoriesList[mainIndex!];
+    // }
+    controller.getMyMemoryData(memoryId);
+    // print('memoriesModel ${memoriesModel!.memoryId}');
 
     return GetBuilder(
+      initState: (state) {
+        controller.getMyMemoryData(memoryId);
+      },
       builder: (MemoriesController controller) {
-        return Scaffold(
+        return controller.detailMemoryModel!=null? Scaffold(
             resizeToAvoidBottomInset: false,
             body: Column(
               children: [
@@ -40,17 +47,32 @@ class Memory_Lane extends GetView<MemoriesController> {
                       width: MediaQuery.of(context).size.width,
                       height: 170,
                       padding: const EdgeInsets.only(top: 45),
-                      decoration: memoriesModel!.imagesCaption!.isNotEmpty
+                      // decoration: memoriesModel!.imagesCaption!.isNotEmpty
+                      //     ? BoxDecoration(
+                      //         image: DecorationImage(
+                      //             image: CachedNetworkImageProvider(
+                      //                 memoriesModel!
+                      //                     .imagesCaption![memoriesModel!
+                      //                             .imagesCaption!.length -
+                      //                         1]
+                      //                     .image!),
+                      //             fit: BoxFit.cover))
+                      decoration: controller
+                              .detailMemoryModel!.imagesCaption!.isNotEmpty
                           ? BoxDecoration(
                               image: DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                      memoriesModel!
-                                          .imagesCaption![memoriesModel!
-                                          .imagesCaption!.length-1]
-                                          .image!),
+                                  image: CachedNetworkImageProvider(controller
+                                      .detailMemoryModel!
+                                      .imagesCaption![
+                                          controller
+                                      .detailMemoryModel!
+                                      .imagesCaption!.length -
+                                              1]
+                                      .image!),
                                   fit: BoxFit.cover))
                           : null,
-                      color: memoriesModel!.imagesCaption!.isNotEmpty
+                      color: controller
+                              .detailMemoryModel!.imagesCaption!.isNotEmpty
                           ? null
                           : Colors.grey,
                     ),
@@ -80,20 +102,23 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       ],
                                     ),
                                   ),
-                                  if (userId == memoriesModel!.createdBy)
+                                  if (userId == controller
+                              .detailMemoryModel!.createdBy)
                                     InkWell(
                                       onTap: () {
                                         Get.toNamed(AppRoutes.collaborators,
                                             arguments: {
-                                              'mainIndex': mainIndex,
+                                              // 'mainIndex': mainIndex,
                                               'imageIndex': 0,
-                                              'list': memoriesModel,
-                                              'type': type
+                                              'list': controller
+                              .detailMemoryModel,
+                                              // 'type': type
                                             });
                                         controller.createDynamicLink(
-                                            memoriesModel!.memoryId!,
-                                            true,
-                                            mainIndex!);
+                                            controller
+                              .detailMemoryModel!.memoryId!,
+                                            true
+                                            );
                                       },
                                       child: const Icon(
                                         Icons.person_add_alt_1_outlined,
@@ -108,8 +133,10 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   InkWell(
                                     onTap: () {
                                       controller.pickImages(
-                                          memoriesModel!.memoryId!,
-                                          memoriesModel!);
+                                          controller
+                              .detailMemoryModel!.memoryId!,
+                                          controller
+                              .detailMemoryModel!);
                                     },
                                     child: const Icon(
                                       Icons.add_box_rounded,
@@ -127,8 +154,10 @@ class Memory_Lane extends GetView<MemoriesController> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      memoriesModel!.userModel != null &&
-                                              memoriesModel!.userModel!
+                                      controller
+                              .detailMemoryModel!.userModel != null &&
+                                              controller
+                              .detailMemoryModel!.userModel!
                                                   .profileImage!.isNotEmpty
                                           ? Container(
                                               height: 60,
@@ -143,7 +172,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                       const BorderRadius.all(
                                                           Radius.circular(30)),
                                                   child: CachedNetworkImage(
-                                                    imageUrl: memoriesModel!
+                                                    imageUrl: controller
+                              .detailMemoryModel!
                                                         .userModel!
                                                         .profileImage!,
                                                     fit: BoxFit.cover,
@@ -158,7 +188,9 @@ class Memory_Lane extends GetView<MemoriesController> {
                                             top: 5,
                                           ),
                                           child: Text(
-                                            "${memoriesModel!.title!} (${memoriesModel!.imagesCaption!.length})",
+                                            "${controller
+                              .detailMemoryModel!.title!} (${controller
+                              .detailMemoryModel!.imagesCaption!.length})",
                                             style: const TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w900,
@@ -174,15 +206,17 @@ class Memory_Lane extends GetView<MemoriesController> {
                 Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
-                    itemCount: memoriesModel!.imagesCaption!.length,
+                    itemCount: controller
+                              .detailMemoryModel!.imagesCaption!.length,
                     reverse: false,
                     controller: controller.scrollController,
                     itemBuilder: (context, index) {
-                      if (type == "1") {
-                        memoriesModel = controller.memoriesList[mainIndex!];
-                      } else {
-                        memoriesModel = controller.sharedMemoriesList[mainIndex!];
-                      }
+                      // if (type == "1") {
+                      //   memoriesModel = controller.memoriesList[mainIndex!];
+                      // } else {
+                      //   memoriesModel =
+                      //       controller.sharedMemoriesList[mainIndex!];
+                      // }
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -203,9 +237,17 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           shape: BoxShape.circle,
                                           border: Border.all(
                                               color: Colors.white, width: 2)),
-                                      child: memoriesModel!.userModel != null
-                                          ? memoriesModel!.userModel!
-                                                  .profileImage!.isNotEmpty
+                                      child: controller
+                              .detailMemoryModel!
+                                                  .imagesCaption![index]
+                                                  .userModel !=
+                                              null
+                                          ? controller
+                              .detailMemoryModel!
+                                                  .imagesCaption![index]
+                                                  .userModel!
+                                                  .profileImage!
+                                                  .isNotEmpty
                                               ? ClipRRect(
                                                   borderRadius:
                                                       const BorderRadius.all(
@@ -213,7 +255,9 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   child: CachedNetworkImage(
                                                     width: 45,
                                                     height: 45,
-                                                    imageUrl: memoriesModel!
+                                                    imageUrl: controller
+                              .detailMemoryModel!
+                                                        .imagesCaption![index]
                                                         .userModel!
                                                         .profileImage!,
                                                     fit: BoxFit.cover,
@@ -235,11 +279,20 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   height: 45,
                                                 )
                                           : Text(
-                                              memoriesModel!
-                                                  .userModel!.userName!
-                                                  .toString()
-                                                  .substring(0, 1)
-                                                  .toUpperCase(),
+                                              controller
+                              .detailMemoryModel!
+                                                          .imagesCaption![index]
+                                                          .userModel !=
+                                                      null
+                                                  ? controller
+                              .detailMemoryModel!
+                                                      .imagesCaption![index]
+                                                      .userModel!
+                                                      .userName!
+                                                      .toString()
+                                                      .substring(0, 1)
+                                                      .toUpperCase()
+                                                  : "",
                                               textAlign: TextAlign.center,
                                               style: const TextStyle(
                                                   fontSize: 22,
@@ -256,7 +309,16 @@ class Memory_Lane extends GetView<MemoriesController> {
                                             CrossAxisAlignment.stretch,
                                         children: [
                                           Text(
-                                            memoriesModel!.userModel!.userName!,
+                                            controller
+                              .detailMemoryModel!.imagesCaption![index]
+                                                        .userModel !=
+                                                    null
+                                                ? controller
+                              .detailMemoryModel!
+                                                    .imagesCaption![index]
+                                                    .userModel!
+                                                    .userName!
+                                                : "",
                                             style: const TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
@@ -272,13 +334,22 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   const TextStyle(fontSize: 11),
                                               children: <TextSpan>[
                                                 TextSpan(
-                                                    text:
-                                                        DateFormat("MMM dd/yy")
-                                                            .format(
-                                                                memoriesModel!.imagesCaption![index]
-                                                                    .createdAt!
-                                                                    .toDate())
-                                                            .toString(),
+                                                    text: controller
+                              .detailMemoryModel!
+                                                                .imagesCaption![
+                                                                    index]
+                                                                .createdAt !=
+                                                            null
+                                                        ? DateFormat(
+                                                                "MMM dd/yy hh:mm a")
+                                                            .format(controller
+                              .detailMemoryModel!
+                                                                .imagesCaption![
+                                                                    index]
+                                                                .createdAt!
+                                                                .toDate())
+                                                            .toString()
+                                                        : "",
                                                     style: TextStyle(
                                                         color: AppColors
                                                             .primaryColor
@@ -294,26 +365,29 @@ class Memory_Lane extends GetView<MemoriesController> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        if (memoriesModel!
+                                        if (controller
+                              .detailMemoryModel!
                                             .imagesCaption!.isNotEmpty) {
                                           Get.toNamed(AppRoutes.comments,
                                               arguments: {
                                                 "memoryId":
-                                                    memoriesModel!.memoryId!,
-                                                "memoryImage": memoriesModel!
+                                                    controller
+                              .detailMemoryModel!.memoryId!,
+                                                "memoryImage": controller
+                              .detailMemoryModel!
                                                     .imagesCaption![index]
                                                     .image,
-                                                'list': memoriesModel,
-                                                'mainIndex': mainIndex,
+                                                'list': controller
+                              .detailMemoryModel,
                                                 'imageIndex': index,
-                                                'type': type
                                               });
                                         }
                                       },
                                       child: Row(
                                         children: [
                                           Text(
-                                            memoriesModel!.imagesCaption![index]
+                                            controller
+                              .detailMemoryModel!.imagesCaption![index]
                                                 .commentCount
                                                 .toString(),
                                             style: const TextStyle(
@@ -333,14 +407,18 @@ class Memory_Lane extends GetView<MemoriesController> {
                                     const SizedBox(
                                       width: 4,
                                     ),
-                                    if (memoriesModel!.createdBy == userId)
+                                    if (controller
+                              .detailMemoryModel!.createdBy == userId)
                                       moreButton(
                                           context,
-                                          memoriesModel!.memoryId!,
+                                          controller
+                              .detailMemoryModel!.memoryId!,
                                           index,
                                           controller,
-                                          memoriesModel!,
-                                          memoriesModel!.imagesCaption![index]),
+                                          controller
+                              .detailMemoryModel!,
+                                          controller
+                              .detailMemoryModel!.imagesCaption![index]),
                                     const SizedBox(
                                       width: 6,
                                     ),
@@ -374,7 +452,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                         ),
                                                       ),
                                               fit: BoxFit.cover,
-                                              imageUrl: memoriesModel!
+                                              imageUrl: controller
+                              .detailMemoryModel!
                                                   .imagesCaption![index]
                                                   .image!),
                                         )
@@ -386,10 +465,9 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   onTap: () {
                                     Get.toNamed(AppRoutes.addCaption,
                                         arguments: {
-                                          'mainIndex': mainIndex,
                                           'imageIndex': index,
-                                          'list': memoriesModel,
-                                          'type': type
+                                          'list': controller
+                              .detailMemoryModel,
                                         });
                                   },
                                   child: Container(
@@ -398,21 +476,25 @@ class Memory_Lane extends GetView<MemoriesController> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 5),
                                     child: Text(
-                                        memoriesModel!.imagesCaption![index]
+                                        controller
+                              .detailMemoryModel!.imagesCaption![index]
                                                 .caption!.isEmpty
                                             ? 'Add caption to this Post...'
-                                            : memoriesModel!
+                                            : controller
+                              .detailMemoryModel!
                                                 .imagesCaption![index].caption!,
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
-                                            color: memoriesModel!
+                                            color: controller
+                              .detailMemoryModel!
                                                     .imagesCaption![index]
                                                     .caption!
                                                     .isEmpty
                                                 ? AppColors.textColor
                                                 : AppColors.darkColor,
                                             fontSize: 12,
-                                            fontStyle: memoriesModel!
+                                            fontStyle: controller
+                              .detailMemoryModel!
                                                     .imagesCaption![index]
                                                     .caption!
                                                     .isEmpty
@@ -439,7 +521,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                   ),
                 )
               ],
-            ));
+            )) : Container();
       },
     );
   }

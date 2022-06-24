@@ -2,20 +2,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
+import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 
 class AddCaption extends GetView<MemoriesController> {
-  int? mainIndex, imageIndex;
+  int?  imageIndex;
+  MemoriesModel? memoriesModel;
   TextEditingController captionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    mainIndex = Get.arguments['mainIndex'];
     imageIndex = Get.arguments['imageIndex'];
-    captionController.text = controller.memoriesList[mainIndex!]
-            .imagesCaption[imageIndex].caption.isNotEmpty
-        ? controller.memoriesList[mainIndex!].imagesCaption[imageIndex].caption
-        : "";
+    memoriesModel = Get.arguments['list'];
+    captionController.text =
+        memoriesModel!.imagesCaption![imageIndex!].caption!.isNotEmpty
+            ? memoriesModel!.imagesCaption![imageIndex!].caption!
+            : "";
 
     return Scaffold(
       appBar: AppBar(
@@ -32,11 +34,8 @@ class AddCaption extends GetView<MemoriesController> {
         actions: [
           InkWell(
             onTap: () {
-              controller.saveCaption(
-                  captionController.text.toString(),
-                  imageIndex!,
-                  controller.memoriesList[mainIndex!].memoryId,
-                  mainIndex!);
+              controller.saveCaption(captionController.text.toString(),
+                  imageIndex!, memoriesModel!);
             },
             child: Row(
               children: const [
@@ -77,7 +76,6 @@ class AddCaption extends GetView<MemoriesController> {
             maxLength: 350,
             decoration: const InputDecoration(
                 hintText: 'Add Caption to this post..',
-              
                 hintStyle: TextStyle(fontSize: 14, color: AppColors.textColor),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0)),
@@ -91,8 +89,8 @@ class AddCaption extends GetView<MemoriesController> {
                       ),
                     ),
                 fit: BoxFit.cover,
-                imageUrl: controller.memoriesList[mainIndex!]
-                    .imagesCaption[imageIndex!].image!),
+                imageUrl: memoriesModel!
+                    .imagesCaption![imageIndex!].image!),
           )
         ],
       ),

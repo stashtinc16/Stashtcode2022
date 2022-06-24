@@ -30,16 +30,16 @@ class NotificationController extends GetxController {
     notificationList.clear();
     notificationsRef
         .where("receiver_id", isEqualTo: userId)
-        .orderBy("created_at", descending: true)
+        .orderBy("created_at", descending: false)
         .snapshots()
         .listen((event) {
       print('listenEvent ${event.docChanges.length}');
       if (event.docChanges.isNotEmpty) {
         for (var element in event.docChanges) {
           NotificationsModel notificationsModel = element.doc.data()!;
+          print('Type ${element.doc.data()!.type}');
           notificationsModel.id = element.doc.id;
           usersRef.doc(element.doc.data()!.userId).get().then((userValue) {
-            print('userValue.data() ${element.doc.id}');
             notificationsModel.userModel = userValue.data();
             int index = 0;
             var notificationValue = notificationList.where((p0) {
@@ -47,6 +47,7 @@ class NotificationController extends GetxController {
               return p0.id == element.doc.id;
             });
 
+          
             if (notificationValue.isNotEmpty) {
               notificationList[index] = notificationsModel;
             } else {

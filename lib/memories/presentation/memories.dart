@@ -132,7 +132,10 @@ class Memories extends GetView<MemoriesController> {
                                                 'mainIndex': index,
                                                 'list': controller
                                                     .memoriesList[index],
-                                                'type': "1"
+                                                'type': "1",
+                                                "memoryId": controller
+                                                    .memoriesList[index]
+                                                    .memoryId
                                               });
                                         },
                                         child: Container(
@@ -322,8 +325,8 @@ class Memories extends GetView<MemoriesController> {
                                                                 .center,
                                                             margin:
                                                                 const EdgeInsets
-                                                                        .only(left:
-                                                                        5),
+                                                                        .only(
+                                                                    left: 5),
                                                             decoration:
                                                                 const BoxDecoration(
                                                                     color: Colors
@@ -527,7 +530,9 @@ class Memories extends GetView<MemoriesController> {
                           Get.toNamed(AppRoutes.memoryList, arguments: {
                             'mainIndex': index,
                             'list': controller.sharedMemoriesList[index],
-                            'type': "2"
+                            'type': "2",
+                            "memoryId":
+                                controller.sharedMemoriesList[index].memoryId
                           });
                         }
                       },
@@ -631,38 +636,44 @@ class Memories extends GetView<MemoriesController> {
                                   ),
                                 ),
                                 Container(
-                                  child: isJoined == 0
-                                      ? InkWell(
-                                          onTap: () {
-                                            showInviteRepondDialog(
-                                                context, index, shareIndex);
+                                    child: isJoined == 0
+                                        ? InkWell(
+                                            onTap: () {
+                                              showInviteRepondDialog(
+                                                  context, index, shareIndex);
 
-                                            controller.update();
-                                          },
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10.0)),
-                                                color: Colors.white),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 13.0,
-                                                vertical: 7.0),
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 13.0),
-                                            child: const Text(
-                                              'Join',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: AppColors.primaryColor,
-                                                  fontFamily: robotoBold),
+                                              controller.update();
+                                            },
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              10.0)),
+                                                  color: Colors.white),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 13.0,
+                                                      vertical: 7.0),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 13.0),
+                                              child: const Text(
+                                                'Join',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    fontFamily: robotoBold),
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                      : SvgPicture.asset(
-                                          checkBox,
-                                          width: 45,
-                                        ),
-                                ),
+                                          )
+                                        : Container()
+                                    // : SvgPicture.asset(
+                                    //     checkBox,
+                                    //     width: 45,
+                                    //   ),
+                                    ),
                                 const SizedBox(
                                   width: 10,
                                 )
@@ -823,7 +834,10 @@ class Memories extends GetView<MemoriesController> {
       color: Colors.white,
       splashRadius: 5,
       elevation: 2,
-      icon: Icon(Icons.more_vert,color: Colors.white,),
+      icon: Icon(
+        Icons.more_vert,
+        color: Colors.white,
+      ),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
       onSelected: (value) {

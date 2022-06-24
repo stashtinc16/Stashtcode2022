@@ -6,6 +6,9 @@ class NotificationsModel {
   String? memoryTitle;
   String? userId;
   String? memoryCover;
+  String? memoryImage;
+  String? description;
+  String? type;
   String? memoryId;
   String? receiverId;
   Timestamp? createdAt;
@@ -18,11 +21,15 @@ class NotificationsModel {
       this.memoryTitle,
       this.userId,
       this.memoryCover,
+      this.memoryImage,
       this.memoryId,
+      this.description,
+      this.type,
       this.receiverId,
       this.createdAt,
       this.updatedAt,
-      this.isRead,this.userModel});
+      this.isRead,
+      this.userModel});
 
   NotificationsModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -32,21 +39,27 @@ class NotificationsModel {
     memoryId = json['memory_id'];
     receiverId = json['receiver_id'];
     createdAt = json['created_at'];
+    description = json['description'];
+    memoryImage = json['memory_image'];
+    type = json['type'];
     updatedAt = json['updated_at'];
     isRead = json['is_read'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['memory_title'] = this.memoryTitle;
-    data['user_id'] = this.userId;
-    data['memory_cover'] = this.memoryCover;
-    data['memory_id'] = this.memoryId;
-    data['receiver_id'] = this.receiverId;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['is_read'] = this.isRead;
+    final Map<String, dynamic> data =  <String, dynamic>{};
+    data['id'] = id;
+    data['memory_title'] = memoryTitle;
+    data['user_id'] = userId;
+    data['memory_cover'] = memoryCover;
+    data['memory_image'] = memoryImage;
+    data['memory_id'] = memoryId;
+    data['description'] = description;
+    data['type'] = type;
+    data['receiver_id'] = receiverId;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['is_read'] = isRead;
     return data;
   }
 }
