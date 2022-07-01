@@ -11,7 +11,7 @@ import 'package:stasht/utils/assets_images.dart';
 
 class Collaborators extends GetView<MemoriesController> {
   String? imagePath = "";
-  int? mainIndex;
+  // int? mainIndex;
   String? type;
   MemoriesModel? memoriesModel;
 
@@ -19,7 +19,7 @@ class Collaborators extends GetView<MemoriesController> {
 
   @override
   Widget build(BuildContext context) {
-    mainIndex = Get.arguments['mainIndex'];
+    // mainIndex = Get.arguments['mainIndex'];
     memoriesModel = Get.arguments['list'];
     type = Get.arguments['type'];
     return GetBuilder(
@@ -76,8 +76,13 @@ class Collaborators extends GetView<MemoriesController> {
                           right: 10,
                           top: 0,
                           child: IconButton(
-                            onPressed: () => controller.share(
-                                memoriesModel!, "${controller.shareLink}"),
+                            onPressed: () => {
+                              controller.createDynamicLink(
+                                  controller.detailMemoryModel!.memoryId!,
+                                  true,
+                                  true,
+                                  controller.detailMemoryModel!)
+                            },
                             icon: const Icon(
                               Icons.share,
                               color: Colors.white,
@@ -154,7 +159,6 @@ class Collaborators extends GetView<MemoriesController> {
                       }
                       DocumentSnapshot<UserModel> userModelSnapshot =
                           snapshot.data! as DocumentSnapshot<UserModel>;
-                      print('USerDATA $userModelSnapshot ${snapshot.data!}');
                       UserModel userModel = userModelSnapshot.data()!;
                       return Column(
                         children: [
@@ -215,7 +219,7 @@ class Collaborators extends GetView<MemoriesController> {
                               if (dismissDirection ==
                                   DismissDirection.endToStart) {
                                 print('DismissDirection ');
-                                deleteCollaborator(index, mainIndex!,type!);
+                                deleteCollaborator(index,  "1");
                               }
                               print(
                                   'DismissDirection onDismissed $dismissDirection ');
@@ -244,8 +248,8 @@ class Collaborators extends GetView<MemoriesController> {
   }
 
   //delete collaborator
-  void deleteCollaborator(int index, int mainIndex,String type) {
+  void deleteCollaborator(int index, String type) {
     controller.deleteCollaborator(
-        memoriesModel!.memoryId!, memoriesModel!, index, mainIndex, type);
+        memoriesModel!.memoryId!, memoriesModel!, index,  type);
   }
 }

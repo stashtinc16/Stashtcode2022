@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
+import 'package:stasht/memories/controllers/memories_controller.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/constants.dart';
 
@@ -20,9 +21,12 @@ class ProfileController extends GetxController {
   RxBool status2 = true.obs;
   RxBool status3 = true.obs;
   RxBool changeUserName = false.obs;
+  RxBool allowBackPress = true.obs;
+  RxBool allowBackPressOnPw = true.obs;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   GlobalKey<FormState> formkeyPassword = GlobalKey<FormState>();
+  MemoriesController memoriesController = Get.find<MemoriesController>();
 
   FacebookLogin facebookAuth = FacebookLogin();
   @override
@@ -40,19 +44,17 @@ class ProfileController extends GetxController {
       );
 
   void updateProfileImage(String profileUrl) {
-    usersRef.doc(userId).update({"profile_image": profileUrl}).then(
-        (value) => {print('Profile updated'), userImage.value = profileUrl});
-  }
-
-  @override
-  void onReady() {
-    // TODO: implement onReady
-    super.onReady();
+    usersRef.doc(userId).update({"profile_image": profileUrl}).then((value) => {
+          print('Profile updated'),
+          userImage.value = profileUrl,
+          memoriesController.onInit()
+        });
   }
 
   changePassword() async {
     if (formkeyPassword.currentState!.validate()) {
       formkeyPassword.currentState!.save();
+      allowBackPressOnPw.value = false;
       EasyLoading.show(status: 'Processing..');
       final user = await FirebaseAuth.instance.currentUser;
       final cred = EmailAuthProvider.credential(
@@ -63,20 +65,33 @@ class ProfileController extends GetxController {
           //Success, do something
           print('NewPassword');
           EasyLoading.dismiss();
+          allowBackPressOnPw.value = true;
+          clearPassword();
           Get.back();
-          Get.snackbar('Success', 'Password changed successfully.');
+          Get.snackbar('Success', 'Password changed.');
         }).catchError((error) {
           //Error, show something
           print('catchErrorUpdate $error');
           Get.snackbar('User not found', '');
+          allowBackPressOnPw.value = true;
+          clearPassword();
           EasyLoading.dismiss();
         });
       }).catchError((err) {
         print('catchError $err');
         EasyLoading.dismiss();
+        clearPassword();
+        allowBackPressOnPw.value = true;
         Get.snackbar('Password Incorrect', 'Current password is incorrect.');
       });
     }
+  }
+
+// Clear Passwords for change password view
+  clearPassword() {
+    oldPasswordcontroller.value.text = "";
+    newPasswordcontroller.value.text = "";
+    confirmPasswordcontroller.value.text = "";
   }
 
   logoutUser() {
@@ -92,14 +107,24 @@ class ProfileController extends GetxController {
       fromShare = false;
       Get.offAllNamed(AppRoutes.signup);
       print('UserId==== $userId');
+    }).onError((error, stackTrace) {
+      print('Profile ${error}');
     });
   }
 
+ // update notification count as 0 
+  void updateNotificationCount(){
+     usersRef
+          .doc(userId)
+          .update({"notification_count": 0});
+  }
+
   void changeUserNameFunc() {
-    if (formkey.currentState!.validate()) {}
-    usersRef
-        .doc(userId)
-        .update({"display_name": nameController.value.text}).then(
-            (value) => {print('onNameChange ')});
+    if (formkey.currentState!.validate()) {
+      usersRef
+          .doc(userId)
+          .update({"display_name": nameController.value.text}).then(
+              (value) => {print('onNameChange '), memoriesController.onInit()});
+    }
   }
 }

@@ -35,23 +35,24 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
             ),
           ),
         ),
-        const SizedBox(
-          width: 17,
-        ),
-        InkWell(
-          onTap: () {
-            pageSelected(false, true, false, false);
-          },
-          child: SvgPicture.asset(
-            "assets/images/todayapp.svg",
-            height: 22,
-            width: 21,
-            color: const Color.fromRGBO(108, 96, 255, 1),
-          ),
-        ),
+        // const SizedBox(
+        //   width: 17,
+        // ),
+        // InkWell(
+        //   onTap: () {
+        //     pageSelected(false, true, false, false);
+        //   },
+        //   child: SvgPicture.asset(
+        //     "assets/images/todayapp.svg",
+        //     height: 22,
+        //     width: 21,
+        //     color: const Color.fromRGBO(108, 96, 255, 1),
+        //   ),
+        // ),
         Expanded(
           child: Container(
             height: 30,
+            margin: const EdgeInsets.only(left: 30),
             alignment: Alignment.center,
             child: Text(
               title,

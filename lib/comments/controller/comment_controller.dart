@@ -14,12 +14,15 @@ import 'package:stasht/utils/constants.dart';
 class CommentsController extends GetxController {
   // RxList   List<CommentsModel>
   RxList commentsList = List.empty(growable: true).obs;
+  final ScrollController scrollController = ScrollController();
+
   TextEditingController commentController = TextEditingController();
   StreamController<CommentsModel> streamController =
       StreamController<CommentsModel>();
   int imageIndex = Get.arguments["imageIndex"];
   // int mainIndex = Get.arguments["mainIndex"];
   MemoriesModel memoriesModel = Get.arguments["list"];
+  RxBool hasData = false.obs;
 
   final commentsRef = FirebaseFirestore.instance
       .collection(commentsCollection)
@@ -85,7 +88,7 @@ class CommentsController extends GetxController {
       for (var element in event.docs) {
         print(
             'elementId ${element.id} => ${event.docs[event.docs.length - 1].id}');
-        usersRef.doc(element.data().userId).get().then((userValue) {
+        await usersRef.doc(element.data().userId).get().then((userValue) {
           CommentsModel commentsModel = CommentsModel();
           commentsModel = element.data();
           commentsModel.commentId = element.id;
@@ -133,21 +136,26 @@ class CommentsController extends GetxController {
         )
         .snapshots()
         .listen((event) async {
+           hasData.value = true;
+      if (event.docChanges.isEmpty) {
+        
+        update();
+      }
+
       // here count is a field name in firestore database
 
       for (var element in event.docChanges) {
-        usersRef.doc(element.doc.data()!.userId!).get().then((userValue) {
+        await usersRef.doc(element.doc.data()!.userId!).get().then((userValue) {
           CommentsModel commentsModel = CommentsModel();
           commentsModel = element.doc.data()!;
           commentsModel.commentId = element.doc.id;
           commentsModel.userModel = userValue.data()!;
 
           commentsList.value.add(commentsModel);
-          if (element.doc.id == event.docs[event.docs.length - 1].id) {
+          if (commentsList.length == event.docChanges.length) {
             commentsList.sort((first, second) {
               return first.createdAt!.compareTo(second.createdAt!);
             });
-            print('CommentList ${commentsList.length}');
             memoryRef.doc(commentsModel.memoryId).get().then((value) {
               MemoriesModel memoriesModel = value.data()!;
               memoriesModel.imagesCaption![imageIndex].commentCount =
@@ -159,6 +167,9 @@ class CommentsController extends GetxController {
                   .then((value) => {print('Comment Count updated  '), update()})
                   .onError((error, stackTrace) => {});
             });
+            // Future.delayed(Duration(seconds: 1), (() {
+            //   scrollDown();
+            // }));
           }
         });
       }
@@ -182,11 +193,13 @@ class CommentsController extends GetxController {
           print('CommentAdded $value'),
           commentController.text = "",
           addCommentCountToMemories(memoryId),
+          scrollDown(),
           sendCommentNotification(
               // userId == memoriesModel.createdBy!?
-                   memoriesModel.imagesCaption![imageIndex].userId!
-                  // : memoriesModel.createdBy!
-              ,memoriesModel.memoryId!,
+              memoriesModel.imagesCaption![imageIndex].userId!
+              // : memoriesModel.createdBy!
+              ,
+              memoriesModel.memoryId!,
               memoriesModel,
               memoriesModel.imagesCaption![imageIndex].image!),
           update(),
@@ -195,34 +208,68 @@ class CommentsController extends GetxController {
 
   Future<void> sendCommentNotification(String receiverId, String memoryID,
       MemoriesModel memoriesModel, String commentImage) async {
-    var receiverToken = "";
-    var db = await FirebaseFirestore.instance
-        .collection("users")
+    List<String> registeredTokens = List.empty(growable: true);
+    List<String> receiverIds = List.empty(growable: true);
+
+    FirebaseFirestore.instance
+        .collection(userCollection)
         .withConverter<UserModel>(
           fromFirestore: (snapshots, _) =>
               UserModel.fromJson(snapshots.data()!),
           toFirestore: (users, _) => users.toJson(),
         )
-        .doc(receiverId)
-        .get();
+        .get()
+        .then((event) {
+      var sendToOwner = false;
+      print(
+          'GetUsers ${event.docs.length} => ${memoriesModel.memoryId} => ${memoriesModel.sharedWith!.length}');
+      if (event.docs.isNotEmpty) {
+        outerLoop:
+        for (int j = 0; j < memoriesModel.sharedWith!.length; j++) {
+          innerLoop:
+          for (var element in event.docs) {
+            if (!sendToOwner &&
+                memoriesModel.createdBy != userId &&
+                memoriesModel.createdBy == element.id) {
+              sendToOwner = true;
+              sendNotificationToAllUser(memoriesModel.memoryId!,
+                  element.data().deviceToken!, element.id, commentImage);
+            }
+            if (memoriesModel.sharedWith![j].status == 1 &&
+                element.id == memoriesModel.sharedWith![j].userId &&
+                userId != element.id) {
+              sendNotificationToAllUser(memoriesModel.memoryId!,
+                  element.data().deviceToken!, element.id, commentImage);
 
-    receiverToken = db.data()!.deviceToken!;
-    print('receiverToken $receiverToken');
+              print('Receiver');
+              break innerLoop;
+            }
+          }
+          // if (element.id == event.docs[event.docs.length - 1].id) {
+          //   sendNotificationToAllUser(memoriesModel.memoryId!, registeredTokens,
+          //       receiverIds, commentImage);
+          // }
+        }
+      }
+    });
+  }
 
-    print('receiverId $receiverId => receiverToken $receiverToken ');
+  void sendNotificationToAllUser(String memoryId, String deviceToken,
+      String receiverId, String commentImage) {
     String title = "New Comment";
     String description =
         "$userName has commented on ${memoriesModel.title} memory.";
     // String receiverToken = globalNotificationToken;
     var dataPayload = jsonEncode({
-      'to': receiverToken,
+      'to': deviceToken,
+      // 'registration_ids': registeredTokens,
       'data': {
         "type": "comment",
         "priority": "high",
         "click_action": "FLUTTER_NOTIFICATION_CLICK",
         "sound": "default",
         "senderId": userId,
-        "memoryID": memoryID
+        "memoryID": memoryId
       },
       'notification': {
         'title': title,
@@ -231,8 +278,18 @@ class CommentsController extends GetxController {
         "sound": "default"
       },
     });
-    sendPushMessage(receiverToken, dataPayload);
+    sendPushMessage(deviceToken, dataPayload);
     saveNotificationData(receiverId, memoriesModel, commentImage);
+  }
+
+  void scrollDown() {
+    if(scrollController.position!=null){
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent + 50,
+      duration: Duration(seconds: 2),
+      curve: Curves.fastOutSlowIn,
+    );
+    }
   }
 
   // Save Notification data in DB
@@ -251,7 +308,8 @@ class CommentsController extends GetxController {
         memoryImage: commentImage,
         description: ' has commented on',
         type: 'comment',
-        receiverId: receivedId,
+        receivedId: receivedId,
+        // receiverIds: receivedId,
         userId: userId);
     notificationsRef
         .add(notificationsModel)
@@ -263,6 +321,16 @@ class CommentsController extends GetxController {
                 : 1
           })
         });
+
+    // for (int k = 0; k < receivedId.length; k++) {
+    //   usersRef.doc(receivedId[k]).get().then((value) => {
+    //         usersRef.doc(receivedId[k]).update({
+    //           "notification_count": value.data()!.notificationCount != null
+    //               ? value.data()!.notificationCount! + 1
+    //               : 1
+    //         })
+    //       });
+    // }
   }
 
   void addCommentCountToMemories(String memoryId) {

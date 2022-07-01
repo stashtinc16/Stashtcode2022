@@ -117,11 +117,11 @@ class SignupController extends GetxController {
                     EasyLoading.dismiss(),
                     if (value.docs.isNotEmpty)
                       {
-                        if (value.docs[0].data().deviceToken!.isEmpty)
-                          {
+                        // if (value.docs[0].data().deviceToken!.isEmpty)
+                        //   {
                             usersRef.doc(value.docs[0].id).update(
-                                {"device_token": globalNotificationToken})
-                          },
+                                {"device_token": globalNotificationToken}),
+                          // },
                         saveSession(
                             value.docs[0].id,
                             value.docs[0].data().displayName!,
@@ -187,7 +187,7 @@ class SignupController extends GetxController {
           EasyLoading.dismiss(),
           saveSession(value.id, username, user.email!, "", 0),
           clearTexts(),
-          Get.snackbar('Success', "User registerd successfully",
+          Get.snackbar('Success', "User registerd",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
           Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
         });
@@ -207,19 +207,19 @@ class SignupController extends GetxController {
       FacebookPermission.email,
     ]);
 
-    if (Platform.isAndroid) {
-      final res = await plugin.expressLogin();
-          print('LoginToFacebook');
+    // if (Platform.isAndroid) {
+    //   final res = await plugin.expressLogin();
+    //       print('LoginToFacebook');
 
-      if (res.status == FacebookLoginStatus.success) {
-        await _updateLoginInfo();
-      } else {
-        EasyLoading.dismiss();
-      }
-    } else {
+    //   if (res.status == FacebookLoginStatus.success) {
+    //     await _updateLoginInfo();
+    //   } else {
+    //     EasyLoading.dismiss();
+    //   }
+    // } else {
       await _updateLoginInfo();
       EasyLoading.dismiss();
-    }
+    // }
 
     return _isLogged!;
   }
@@ -265,7 +265,7 @@ class SignupController extends GetxController {
                 EasyLoading.dismiss(),
                 emailController.value.text = "",
                 passwordController.text = "",
-                Get.snackbar('Success', "User logged-in successfully",
+                Get.snackbar('Success', "User logged-in!",
                     snackPosition: SnackPosition.BOTTOM,
                     colorText: Colors.white),
                 Get.offNamed(AppRoutes.memories)
@@ -294,7 +294,7 @@ class SignupController extends GetxController {
           EasyLoading.dismiss(),
           isSocailUser = false,
           saveSession(value.id, name, email!, profileImage!, 0),
-          Get.snackbar('Success', "User logged-in successfully",
+          Get.snackbar('Success', "User logged-in!",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
           Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
         });

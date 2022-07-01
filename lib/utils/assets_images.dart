@@ -22,3 +22,4 @@ const messageIcon = assetPath + "message_icon.png";
 const tickIcon = assetPath + "tick_icon.png";
 const copyIcon = assetPath + "copy_icon.png";
 const deleteIcon = assetPath + "delete_icon.png";
+const addPhotos = assetPath + "add_photos.svg";

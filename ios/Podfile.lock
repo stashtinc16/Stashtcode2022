@@ -644,11 +644,11 @@ PODS:
   - Firebase/Storage (8.15.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 8.15.0)
-  - firebase_auth (3.3.18):
+  - firebase_auth (3.3.20):
     - Firebase/Auth (= 8.15.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.17.0):
+  - firebase_core (1.18.0):
     - Firebase/CoreOnly (= 8.15.0)
     - Flutter
   - firebase_crashlytics (2.8.1):
@@ -730,6 +730,8 @@ PODS:
     - Flutter
   - flutter_login_facebook (1.4.0):
     - FBSDKLoginKit (~> 12.3)
+    - Flutter
+  - flutter_secure_storage (3.3.1):
     - Flutter
   - flutter_share (0.0.1):
     - Flutter
@@ -852,6 +854,8 @@ PODS:
   - SDWebImageWebPCoder (0.8.4):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
+  - shared_preferences_ios (0.0.1):
+    - Flutter
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
@@ -870,12 +874,14 @@ DEPENDENCIES:
   - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_login_facebook (from `.symlinks/plugins/flutter_login_facebook/ios`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - flutter_share (from `.symlinks/plugins/flutter_share/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - multi_image_picker (from `.symlinks/plugins/multi_image_picker/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - photo_gallery (from `.symlinks/plugins/photo_gallery/ios`)
+  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
 
 SPEC REPOS:
@@ -942,6 +948,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_login_facebook:
     :path: ".symlinks/plugins/flutter_login_facebook/ios"
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
   flutter_share:
     :path: ".symlinks/plugins/flutter_share/ios"
   image_picker_ios:
@@ -954,6 +962,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   photo_gallery:
     :path: ".symlinks/plugins/photo_gallery/ios"
+  shared_preferences_ios:
+    :path: ".symlinks/plugins/shared_preferences_ios/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
 
@@ -971,8 +981,8 @@ SPEC CHECKSUMS:
   FBSDKCoreKit_Basics: 6bee7c1f0932432901781203fa5e587ec5099148
   FBSDKLoginKit: 56d55e23fe66a6db045826190b0b4dbc0e1ca0a0
   Firebase: 5f8193dff4b5b7c5d5ef72ae54bb76c08e2b841d
-  firebase_auth: ace975b530600827bd901a9a18584f7cdaf6d160
-  firebase_core: aa1b92020533f5c23955e388c347c58fd64f8627
+  firebase_auth: 0c31e02a522f6ece632f9f6d623441898c4dd679
+  firebase_core: b14c1cfa29b9eb316345f74d1489328283825d6d
   firebase_crashlytics: 3ccd7b4f26a7fc546774b1074d2d10b0c6f92ab6
   firebase_dynamic_links: 9091e315c78410ee8da9d9edb9372a672bf0713c
   firebase_messaging: 943cfe65e0b3f457240489ce67655e40da1d270c
@@ -990,6 +1000,7 @@ SPEC CHECKSUMS:
   flutter_image_compress: fd2b476345226e1a10ea352fa306af95704642c1
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_login_facebook: a3fc23908d8554e5aa62a25999a1079c33272d54
+  flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
   flutter_share: 4be0208963c60b537e6255ed2ce1faae61cd9ac2
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
@@ -1011,6 +1022,7 @@ SPEC CHECKSUMS:
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   SDWebImage: 0905f1b7760fc8ac4198cae0036600d67478751e
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
+  shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
 
 PODFILE CHECKSUM: 2ae5b59f1f93237a5a410e40e72aa51fe4a467d3

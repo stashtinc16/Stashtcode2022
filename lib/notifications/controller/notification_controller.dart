@@ -47,15 +47,20 @@ class NotificationController extends GetxController {
               return p0.id == element.doc.id;
             });
 
-          
             if (notificationValue.isNotEmpty) {
               notificationList[index] = notificationsModel;
             } else {
               notificationList.value.add(notificationsModel);
             }
 
-            if (element.doc.id ==
-                event.docChanges[event.docChanges.length - 1].doc.id) {
+            if (notificationList.length == event.docChanges.length) {
+              try {
+                notificationList.sort((first, second) {
+                  return second.createdAt!.compareTo(first.createdAt!);
+                });
+              } catch (e) {
+                print('Exception $e');
+              }
               update();
             }
           });

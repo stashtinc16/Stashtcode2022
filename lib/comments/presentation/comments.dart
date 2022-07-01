@@ -12,6 +12,7 @@ class Comments extends GetView<CommentsController> {
   Comments({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+
     return GetBuilder(
       builder: (CommentsController controller) => Scaffold(
         appBar: AppBar(
@@ -38,14 +39,15 @@ class Comments extends GetView<CommentsController> {
               image: DecorationImage(
                   image: CachedNetworkImageProvider(imagePath),
                   fit: BoxFit.cover)),
-          child: Container(
+          child:   Container(
             decoration: BoxDecoration(color: Colors.black.withOpacity(0.49)),
             child: Column(
               children: [
                 Expanded(
                   child: Align(
                     alignment: Alignment.bottomCenter,
-                    child: Obx(() => ListView.builder(
+                    child: controller.hasData.value ? Obx(() =>  ListView.builder(
+                      // controller: controller.scrollController,
                           itemBuilder: (BuildContext context, int index) {
                             return Column(
                               children: [
@@ -132,7 +134,10 @@ class Comments extends GetView<CommentsController> {
                           },
                           itemCount: controller.commentsList.length,
                           shrinkWrap: true,
-                        )),
+                        ) ) : SizedBox(
+            width: 30,
+            height: 30,
+            child: CircularProgressIndicator(color: Colors.white,)), 
                   ),
                 ),
                 Container(
@@ -161,12 +166,14 @@ class Comments extends GetView<CommentsController> {
                     if (controller.commentController.text.trim().isNotEmpty)
                       IconButton(
                           onPressed: () {
+                            if(controller.commentController.text.trim().isNotEmpty){
                             controller.addComment(memoryId);
                             controller
                                     .memoriesModel
                                     .imagesCaption![controller.imageIndex]
                                     .commentCount =
                                 controller.commentsList.length + 1;
+                                }
                           },
                           icon: const Icon(Icons.arrow_circle_right_outlined,
                               color: Colors.white))
@@ -174,9 +181,11 @@ class Comments extends GetView<CommentsController> {
                 ),
               ],
             ),
-          ),
+          )
         ),
       ),
     );
   }
+
+
 }

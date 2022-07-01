@@ -49,6 +49,8 @@
 	<string>f09d1819fcfdf61822fe7f37dad00ec8</string>
 	<key>FacebookDisplayName</key>
 	<string>Stasht</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>

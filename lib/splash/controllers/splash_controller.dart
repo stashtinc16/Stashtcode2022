@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:ffi';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,17 +45,26 @@ class SplashController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    initDynamicLinks();
+
     initializeFirebaseNotification();
+    initDynamicLinks();
     // _connectivitySubscription =
     //     _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
-  void initializeFirebaseNotification() {
-    FirebaseMessaging.instance.requestPermission();
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
+  Future<void> initializeFirebaseNotification() async {
+    FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+
+    firebaseMessaging.requestPermission(
+        sound: true, badge: true, alert: true, provisional: false);
+    if (Platform.isIOS) {
+      await firebaseMessaging.setForegroundNotificationPresentationOptions(
+        alert: true, // Required to display a heads up notification
+        badge: true,
+        sound: true,
+      );
+    }
+    firebaseMessaging.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {}
     });
 
@@ -67,27 +79,52 @@ class SplashController extends GetxController {
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null && !kIsWeb) {
         flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              // TODO add a proper drawable resource to android, for now using
-              //      one that already exists in example app.
-              icon: '@mipmap/ic_launcher',
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                // TODO add a proper drawable resource to android, for now using
+                //      one that already exists in example app.
+                icon: '@mipmap/ic_launcher',
+              ),
             ),
-          ),
-        );
+            payload: jsonEncode(message.data));
       }
     });
+    var initializationSettingsAndroid =
+        const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = const IOSInitializationSettings();
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      String memoryId = message.data["memoryID"];
+      // String memoryId = message.data["memoryID"];
       // Get.toNamed(AppRoutes.memoryList, {});
-      print('A new onMessageOpenedApp event was published!');
+      print('A new onMessageOpenedApp event was published! ${message.data}');
+       var data = message.data;
+    // if (data['type'] == "comment") {
+      var memoryId = data['memoryID'];
+      Get.toNamed(AppRoutes.memoryList, arguments: {"memoryId": memoryId});
     });
+  }
+
+  Future onSelectNotification(String? payload) async {
+    print('payload $payload');
+    if(payload!=null){
+
+   
+    var data = jsonDecode(payload!);
+    // if (data['type'] == "comment") {
+      var memoryId = data['memoryID'];
+      Get.toNamed(AppRoutes.memoryList, arguments: {"memoryId": memoryId});
+    // }
+     }
   }
 
 // Update notification Count for a user
@@ -107,11 +144,18 @@ class SplashController extends GetxController {
       print('fromShare splash $fromShare');
       print('dynamicLinkData $dynamicLinkData');
       var link = dynamicLinkData.link.toString().split("memory_id=");
-
-      checkMemoryForUser(link[1]);
+      var timeStamp = dynamicLinkData.link.toString().split("timestamp=");
+      var nowTime = DateTime.now().millisecondsSinceEpoch;
+      var difference = nowTime - double.parse(timeStamp[1]);
+      print('difference $nowTime ${timeStamp[1]} $difference');
+      if (difference > 3600000) {
+        Get.snackbar("", "This link has expired");
+        handleNavigation(false);
+      } else {
+        checkMemoryForUser(link[1]);
+      }
     }).onError((error) {
       print('onErro $error');
-      print(error.message);
     });
     if (!dynamicLinks.isBlank!) {
       print('HandleNavigation ');
@@ -161,7 +205,7 @@ class SplashController extends GetxController {
                 .set(memoriesModel)
                 .then((value) => {
                       print('UpdateCaption '),
-
+                      globalShareMemoryModel = memoriesModel,
                       EasyLoading.dismiss(),
                       fromShare = true,
                       handleNavigation(true),
@@ -287,5 +331,7 @@ class SplashController extends GetxController {
     userName = _userName;
     userImage.value = _userImage;
     notificationCount.value = _notificationCount;
+
+    usersRef.doc(userId).update({"device_token": globalNotificationToken});
   }
 }

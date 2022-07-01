@@ -12,7 +12,9 @@ class MemoriesModel {
   String? createdBy;
   int? commentCount;
   List<SharedWith>? sharedWith;
+  int? sharedWithCount=0;
   UserModel? userModel;
+  List<UserModel>? collaborators;
 
   MemoriesModel(
       {this.imagesCaption,
@@ -24,6 +26,8 @@ class MemoriesModel {
       this.published,
       this.createdBy,
       this.sharedWith,
+      this.sharedWithCount,
+      this.collaborators,
       this.userModel});
 
   MemoriesModel.fromJson(Map<String, dynamic> json) {
@@ -114,8 +118,9 @@ class ImagesCaption {
 class SharedWith {
   String? userId;
   int? status;
+  UserModel? sharedUser;
 
-  SharedWith({this.userId, this.status});
+  SharedWith({this.userId, this.status, this.sharedUser});
 
   SharedWith.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];

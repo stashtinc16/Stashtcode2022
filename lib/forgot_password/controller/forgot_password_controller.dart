@@ -30,7 +30,7 @@ class ForgotPasswordController extends GetxController {
                 EasyLoading.dismiss(),
                 Get.back(),
                 Get.snackbar(
-                    'Success', 'Password reset link has sent to your email'),
+                    'Success', 'Password reset link has sent to your email', colorText: Colors.white),
               })
           .onError((error, stackTrace) =>
               {print('onError $error'), EasyLoading.dismiss()});

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -13,6 +14,8 @@ import 'package:stasht/routes/app_pages.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Define a top-level named handler which background/terminated messages will
 /// call.
@@ -37,8 +40,19 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getBool('first_run') ?? true) {
+      FlutterSecureStorage storage = FlutterSecureStorage();
+      FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+      firebaseAuth.signOut();
+
+      await storage.deleteAll();
+
+      prefs.setBool('first_run', false);
+    }
     runApp(const MyApp());
-   
+
     configLoading();
 
     if (!kIsWeb) {
@@ -49,6 +63,9 @@ void main() async {
       );
 
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+      await FirebaseMessaging.instance.requestPermission(
+          sound: true, badge: true, alert: true, provisional: false);
 
       /// Create an Android Notification Channel.
       ///
@@ -87,6 +104,7 @@ void configLoading() {
     ..progressColor = AppColors.primaryColor
     ..backgroundColor = Colors.white
     ..indicatorColor = AppColors.primaryColor
+    // ..maskType = EasyLoadingMaskType.custom
     ..textColor = AppColors.primaryColor
     ..maskColor = AppColors.primaryColor.withOpacity(0.5)
     ..userInteractions = false

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/utils/app_colors.dart';
 
 String userId = "";
@@ -13,6 +14,7 @@ bool isSocailUser = false;
 String changePassword = "Change Password";
 
 bool fromShare = false;
+late MemoriesModel globalShareMemoryModel ;
 //collections
 String memoriesCollection = "memories";
 String userCollection = "users";
