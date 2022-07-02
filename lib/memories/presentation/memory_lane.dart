@@ -140,7 +140,88 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            getCollaboratorsImage(context),
+                                            controller.detailMemoryModel!
+                                                        .sharedWith!.length >
+                                                    0
+                                                ? getCollaboratorsImage(context)
+                                                : controller
+                                                        .detailMemoryModel!
+                                                        .userModel!
+                                                        .profileImage!
+                                                        .contains("http")
+                                                    ? CachedNetworkImage(
+                                                        imageUrl: controller
+                                                            .detailMemoryModel!
+                                                            .userModel!
+                                                            .profileImage!,
+                                                        imageBuilder: (context,
+                                                                imageProvider) =>
+                                                            Container(
+                                                          width: 60,
+                                                          height: 60,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            border: Border.all(
+                                                                width: 0.5,
+                                                                color: Colors
+                                                                    .white),
+                                                            image:
+                                                                DecorationImage(
+                                                              image:
+                                                                  imageProvider,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        placeholder:
+                                                            (context, url) =>
+                                                                Container(
+                                                          width: 60,
+                                                          height: 60,
+                                                          alignment:
+                                                              Alignment.center,
+                                                          decoration: BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              image: DecorationImage(
+                                                                  image: AssetImage(
+                                                                      userIcon))),
+                                                        ),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            Container(
+                                                          width: 60,
+                                                          height: 60,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            border: Border.all(
+                                                                width: 1,
+                                                                color: Colors
+                                                                    .black),
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons.error,
+                                                            size: 30,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Container(
+                                                        width: 60,
+                                                        height: 60,
+                                                        decoration: BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            border: Border.all(
+                                                                width: 0.5,
+                                                                color: Colors
+                                                                    .grey),
+                                                            image: const DecorationImage(
+                                                                image: AssetImage(
+                                                                    userIcon)))),
                                             Padding(
                                                 padding: const EdgeInsets.only(
                                                   top: 5,
@@ -545,7 +626,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                       height: 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                          border: Border.all(width: 0.5,color: Colors.white),
+                        border: Border.all(width: 0.5, color: Colors.white),
                         image: DecorationImage(
                           image: imageProvider,
                           fit: BoxFit.cover,
@@ -608,7 +689,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                                         height: 30,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                            border: Border.all(width: 0.5,color: Colors.white),
+                                          border: Border.all(
+                                              width: 0.5, color: Colors.white),
                                           image: DecorationImage(
                                             image: imageProvider,
                                             fit: BoxFit.cover,
@@ -660,11 +742,13 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           .profileImage!
                                           .contains("http")
                                       ? Container(
-                                        decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(width: 0.5,color: Colors.white),
-                                        ),
-                                        child: CachedNetworkImage(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                width: 0.5,
+                                                color: Colors.white),
+                                          ),
+                                          child: CachedNetworkImage(
                                             imageUrl: controller
                                                 .detailMemoryModel!
                                                 .sharedWith![i]
@@ -675,10 +759,11 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                     Container(
                                               width: 30,
                                               height: 30,
-
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                border: Border.all(width: 1,color: Colors.white),
+                                                border: Border.all(
+                                                    width: 1,
+                                                    color: Colors.white),
                                                 image: DecorationImage(
                                                   image: imageProvider,
                                                   fit: BoxFit.cover,
@@ -693,11 +778,12 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               decoration: const BoxDecoration(
                                                   shape: BoxShape.circle,
                                                   image: DecorationImage(
-                                                      image:
-                                                          AssetImage(userIcon))),
+                                                      image: AssetImage(
+                                                          userIcon))),
                                             ),
-                                            errorWidget: (context, url, error) =>
-                                                Container(
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
                                               width: 30,
                                               height: 30,
                                               decoration: BoxDecoration(
@@ -712,7 +798,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               ),
                                             ),
                                           ),
-                                      )
+                                        )
                                       : Container(
                                           width: 30,
                                           height: 30,
@@ -724,26 +810,25 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   image: AssetImage(userIcon))),
                                         ),
                                 ),
-                                 if (restValue > 0)
-                      Padding(
-                       padding: EdgeInsets.only(
-                                    left: listSize * (75) / 2),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: Colors.white),
-                              borderRadius: BorderRadius.circular(40),color: Colors.black),
+                        if (restValue > 0)
+                          Padding(
+                            padding: EdgeInsets.only(left: listSize * (75) / 2),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 1, color: Colors.white),
+                                  borderRadius: BorderRadius.circular(40),
+                                  color: Colors.black),
                               padding: EdgeInsets.all(5),
-                          child: Text(
-                            "+$restValue",
-                            style: const TextStyle(
-                                fontSize: 9, color: Colors.white),
-                          ),
-                        ),
-                      )
+                              child: Text(
+                                "+$restValue",
+                                style: const TextStyle(
+                                    fontSize: 9, color: Colors.white),
+                              ),
+                            ),
+                          )
                       ],
                     ),
-                   
-                   
                   ],
                 ))
           ],

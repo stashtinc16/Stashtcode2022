@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -136,9 +137,8 @@ class CommentsController extends GetxController {
         )
         .snapshots()
         .listen((event) async {
-           hasData.value = true;
+      hasData.value = true;
       if (event.docChanges.isEmpty) {
-        
         update();
       }
 
@@ -152,7 +152,9 @@ class CommentsController extends GetxController {
           commentsModel.userModel = userValue.data()!;
 
           commentsList.value.add(commentsModel);
-          if (commentsList.length == event.docChanges.length) {
+          print(
+              'commentsList.length ${commentsList.length} => ${event.docs.length}');
+          if (commentsList.length == event.docs.length) {
             commentsList.sort((first, second) {
               return first.createdAt!.compareTo(second.createdAt!);
             });
@@ -167,9 +169,9 @@ class CommentsController extends GetxController {
                   .then((value) => {print('Comment Count updated  '), update()})
                   .onError((error, stackTrace) => {});
             });
-            // Future.delayed(Duration(seconds: 1), (() {
-            //   scrollDown();
-            // }));
+            Future.delayed(Duration(seconds: 1), (() {
+              scrollDown();
+            }));
           }
         });
       }
@@ -283,12 +285,12 @@ class CommentsController extends GetxController {
   }
 
   void scrollDown() {
-    if(scrollController.position!=null){
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent + 50,
-      duration: Duration(seconds: 2),
-      curve: Curves.fastOutSlowIn,
-    );
+    if (scrollController.position != null) {
+      scrollController.animateTo(
+       Platform.isIOS ? scrollController.position.maxScrollExtent  :  scrollController.position.maxScrollExtent + 50,
+        duration: Duration(seconds: 2),
+        curve: Curves.fastOutSlowIn,
+      );
     }
   }
 

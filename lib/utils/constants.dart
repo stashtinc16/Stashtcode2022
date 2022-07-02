@@ -14,7 +14,7 @@ bool isSocailUser = false;
 String changePassword = "Change Password";
 
 bool fromShare = false;
-late MemoriesModel globalShareMemoryModel ;
+ MemoriesModel? globalShareMemoryModel ;
 //collections
 String memoriesCollection = "memories";
 String userCollection = "users";

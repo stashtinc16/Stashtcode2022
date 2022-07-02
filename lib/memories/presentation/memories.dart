@@ -21,7 +21,7 @@ class Memories extends GetView<MemoriesController> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     Future.delayed(Duration.zero, () {
       if (fromShare && globalShareMemoryModel != null) {
-        showInviteRepondDialog(context, globalShareMemoryModel);
+        showInviteRepondDialog(context, globalShareMemoryModel!);
       }
     });
 
@@ -316,7 +316,9 @@ class Memories extends GetView<MemoriesController> {
                                                                               .userModel !=
                                                                           null
                                                                       ? controller.memoriesList[index].sharedWithCount > 0
-                                                                          ?controller.memoriesList[index].sharedWithCount>1 ? "Author : ${controller.memoriesList[index].userModel!.displayName!} + ${controller.memoriesList[index].sharedWithCount} others" : "Author : ${controller.memoriesList[index].userModel!.displayName!} + ${controller.memoriesList[index].sharedWithCount} other"
+                                                                          ? controller.memoriesList[index].sharedWithCount > 1
+                                                                              ? "Author : ${controller.memoriesList[index].userModel!.displayName!} + ${controller.memoriesList[index].sharedWithCount} others"
+                                                                              : "Author : ${controller.memoriesList[index].userModel!.displayName!} + ${controller.memoriesList[index].sharedWithCount} other"
                                                                           : "Author : ${controller.memoriesList[index].userModel!.displayName!}"
                                                                       : "",
                                                                   style: const TextStyle(
@@ -391,10 +393,12 @@ class Memories extends GetView<MemoriesController> {
                       ),
                       InkWell(
                         onTap: () {
-                          controller.sharedMemoriesExpand.value =
-                              !controller.sharedMemoriesExpand.value;
-                          if (controller.sharedMemoriesExpand.value) {
-                            controller.getSharedMemories();
+                          if (controller.sharedMemoriesList.isNotEmpty) {
+                            controller.sharedMemoriesExpand.value =
+                                !controller.sharedMemoriesExpand.value;
+                            // if (controller.sharedMemoriesExpand.value) {
+                            //   controller.getSharedMemories();
+                            // }
                           }
                           controller.update();
                         },
@@ -592,7 +596,11 @@ class Memories extends GetView<MemoriesController> {
                                                                               index]
                                                                           .sharedWithCount >
                                                                       0
-                                                                  ?  controller.sharedMemoriesList[index].sharedWithCount>1 ? "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} others"  :  "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} other"
+                                                                  ? controller.sharedMemoriesList[index]
+                                                                              .sharedWithCount >
+                                                                          1
+                                                                      ? "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} others"
+                                                                      : "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} other"
                                                                   : "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!}"
                                                               : "",
                                                           style:
@@ -963,6 +971,7 @@ class Memories extends GetView<MemoriesController> {
       if (controller.sharedMemoriesList![i].memoryId ==
           memoriesModel.memoryId) {
         mainIndex = i;
+        print('mainIndex $mainIndex');
       }
     }
 

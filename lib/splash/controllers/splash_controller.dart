@@ -107,8 +107,8 @@ class SplashController extends GetxController {
       // String memoryId = message.data["memoryID"];
       // Get.toNamed(AppRoutes.memoryList, {});
       print('A new onMessageOpenedApp event was published! ${message.data}');
-       var data = message.data;
-    // if (data['type'] == "comment") {
+      var data = message.data;
+      // if (data['type'] == "comment") {
       var memoryId = data['memoryID'];
       Get.toNamed(AppRoutes.memoryList, arguments: {"memoryId": memoryId});
     });
@@ -116,15 +116,13 @@ class SplashController extends GetxController {
 
   Future onSelectNotification(String? payload) async {
     print('payload $payload');
-    if(payload!=null){
-
-   
-    var data = jsonDecode(payload!);
-    // if (data['type'] == "comment") {
+    if (payload != null) {
+      var data = jsonDecode(payload!);
+      // if (data['type'] == "comment") {
       var memoryId = data['memoryID'];
       Get.toNamed(AppRoutes.memoryList, arguments: {"memoryId": memoryId});
-    // }
-     }
+      // }
+    }
   }
 
 // Update notification Count for a user
@@ -144,15 +142,18 @@ class SplashController extends GetxController {
       print('fromShare splash $fromShare');
       print('dynamicLinkData $dynamicLinkData');
       var link = dynamicLinkData.link.toString().split("memory_id=");
+      var memory = link[1].split("&");
       var timeStamp = dynamicLinkData.link.toString().split("timestamp=");
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       var difference = nowTime - double.parse(timeStamp[1]);
       print('difference $nowTime ${timeStamp[1]} $difference');
       if (difference > 3600000) {
+    
         Get.snackbar("", "This link has expired");
+        globalShareMemoryModel = null;
         handleNavigation(false);
       } else {
-        checkMemoryForUser(link[1]);
+        checkMemoryForUser(memory[0]);
       }
     }).onError((error) {
       print('onErro $error');
@@ -174,6 +175,7 @@ class SplashController extends GetxController {
         );
     MemoriesModel memoriesModel = MemoriesModel();
     List<SharedWith> shareList = List.empty(growable: true);
+    print('memoryId $memoryId');
     memoriesRef.doc(memoryId).get().then((value) {
       if (value.exists) {
         memoriesModel = value.data()!;

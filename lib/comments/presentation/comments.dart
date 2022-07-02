@@ -47,7 +47,7 @@ class Comments extends GetView<CommentsController> {
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: controller.hasData.value ? Obx(() =>  ListView.builder(
-                      // controller: controller.scrollController,
+                      controller: controller.scrollController,
                           itemBuilder: (BuildContext context, int index) {
                             return Column(
                               children: [

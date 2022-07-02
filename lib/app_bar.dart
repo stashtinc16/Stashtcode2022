@@ -109,7 +109,7 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                                   child: Text(
                                     '${notificationCount.value}',
                                     style: const TextStyle(
-                                        fontSize: 12, color: Colors.white),
+                                        fontSize: 10, color: Colors.white),
                                     textAlign: TextAlign.center,
                                   ),
                                 )

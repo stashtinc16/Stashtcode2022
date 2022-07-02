@@ -75,6 +75,7 @@ class MemoriesController extends GetxController {
         .orderBy('created_at', descending: true)
         .snapshots()
         .listen((value) => {
+              if (value.docs.isEmpty) {sharedMemoriesList.clear(), update()},
               value.docChanges.forEach((element) {
                 usersRef
                     .doc(element.doc.data()!.createdBy!)
@@ -84,11 +85,12 @@ class MemoriesController extends GetxController {
                   MemoriesModel memoriesModel = element.doc.data()!;
                   memoriesModel.memoryId = element.doc.id;
                   memoriesModel.userModel = userValue.data()!;
-                   element.doc.data()!.sharedWith!.forEach((elementShare) {
-                      if (elementShare.status == 1) {
-                        memoriesModel.sharedWithCount = memoriesModel.sharedWithCount! +1;
-                      }
-                    });
+                  element.doc.data()!.sharedWith!.forEach((elementShare) {
+                    if (elementShare.status == 1) {
+                      memoriesModel.sharedWithCount =
+                          memoriesModel.sharedWithCount! + 1;
+                    }
+                  });
                   element.doc
                       .data()!
                       .imagesCaption!
@@ -277,10 +279,11 @@ class MemoriesController extends GetxController {
                     MemoriesModel memoriesModel = element.data()!;
                     memoriesModel.memoryId = element.id;
                     memoriesModel.userModel = userValue.data()!;
-                   
+
                     element.data().sharedWith!.forEach((elementShare) {
                       if (elementShare.status == 1) {
-                        memoriesModel.sharedWithCount = memoriesModel.sharedWithCount! +1;
+                        memoriesModel.sharedWithCount =
+                            memoriesModel.sharedWithCount! + 1;
                       }
                     });
                     element
@@ -822,11 +825,20 @@ class MemoriesController extends GetxController {
   void deleteInvite(
       MemoriesModel sharedMemories, int shareIndex, int mainIndex) {
     MemoriesModel memoriesModel = sharedMemories;
+    print('SharedWith ${sharedMemories.sharedWith!.length}');
 
     memoriesModel.sharedWith!.removeAt(shareIndex);
+    print('SharedWith After ${sharedMemories.sharedWith!.length}');
     memoriesRef
         .doc(sharedMemories.memoryId)
         .set(memoriesModel)
-        .then((value) => {sharedMemoriesList.removeAt(mainIndex), update()});
+        .then((value) => {
+          if(sharedMemoriesList.isEmpty){
+sharedMemoriesExpand.value=false
+          },
+              print('SharedWith Inside ${sharedMemoriesList.length}'),
+              // sharedMemoriesList.removeAt(mainIndex),
+              update()
+            });
   }
 }
