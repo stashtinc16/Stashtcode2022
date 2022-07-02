@@ -33,7 +33,7 @@ class NotificationController extends GetxController {
         .orderBy("created_at", descending: false)
         .snapshots()
         .listen((event) {
-      print('listenEvent ${event.docChanges.length}');
+      print('listenEvent ${event.docs.length} ${event.docChanges.length} $userId');
       if (event.docChanges.isNotEmpty) {
         for (var element in event.docChanges) {
           NotificationsModel notificationsModel = element.doc.data()!;

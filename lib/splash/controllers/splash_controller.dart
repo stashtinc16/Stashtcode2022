@@ -110,7 +110,7 @@ class SplashController extends GetxController {
       var data = message.data;
       // if (data['type'] == "comment") {
       var memoryId = data['memoryID'];
-      Get.toNamed(AppRoutes.memoryList, arguments: {"memoryId": memoryId});
+      Get.offAndToNamed(AppRoutes.memoryList, arguments: {"memoryId": memoryId});
     });
   }
 
@@ -120,7 +120,7 @@ class SplashController extends GetxController {
       var data = jsonDecode(payload!);
       // if (data['type'] == "comment") {
       var memoryId = data['memoryID'];
-      Get.toNamed(AppRoutes.memoryList, arguments: {"memoryId": memoryId});
+      Get.offAndToNamed(AppRoutes.memoryList, arguments: {"memoryId": memoryId});
       // }
     }
   }
@@ -148,7 +148,6 @@ class SplashController extends GetxController {
       var difference = nowTime - double.parse(timeStamp[1]);
       print('difference $nowTime ${timeStamp[1]} $difference');
       if (difference > 3600000) {
-    
         Get.snackbar("", "This link has expired");
         globalShareMemoryModel = null;
         handleNavigation(false);
@@ -306,6 +305,7 @@ class SplashController extends GetxController {
                             element.data().notificationCount != null
                                 ? element.data().notificationCount!
                                 : 0),
+                        print('fromDeepLink $fromDeepLink'),
                         if (fromDeepLink)
                           {
                             Get.off(() => Memories(),
