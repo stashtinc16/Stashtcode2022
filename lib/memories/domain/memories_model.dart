@@ -6,13 +6,16 @@ class MemoriesModel {
   String? title;
   List<ImagesCaption>? imagesCaption;
   Timestamp? createdAt;
+  Timestamp? publishedCreatedAt;
+  Timestamp? sharedCreatedAt;
   Timestamp? updatedAt;
   String? inviteLink;
+  String? publishLink;
   bool? published;
   String? createdBy;
   int? commentCount;
   List<SharedWith>? sharedWith;
-  int? sharedWithCount=0;
+  int? sharedWithCount = 0;
   UserModel? userModel;
   List<UserModel>? collaborators;
 
@@ -24,6 +27,9 @@ class MemoriesModel {
       this.inviteLink,
       this.commentCount,
       this.published,
+      this.publishLink,
+      this.publishedCreatedAt,
+      this.sharedCreatedAt,
       this.createdBy,
       this.sharedWith,
       this.sharedWithCount,
@@ -36,6 +42,9 @@ class MemoriesModel {
     updatedAt = json['updated_at'];
     inviteLink = json['invite_link'];
     published = json['published'];
+    publishLink = json['publish_link'];
+    publishedCreatedAt = json['published_created_at'];
+    sharedCreatedAt = json['shared_created_at'];
     createdBy = json['created_by'];
     commentCount = json['comment_count'];
     if (json['images_caption'] != null) {
@@ -64,7 +73,10 @@ class MemoriesModel {
     data['comment_count'] = commentCount;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
+    data['publish_link'] = publishLink;
     data['invite_link'] = inviteLink;
+    data['published_created_at'] = publishedCreatedAt;
+    data['shared_created_at'] = sharedCreatedAt;
     data['published'] = published;
     data['created_by'] = createdBy;
 

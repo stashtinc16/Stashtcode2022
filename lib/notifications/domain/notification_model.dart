@@ -15,6 +15,7 @@ class NotificationsModel {
   Timestamp? createdAt;
   Timestamp? updatedAt;
   bool? isRead;
+  String? imageId;
   UserModel? userModel;
 
   NotificationsModel(
@@ -29,6 +30,7 @@ class NotificationsModel {
       this.receiverIds,
       this.receivedId,
       this.createdAt,
+      this.imageId,
       this.updatedAt,
       this.isRead,
       this.userModel});
@@ -39,6 +41,7 @@ class NotificationsModel {
     userId = json['user_id'];
     memoryCover = json['memory_cover'];
     memoryId = json['memory_id'];
+    imageId = json['image_id'];
     // receiverIds = json['receiver_ids'].cast<String>();
     createdAt = json['created_at'];
     description = json['description'];
@@ -57,6 +60,7 @@ class NotificationsModel {
     data['memory_cover'] = memoryCover;
     data['memory_image'] = memoryImage;
     data['receiver_id'] = receivedId;
+    data['image_id'] = imageId;
     data['memory_id'] = memoryId;
     data['description'] = description;
     data['type'] = type;

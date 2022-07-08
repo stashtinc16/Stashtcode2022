@@ -18,6 +18,7 @@ bool fromShare = false;
 //collections
 String memoriesCollection = "memories";
 String userCollection = "users";
+String shareLinkCollection = "share_links";
 String commentsCollection = "comments";
 String notificationsCollection = "notifications";
 

@@ -272,6 +272,28 @@ class SignIn extends GetView<SignupController> {
                                     ),
                                   ),
                                 ),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              InkWell(
+                                onTap: ()  {
+                                  Get.back();
+                                },
+                                child: const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "New user? Click here to create account",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: AppColors.fieldBorderColor,
+                                        fontSize: 16,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               )
                             ],
                           ))

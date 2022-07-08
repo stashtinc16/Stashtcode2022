@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stasht/app_bar.dart';
 import 'package:stasht/notifications/controller/notification_controller.dart';
-import 'package:stasht/notifications/domain/notification_model.dart';
-import 'package:stasht/routes/app_pages.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
@@ -24,9 +22,9 @@ class Notifications extends GetView<NotificationController> {
               pageSelected: (isMemory, isPhotos, isNotification, isSettings) =>
                   {
                 if (isMemory)
-                  {Get.toNamed(AppRoutes.memories)}
+                  {Get.back()}
                 else if (isSettings)
-                  {Get.toNamed(AppRoutes.profile)}
+                  {Get.offNamed(AppRoutes.profile)}
               },
             ),
             body: Obx(() => controller.notificationList.isNotEmpty
@@ -50,14 +48,17 @@ class Notifications extends GetView<NotificationController> {
                                       controller.notificationList[index]);
                                   controller.update();
                                 }
-                                print('ontroller.notificationList[index].type ${controller.notificationList[index].type}');
+                                print(
+                                    'ontroller.notificationList[index].type ${controller.notificationList[index].type}');
                                 if (controller.notificationList[index].type ==
                                     "comment") {
-                                  Get.toNamed(AppRoutes.memoryList, arguments: {
+                                  Get.toNamed(AppRoutes.comments, arguments: {
                                     "memoryId": controller
                                         .notificationList[index].memoryId,
                                     "memoryImage": controller
-                                        .notificationList[index].memoryImage
+                                        .notificationList[index].memoryImage,
+                                    "imageId": controller
+                                        .notificationList[index].imageId
                                   });
                                 } else {
                                   Get.toNamed(AppRoutes.memoryList, arguments: {
@@ -113,7 +114,7 @@ class Notifications extends GetView<NotificationController> {
                                             children: <TextSpan>[
                                               TextSpan(
                                                   text:
-                                                      " ${controller.notificationList[index].description!}\n",
+                                                      " ${controller.notificationList[index].description!} ",
                                                   style: const TextStyle(
                                                       fontFamily: robotoRegular,
                                                       color: Colors.black,
@@ -141,17 +142,13 @@ class Notifications extends GetView<NotificationController> {
                                             MediaQuery.of(context).size.width,
                                         color: !controller
                                                 .notificationList[index].isRead!
-                                            ? const Color.fromRGBO(
-                                                    108, 96, 255, 1)
-                                                .withOpacity(0.3)
+                                            ? AppColors.primaryColor.withOpacity(0.09)
                                             : Colors.transparent,
                                       ),
                                     ),
                                 ],
                               )),
-                          const SizedBox(
-                            height: 4,
-                          ),
+                          
                           Container(
                             width: MediaQuery.of(context).size.width,
                             height: 0.5,
@@ -161,16 +158,21 @@ class Notifications extends GetView<NotificationController> {
                       );
                     },
                   )
-                : Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'No Notifications!',
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                          fontFamily: robotoMedium),
-                    ),
-                  )));
+                : !controller.hasNotification.value
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        color: Colors.blue,
+                      ))
+                    : Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'No Notifications!',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                              fontFamily: robotoMedium),
+                        ),
+                      )));
       },
     );
   }

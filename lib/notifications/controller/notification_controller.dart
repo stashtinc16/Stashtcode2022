@@ -20,6 +20,7 @@ class NotificationController extends GetxController {
         toFirestore: (users, _) => users.toJson(),
       );
   RxList notificationList = List.empty(growable: true).obs;
+  RxBool hasNotification = true.obs;
   @override
   void onInit() {
     super.onInit();
@@ -30,10 +31,11 @@ class NotificationController extends GetxController {
     notificationList.clear();
     notificationsRef
         .where("receiver_id", isEqualTo: userId)
-        .orderBy("created_at", descending: false)
+        .orderBy("created_at", descending: true)
         .snapshots()
         .listen((event) {
-      print('listenEvent ${event.docs.length} ${event.docChanges.length} $userId');
+      print(
+          'listenEvent ${event.docs.length} ${event.docChanges.length} $userId');
       if (event.docChanges.isNotEmpty) {
         for (var element in event.docChanges) {
           NotificationsModel notificationsModel = element.doc.data()!;
@@ -61,11 +63,15 @@ class NotificationController extends GetxController {
               } catch (e) {
                 print('Exception $e');
               }
+              hasNotification.value = false;
               update();
             }
           });
           // notificationList.value.add(element.data());
         }
+      } else {
+        hasNotification.value = false;
+        update();
       }
     });
   }

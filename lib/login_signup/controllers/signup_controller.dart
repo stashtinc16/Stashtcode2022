@@ -54,7 +54,7 @@ class SignupController extends GetxController {
   void checkEmailExists() {
     print('checkEmailExists');
     usersRef
-        .where("email", isEqualTo: emailController.value.text.toString())
+        .where("email", isEqualTo: emailController.value.text.toString().trim())
         .get()
         .then((value) => {
               value.docs.length,
@@ -77,12 +77,12 @@ class SignupController extends GetxController {
 
         await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
-          email: emailController.value.text,
+          email: emailController.value.text.toString().trim(),
           password: passwordController.text,
         )
             .then((value) {
           print("FirebaseAuthExceptionValue $value");
-          saveUserToDB(value.user, userNameController.text);
+          saveUserToDB(value.user, userNameController.text.toString().trim());
         }).onError((error, stackTrace) {
           if (error.toString().contains("email-already-in-use")) {
             Get.snackbar("Email exits",
@@ -107,7 +107,7 @@ class SignupController extends GetxController {
         EasyLoading.show(status: 'Processing..');
         await FirebaseAuth.instance
             .signInWithEmailAndPassword(
-                email: email1Controller.text,
+                email: email1Controller.text.toString().trim(),
                 password: password1Controller.text)
             .then((value1) {
           usersRef
@@ -125,7 +125,7 @@ class SignupController extends GetxController {
                         saveSession(
                             value.docs[0].id,
                             value.docs[0].data().displayName!,
-                            email1Controller.text,
+                            email1Controller.text.toString().trim(),
                             value.docs[0].data().profileImage!,
                             value.docs[0].data().notificationCount != null
                                 ? value.docs[0].data().notificationCount!
@@ -206,20 +206,9 @@ class SignupController extends GetxController {
       FacebookPermission.publicProfile,
       FacebookPermission.email,
     ]);
-
-    // if (Platform.isAndroid) {
-    //   final res = await plugin.expressLogin();
-    //       print('LoginToFacebook');
-
-    //   if (res.status == FacebookLoginStatus.success) {
-    //     await _updateLoginInfo();
-    //   } else {
-    //     EasyLoading.dismiss();
-    //   }
-    // } else {
       await _updateLoginInfo();
       EasyLoading.dismiss();
-    // }
+  
 
     return _isLogged!;
   }

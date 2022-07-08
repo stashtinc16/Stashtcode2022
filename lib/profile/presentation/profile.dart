@@ -74,12 +74,15 @@ class Profile extends GetView<ProfileController> {
             settingsTitle,
             pageSelected: (isMemory, isPhotos, isNotification, isSettings) => {
               if (isMemory)
-                {Get.toNamed(AppRoutes.memories)}
+                {
+                  Get.back()
+                  // Get.offNamed(AppRoutes.memories)
+                  }
               else if (isNotification)
                 {
                   notificationCount.value=0,
                   controller.updateNotificationCount(),
-                  Get.toNamed(AppRoutes.notifications)}
+                  Get.offNamed(AppRoutes.notifications)}
             },
           ),
           body: SingleChildScrollView(

@@ -6,7 +6,6 @@ const gibsonBold = "gibsonbold";
 const gibsonRegular = "gibsonRegular";
 const gibsonRegularItalic = "gibsonRegularItalic";
 
-
 const assetPath = "assets/images/";
 const preLoader = assetPath + "preloader.png";
 const logo = assetPath + "logo.png";
@@ -23,3 +22,4 @@ const tickIcon = assetPath + "tick_icon.png";
 const copyIcon = assetPath + "copy_icon.png";
 const deleteIcon = assetPath + "delete_icon.png";
 const addPhotos = assetPath + "add_photos.svg";
+const publishIcon = assetPath + "publish_icon.png";

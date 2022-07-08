@@ -24,10 +24,12 @@ class Memory_Lane extends GetView<MemoriesController> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     memoryId = Get.arguments['memoryId'];
-    controller.getMyMemoryData(memoryId);
+    print('memoryId $memoryId');
+    // controller.getMyMemoryData(memoryId);
 
     return GetBuilder(
       initState: (state) {
+        print('InitState');
         controller.getMyMemoryData(memoryId);
       },
       builder: (MemoriesController controller) {
@@ -35,13 +37,18 @@ class Memory_Lane extends GetView<MemoriesController> {
             resizeToAvoidBottomInset: false,
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  controller.pickImages(controller.detailMemoryModel!.memoryId!,
-                      controller.detailMemoryModel!);
-                },
-                child: SvgPicture.asset(addPhotos),
-                backgroundColor: AppColors.primaryColor),
+            floatingActionButton: SizedBox(
+              height: 70,
+              width: 70,
+              child: FloatingActionButton(
+                  onPressed: () {
+                    controller.pickImages(
+                        controller.detailMemoryModel!.memoryId!,
+                        controller.detailMemoryModel!);
+                  },
+                  child: SvgPicture.asset(addPhotos),
+                  backgroundColor: AppColors.primaryColor),
+            ),
             body: controller.hasMemory.value == 2
                 ? Column(
                     children: [
@@ -97,6 +104,25 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               ),
                                             ],
                                           ),
+                                        ),
+                                        if (userId ==
+                                                controller.detailMemoryModel!
+                                                    .createdBy &&
+                                            !controller
+                                                .detailMemoryModel!.published!)
+                                          InkWell(
+                                            onTap: () {
+                                              publishMemoryBottomSheet(context);
+                                            },
+                                            child: Image.asset(
+                                              publishIcon,
+                                              color: Colors.white,
+                                              width: 25,
+                                              height: 25,
+                                            ),
+                                          ),
+                                        const SizedBox(
+                                          width: 15,
                                         ),
                                         if (userId ==
                                             controller
@@ -241,6 +267,45 @@ class Memory_Lane extends GetView<MemoriesController> {
                               )),
                         ],
                       ),
+                      if ((userId == controller.detailMemoryModel!.createdBy) &&
+                          controller.detailMemoryModel!.published!)
+                        InkWell(
+                          onTap: () {
+                            controller.sharePublishMemory(
+                                controller.detailMemoryModel!.title!,
+                                controller.detailMemoryModel!.publishLink!);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            color: AppColors.collaboratorBgColor,
+                            child: Row(children: [
+                              InkWell(
+                                onTap: () {
+                                  controller.copyShareLink(
+                                      controller.detailMemoryModel!.title!,
+                                      controller
+                                          .detailMemoryModel!.publishLink!);
+                                },
+                                child: Image.asset(
+                                  copyIcon,
+                                  width: 20,
+                                  height: 20,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Share link: ${controller.detailMemoryModel!.publishLink}',
+                                  maxLines: 2,
+                                  style: const TextStyle(
+                                      fontSize: 15, color: Colors.black),
+                                ),
+                              )
+                            ]),
+                          ),
+                        ),
                       Expanded(
                         child: ListView.builder(
                           padding: EdgeInsets.zero,
@@ -429,6 +494,10 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                           .detailMemoryModel!
                                                           .imagesCaption![index]
                                                           .image,
+                                                      "imageId": controller
+                                                          .detailMemoryModel!
+                                                          .imagesCaption![index]
+                                                          .imageId,
                                                       'list': controller
                                                           .detailMemoryModel,
                                                       'imageIndex': index,
@@ -592,14 +661,106 @@ class Memory_Lane extends GetView<MemoriesController> {
                 : controller.hasMemory.value == 0
                     ? Container(
                         alignment: Alignment.center,
-                        child: CircularProgressIndicator(),
+                        child: const CircularProgressIndicator(),
                       )
                     : Container(
                         alignment: Alignment.center,
-                        child: Text('This memory is no longer available'),
+                        child: const Text('This memory is no longer available'),
                       ));
       },
     );
+  }
+
+  void publishMemoryBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: false,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+        builder: (context) {
+          return Container(
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    topLeft: Radius.circular(15)),
+                color: Colors.white),
+            height: 220,
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: const Padding(
+                      padding: EdgeInsets.all(25.0),
+                      child: Text(
+                        "Would you like to publish your memory",
+                        style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.black,
+                            fontFamily: robotoBold),
+                      )),
+                ),
+                Container(
+                  height: 1,
+                  color: AppColors.viewColor,
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: InkWell(
+                      onTap: () {
+                        controller.publishMemory(
+                            controller.detailMemoryModel!.title!,
+                            controller.detailMemoryModel!.memoryId!);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(40),
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: AppColors.primaryColor,
+                              fontFamily: robotoBold),
+                          textAlign: TextAlign.center,
+                        ),
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            color: AppColors.hintTextColor),
+                      ),
+                    )),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                        child: InkWell(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(40),
+                        child: const Text(
+                          'No',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: AppColors.primaryColor,
+                              fontFamily: robotoBold),
+                          textAlign: TextAlign.center,
+                        ),
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            color: AppColors.hintTextColor),
+                      ),
+                    )),
+                  ],
+                )
+              ],
+            ),
+          );
+        });
   }
 
   getCollaboratorsImage(BuildContext context) {

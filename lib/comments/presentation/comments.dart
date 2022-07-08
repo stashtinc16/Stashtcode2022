@@ -168,11 +168,11 @@ class Comments extends GetView<CommentsController> {
                           onPressed: () {
                             if(controller.commentController.text.trim().isNotEmpty){
                             controller.addComment(memoryId);
-                            controller
-                                    .memoriesModel
-                                    .imagesCaption![controller.imageIndex]
-                                    .commentCount =
-                                controller.commentsList.length + 1;
+                            // controller
+                            //         .memoriesModel
+                            //         .imagesCaption![controller.imageIndex]
+                            //         .commentCount =
+                            //     controller.commentsList.length + 1;
                                 }
                           },
                           icon: const Icon(Icons.arrow_circle_right_outlined,

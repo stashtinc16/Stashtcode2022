@@ -25,6 +25,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // FlutterAppBadger.updateBadgeCount(notificationCount.value);
+
   print('Handling a background message ${message.messageId}');
 }
 
@@ -51,6 +54,9 @@ void main() async {
 
       prefs.setBool('first_run', false);
     }
+    // Set the background messaging handler early on, as a named top-level function
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
     runApp(const MyApp());
 
     configLoading();
@@ -65,7 +71,7 @@ void main() async {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
       await FirebaseMessaging.instance.requestPermission(
-          sound: true, badge: true, alert: true, provisional: false);
+          sound: true, badge: true, alert: true, provisional: true);
 
       /// Create an Android Notification Channel.
       ///

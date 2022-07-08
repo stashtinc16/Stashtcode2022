@@ -20,9 +20,13 @@ class CommentsController extends GetxController {
   TextEditingController commentController = TextEditingController();
   StreamController<CommentsModel> streamController =
       StreamController<CommentsModel>();
-  int imageIndex = Get.arguments["imageIndex"];
-  // int mainIndex = Get.arguments["mainIndex"];
-  MemoriesModel memoriesModel = Get.arguments["list"];
+  // int imageIndex = Get.arguments["imageIndex"];
+  // // int mainIndex = Get.arguments["mainIndex"];
+  // MemoriesModel memoriesModel = Get.arguments["list"];
+
+  String memoryId = Get.arguments["memoryId"];
+  String imageId = Get.arguments["imageId"];
+  String imagePath = Get.arguments!["memoryImage"];
   RxBool hasData = false.obs;
 
   final commentsRef = FirebaseFirestore.instance
@@ -66,9 +70,8 @@ class CommentsController extends GetxController {
   void getCommentsAtOnce() {
     FirebaseFirestore.instance
         .collection(commentsCollection)
-        .where('memory_id', isEqualTo: memoriesModel.memoryId)
-        .where('image_id',
-            isEqualTo: memoriesModel.imagesCaption![imageIndex].imageId)
+        .where('memory_id', isEqualTo: memoryId)
+        .where('image_id', isEqualTo: imageId)
         .orderBy('created_at', descending: false)
         .withConverter<CommentsModel>(
           fromFirestore: (snapshots, _) =>
@@ -82,9 +85,9 @@ class CommentsController extends GetxController {
       List<CommentsModel> _commentList = List.empty(growable: true);
       print('EventDocs ${event.docs.length}');
       print('EventDocsChanged ${event.docChanges.length}');
-      event.docChanges.forEach((element) {
+      for (var element in event.docChanges) {
         print('DocChangesId ${element.doc.id}');
-      });
+      }
 
       for (var element in event.docs) {
         print(
@@ -108,14 +111,22 @@ class CommentsController extends GetxController {
             print('CommentList ${commentsList.length}');
             memoryRef.doc(commentsModel.memoryId).get().then((value) {
               MemoriesModel memoriesModel = value.data()!;
-              memoriesModel.imagesCaption![imageIndex].commentCount =
-                  commentsList.length;
 
-              memoryRef
-                  .doc(commentsModel.memoryId)
-                  .set(memoriesModel)
-                  .then((value) => {print('Comment Count updated  '), update()})
-                  .onError((error, stackTrace) => {});
+              outerLoop:
+              for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
+                if (memoriesModel.imagesCaption![i].imageId == imageId) {
+                  memoriesModel.imagesCaption![i].commentCount =
+                      commentsList.length;
+
+                  memoryRef
+                      .doc(commentsModel.memoryId)
+                      .set(memoriesModel)
+                      .then((value) =>
+                          {print('Comment Count updated  '), update()})
+                      .onError((error, stackTrace) => {});
+                  break outerLoop;
+                }
+              }
             });
           }
         });
@@ -126,9 +137,8 @@ class CommentsController extends GetxController {
   void startStreamAndGetList() {
     FirebaseFirestore.instance
         .collection(commentsCollection)
-        .where('memory_id', isEqualTo: memoriesModel.memoryId)
-        .where('image_id',
-            isEqualTo: memoriesModel.imagesCaption![imageIndex].imageId)
+        .where('memory_id', isEqualTo: memoryId)
+        .where('image_id', isEqualTo: imageId)
         .orderBy('created_at', descending: false)
         .withConverter<CommentsModel>(
           fromFirestore: (snapshots, _) =>
@@ -145,7 +155,7 @@ class CommentsController extends GetxController {
       // here count is a field name in firestore database
 
       for (var element in event.docChanges) {
-        await usersRef.doc(element.doc.data()!.userId!).get().then((userValue) {
+        usersRef.doc(element.doc.data()!.userId!).get().then((userValue) {
           CommentsModel commentsModel = CommentsModel();
           commentsModel = element.doc.data()!;
           commentsModel.commentId = element.doc.id;
@@ -158,19 +168,10 @@ class CommentsController extends GetxController {
             commentsList.sort((first, second) {
               return first.createdAt!.compareTo(second.createdAt!);
             });
-            memoryRef.doc(commentsModel.memoryId).get().then((value) {
-              MemoriesModel memoriesModel = value.data()!;
-              memoriesModel.imagesCaption![imageIndex].commentCount =
-                  commentsList.length;
-
-              memoryRef
-                  .doc(commentsModel.memoryId)
-                  .set(memoriesModel)
-                  .then((value) => {print('Comment Count updated  '), update()})
-                  .onError((error, stackTrace) => {});
-            });
+            update();
             Future.delayed(Duration(seconds: 1), (() {
               scrollDown();
+              setCommentCount();
             }));
           }
         });
@@ -180,36 +181,50 @@ class CommentsController extends GetxController {
     });
   }
 
+  void setCommentCount() {
+    memoryRef.doc(memoryId).get().then((value) {
+      MemoriesModel memoriesModel = value.data()!;
+      outerLoop:
+      for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
+        if (memoriesModel.imagesCaption![i].imageId == imageId) {
+          memoriesModel.imagesCaption![i].commentCount = commentsList.length;
+
+          memoryRef
+              .doc(memoryId)
+              .set(memoriesModel)
+              .then((value) => {print('Comment Count updated  '), update()})
+              .onError((error, stackTrace) => {});
+        }
+      }
+    });
+  }
+
   // Add comment to memory
   void addComment(String memoryId) {
-    print(
-        'memoriesModel.imagesCaption![mainIndex].imageId ${memoriesModel.imagesCaption![imageIndex].imageId}');
+    String comment = commentController.text.toString();
+    commentController.text = "";
     CommentsModel commentsModel = CommentsModel(
         userId: userId,
-        comment: commentController.text.toString(),
+        comment: comment,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         memoryId: memoryId,
-        imageId: memoriesModel.imagesCaption![imageIndex].imageId);
-    commentsRef.add(commentsModel).then((value) => {
-          print('CommentAdded $value'),
-          commentController.text = "",
-          addCommentCountToMemories(memoryId),
-          scrollDown(),
-          sendCommentNotification(
-              // userId == memoriesModel.createdBy!?
-              memoriesModel.imagesCaption![imageIndex].userId!
-              // : memoriesModel.createdBy!
-              ,
-              memoriesModel.memoryId!,
-              memoriesModel,
-              memoriesModel.imagesCaption![imageIndex].image!),
-          update(),
-        });
+        imageId: imageId);
+    commentsRef.add(commentsModel).then(
+        (value) => {scrollDown(), update(), getMemoryAndSendNotification()});
   }
 
-  Future<void> sendCommentNotification(String receiverId, String memoryID,
-      MemoriesModel memoriesModel, String commentImage) async {
+  void getMemoryAndSendNotification() {
+    memoryRef.doc(memoryId).get().then((value) {
+      MemoriesModel memoriesModel = value.data()!;
+      memoriesModel.memoryId = value.id;
+      addCommentCountToMemories(memoryId, memoriesModel);
+      sendCommentNotification(memoryId, memoriesModel, imagePath);
+    });
+  }
+
+  Future<void> sendCommentNotification(
+      String memoryID, MemoriesModel memoriesModel, String commentImage) async {
     List<String> registeredTokens = List.empty(growable: true);
     List<String> receiverIds = List.empty(growable: true);
 
@@ -234,16 +249,15 @@ class CommentsController extends GetxController {
                 memoriesModel.createdBy != userId &&
                 memoriesModel.createdBy == element.id) {
               sendToOwner = true;
-              sendNotificationToAllUser(memoriesModel.memoryId!,
+              sendNotificationToAllUser(memoriesModel.memoryId!, memoriesModel,
                   element.data().deviceToken!, element.id, commentImage);
             }
             if (memoriesModel.sharedWith![j].status == 1 &&
                 element.id == memoriesModel.sharedWith![j].userId &&
                 userId != element.id) {
-              sendNotificationToAllUser(memoriesModel.memoryId!,
+              sendNotificationToAllUser(memoriesModel.memoryId!, memoriesModel,
                   element.data().deviceToken!, element.id, commentImage);
 
-              print('Receiver');
               break innerLoop;
             }
           }
@@ -256,8 +270,8 @@ class CommentsController extends GetxController {
     });
   }
 
-  void sendNotificationToAllUser(String memoryId, String deviceToken,
-      String receiverId, String commentImage) {
+  void sendNotificationToAllUser(String memoryId, MemoriesModel memoriesModel,
+      String deviceToken, String receiverId, String commentImage) {
     String title = "New Comment";
     String description =
         "$userName has commented on ${memoriesModel.title} memory.";
@@ -271,7 +285,9 @@ class CommentsController extends GetxController {
         "click_action": "FLUTTER_NOTIFICATION_CLICK",
         "sound": "default",
         "senderId": userId,
-        "memoryID": memoryId
+        "memoryID": memoryId,
+        "memoryImage": commentImage,
+        "imageId": imageId
       },
       'notification': {
         'title': title,
@@ -285,9 +301,11 @@ class CommentsController extends GetxController {
   }
 
   void scrollDown() {
-    if (scrollController.position != null) {
+    if (scrollController != null && scrollController.position != null) {
       scrollController.animateTo(
-       Platform.isIOS ? scrollController.position.maxScrollExtent  :  scrollController.position.maxScrollExtent + 50,
+        Platform.isIOS
+            ? scrollController.position.maxScrollExtent
+            : scrollController.position.maxScrollExtent + 50,
         duration: Duration(seconds: 2),
         curve: Curves.fastOutSlowIn,
       );
@@ -308,6 +326,7 @@ class CommentsController extends GetxController {
         memoryCover: memoryCover,
         memoryId: memoriesModel.memoryId,
         memoryImage: commentImage,
+        imageId: imageId,
         description: ' has commented on',
         type: 'comment',
         receivedId: receivedId,
@@ -323,23 +342,11 @@ class CommentsController extends GetxController {
                 : 1
           })
         });
-
-    // for (int k = 0; k < receivedId.length; k++) {
-    //   usersRef.doc(receivedId[k]).get().then((value) => {
-    //         usersRef.doc(receivedId[k]).update({
-    //           "notification_count": value.data()!.notificationCount != null
-    //               ? value.data()!.notificationCount! + 1
-    //               : 1
-    //         })
-    //       });
-    // }
   }
 
-  void addCommentCountToMemories(String memoryId) {
+  void addCommentCountToMemories(String memoryId, MemoriesModel memoriesModel) {
     MemoriesModel memoriesModels = MemoriesModel();
     memoriesModels = memoriesModel;
-    print(
-        'memoriesModels.imagesCaption![imageIndex].commentCount! ${memoriesModels.imagesCaption![imageIndex].commentCount!}');
 
     memoryRef
         .doc(memoryId)

@@ -26,7 +26,9 @@ class ProfileController extends GetxController {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   GlobalKey<FormState> formkeyPassword = GlobalKey<FormState>();
-  MemoriesController memoriesController = Get.find<MemoriesController>();
+  MemoriesController memoriesController =  Get.isRegistered()
+      ? Get.find<MemoriesController>()
+      : Get.put(MemoriesController());
 
   FacebookLogin facebookAuth = FacebookLogin();
   @override
@@ -123,7 +125,7 @@ class ProfileController extends GetxController {
     if (formkey.currentState!.validate()) {
       usersRef
           .doc(userId)
-          .update({"display_name": nameController.value.text}).then(
+          .update({"display_name": nameController.value.text.toString().trim()}).then(
               (value) => {print('onNameChange '), memoriesController.onInit()});
     }
   }

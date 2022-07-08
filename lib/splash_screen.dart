@@ -25,4 +25,6 @@ class SplashScreen extends GetView<SplashController> {
               width: 40,
             )));
   }
+
+  
 }
