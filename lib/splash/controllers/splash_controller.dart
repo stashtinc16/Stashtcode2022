@@ -202,6 +202,7 @@ class SplashController extends GetxController {
   void checkValidLink(Uri link, String memoryId) {
     linkRef.where("share_link", isEqualTo: link.toString()).get().then((value) {
       if (value.docs.isEmpty) {
+        print('DeepLink=> NotUsed  and and not saved');
         // Link doesnot exists in shared links
         ShareLinkModel linkModel = ShareLinkModel(
             shareLink: link.toString(),
@@ -214,9 +215,11 @@ class SplashController extends GetxController {
       } else {
         // Link is in shared link but it is not used yet
         if (!value.docs.first.data().linkUsed!) {
+          print('DeepLink=> Link is saved but not used');
           checkMemoryForUser(memoryId);
         } else {
           // Link is used by other user
+          print('DeepLink=> Link is used');
           EasyLoading.dismiss();
           Get.snackbar("Error", "Link has expired", colorText: Colors.red);
           handleNavigation(false);
@@ -272,7 +275,7 @@ class SplashController extends GetxController {
         );
     MemoriesModel memoriesModel = MemoriesModel();
     List<SharedWith> shareList = List.empty(growable: true);
-    print('memoryId $memoryId');
+    print('DeepLink=> memoryId $memoryId');
     memoriesRef.doc(memoryId).get().then((value) {
       if (value.exists) {
         memoriesModel = value.data()!;
@@ -291,15 +294,15 @@ class SplashController extends GetxController {
             value.data()!.sharedWith!.forEach((element) {
               outerLoop:
               if (element.userId == userId) {
-                print('User Exist');
+                print('DeepLink=> User Exist');
                 userExists = true;
                 break outerLoop;
               }
             });
           }
-          print('ShareWith $userId');
+          print('DeepLink=> ShareWith $userId');
           if (!userExists) {
-            print('userExists $userExists $userId');
+            print('DeepLink=> userExists $userExists $userId');
             shareList.add(SharedWith(userId: userId, status: 0));
             memoriesModel.sharedCreatedAt = Timestamp.now();
             memoriesModel.sharedWith = shareList;
@@ -308,7 +311,7 @@ class SplashController extends GetxController {
                 .doc(memoryId)
                 .set(memoriesModel)
                 .then((value) => {
-                      print('globalShareMemoryModel '),
+                      print('DeepLink=> globalShareMemoryModel '),
                       globalShareMemoryModel = MemoriesModel(),
                       globalShareMemoryModel = memoriesModel,
 
@@ -318,10 +321,12 @@ class SplashController extends GetxController {
                     })
                 .onError((error, stackTrace) => {EasyLoading.dismiss()});
           } else {
-            fromShare = true;
-            globalShareMemoryModel = memoriesModel;
-            handleNavigation(true);
+            Get.snackbar("Error", "This memory already exist.",
+                colorText: Colors.red);
+            EasyLoading.dismiss();
+           //  https://stasht.page.link/Y72F   Jgxm
           }
+
         } else {
           EasyLoading.dismiss();
         }

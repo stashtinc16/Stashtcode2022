@@ -144,7 +144,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   true,
                                                   false,
                                                   controller
-                                                      .detailMemoryModel!);
+                                                      .detailMemoryModel!,false);
                                             },
                                             child: const Icon(
                                               Icons.person_add_alt_1_outlined,
@@ -281,7 +281,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                             child: Row(children: [
                               InkWell(
                                 onTap: () {
-                                  controller.copyShareLink(
+                                  controller.copyPublishLink(
                                       controller.detailMemoryModel!.title!,
                                       controller
                                           .detailMemoryModel!.publishLink!);

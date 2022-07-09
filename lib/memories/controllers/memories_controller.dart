@@ -140,7 +140,6 @@ class MemoriesController extends GetxController {
               print(
                   'aaaa ${value.docs.length} =>  ${value.docChanges.length} =>> ${sharedMemoriesList.length}'),
               value.docs.forEach((element) {
-               
                 usersRef.doc(element.data().createdBy!).get().then((userValue) {
                   List<ImagesCaption> imagesList = List.empty(growable: true);
                   MemoriesModel memoriesModel = element.data();
@@ -330,6 +329,7 @@ class MemoriesController extends GetxController {
         .where("published", isEqualTo: false)
         .snapshots()
         .listen((value) => {
+              memoriesList.clear(),
               noData.value = value.docs.isNotEmpty,
               print('Docs ${value.docs.length} => ${value.docChanges.length}'),
               value.docs.forEach((element) {
@@ -383,24 +383,24 @@ class MemoriesController extends GetxController {
 
   updateMemoriesWithData(MemoriesModel model, String memoryId,
       QuerySnapshot<MemoriesModel> value) {
-    int index = 0;
-    var notificationValue = memoriesList.where((p0) {
-      index = memoriesList.indexOf(p0);
-      return p0.memoryId == memoryId;
-    });
+    // int index = 0;
+    // var notificationValue = memoriesList.where((p0) {
+    //   index = memoriesList.indexOf(p0);
+    //   return p0.memoryId == memoryId;
+    // });
 
     if (value.docs.isNotEmpty) {
-      if (notificationValue.isNotEmpty) {
-        memoriesList[index] = model;
-      } else {
-        memoriesList.value.add(model);
-      }
+      //   if (notificationValue.isNotEmpty) {
+      //     memoriesList[index] = model;
+      //   } else {
+      memoriesList.value.add(model);
+      // }
     }
     print('Update ${memoriesList.length}');
 
     print(
         'sharedMemoriesExpand.value ${sharedMemoriesExpand.value} => ${myMemoriesExpand.value}');
-    if (memoryId == value.docChanges[value.docChanges.length - 1].doc.id) {
+    if (memoryId == value.docs[value.docs.length - 1].id) {
       myMemoriesExpand.value = !sharedMemoriesExpand.value;
 
       update();
@@ -452,7 +452,7 @@ class MemoriesController extends GetxController {
 
 // Create Dynamic Link
   Future<void> createDynamicLink(String memoryId, bool short, bool shouldShare,
-      MemoriesModel memoriesModel) async {
+      MemoriesModel memoriesModel, bool copy) async {
     print(
         'createDynamicLink => ${DateTime.now().millisecondsSinceEpoch} ${Timestamp.now().millisecondsSinceEpoch}');
     String link =
@@ -477,11 +477,15 @@ class MemoriesController extends GetxController {
     } else {
       shareLink.value = await dynamicLinks.buildLink(parameters);
     }
-    if (shouldShare) {
-      share(
-        memoriesModel,
-        shareLink.value.toString(),
-      );
+    if (copy) {
+      copyShareLink(shareLink.value.toString(), memoriesModel.title!);
+    } else {
+      if (shouldShare) {
+        share(
+          memoriesModel,
+          shareLink.value.toString(),
+        );
+      }
     }
   }
 
@@ -505,6 +509,30 @@ class MemoriesController extends GetxController {
     }
   }
 
+  checkIfLinkExpire(MemoriesModel memoriesModel, String shareText, bool copy) {
+    linkRef
+        .where("memory_id", isEqualTo: memoriesModel.memoryId)
+        .where("link_used", isEqualTo: false)
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        if (copy) {
+          copyShareLink(shareText, memoriesModel.title!);
+        } else {
+          share(memoriesModel, shareText);
+        }
+      } else {
+        createDynamicLink(
+            memoriesModel.memoryId!, true, true, memoriesModel, copy);
+      }
+    });
+  }
+
+  void copyShareLink(String link, String memoryTitle) {
+    Clipboard.setData(ClipboardData(text: "$shareLink"));
+    Get.snackbar(memoryTitle, "Link copied", colorText: Colors.white);
+  }
+
   // Share Dynamic Link
   Future<void> share(MemoriesModel memoriesModel, String shareText) async {
     await FlutterShare.share(
@@ -524,7 +552,7 @@ class MemoriesController extends GetxController {
   }
 
   // copy PublishedLink
-  void copyShareLink(String title, String link) {
+  void copyPublishLink(String title, String link) {
     Clipboard.setData(ClipboardData(text: link));
     Get.snackbar(title, "Link copied", colorText: Colors.white);
   }

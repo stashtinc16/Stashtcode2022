@@ -77,11 +77,16 @@ class Collaborators extends GetView<MemoriesController> {
                           top: 0,
                           child: IconButton(
                             onPressed: () => {
-                              controller.createDynamicLink(
-                                  controller.detailMemoryModel!.memoryId!,
-                                  true,
-                                  true,
-                                  controller.detailMemoryModel!)
+                              print('controller.shareLink.value.toString() ${controller.shareLink.value.toString()}'),
+                              controller.checkIfLinkExpire(
+                                controller.detailMemoryModel!,
+                                controller.shareLink.value.toString(),false
+                              )
+                              // controller.createDynamicLink(
+                              //     controller.detailMemoryModel!.memoryId!,
+                              //     true,
+                              //     true,
+                              //     controller.detailMemoryModel!)
                             },
                             icon: const Icon(
                               Icons.share,
@@ -110,7 +115,7 @@ class Collaborators extends GetView<MemoriesController> {
               ),
               InkWell(
                 onTap: () {
-                  copyShareLink();
+                  controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(15),
@@ -118,7 +123,8 @@ class Collaborators extends GetView<MemoriesController> {
                   child: Row(children: [
                     InkWell(
                       onTap: () {
-                        copyShareLink();
+
+                        controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                       },
                       child: Image.asset(
                         copyIcon,
@@ -219,7 +225,7 @@ class Collaborators extends GetView<MemoriesController> {
                               if (dismissDirection ==
                                   DismissDirection.endToStart) {
                                 print('DismissDirection ');
-                                deleteCollaborator(index,  "1");
+                                deleteCollaborator(index, "1");
                               }
                               print(
                                   'DismissDirection onDismissed $dismissDirection ');
@@ -242,14 +248,10 @@ class Collaborators extends GetView<MemoriesController> {
     );
   }
 
-  void copyShareLink() {
-    Clipboard.setData(ClipboardData(text: "${controller.shareLink}"));
-    Get.snackbar("${memoriesModel!.title}", "Link copied");
-  }
 
   //delete collaborator
   void deleteCollaborator(int index, String type) {
     controller.deleteCollaborator(
-        memoriesModel!.memoryId!, memoriesModel!, index,  type);
+        memoriesModel!.memoryId!, memoriesModel!, index, type);
   }
 }
