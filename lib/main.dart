@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/route_manager.dart';
-import 'package:stasht/firebase_options.dart';
+// import 'package:stasht/firebase_options.dart';
 import 'package:stasht/login_signup/bindings/signup_binding.dart';
 import 'package:stasht/routes/app_pages.dart';
 import 'package:stasht/utils/app_colors.dart';
@@ -24,10 +24,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+      // options: DefaultFirebaseOptions.currentPlatform
+  );
 
   // FlutterAppBadger.updateBadgeCount(notificationCount.value);
-
   print('Handling a background message ${message.messageId}');
 }
 
@@ -41,7 +42,7 @@ void main() async {
   await runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+      // options: DefaultFirebaseOptions.currentPlatform,
     );
     final prefs = await SharedPreferences.getInstance();
 

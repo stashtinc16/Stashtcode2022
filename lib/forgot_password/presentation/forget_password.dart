@@ -60,7 +60,7 @@ class ForgotPassword extends GetView<ForgotPasswordController> {
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         decoration: const InputDecoration(
-                            labelText: "E-mail",
+                            labelText: "Email",
                             labelStyle: TextStyle(
                               color: Color.fromRGBO(108, 96, 255, 1),
                               fontSize: 15,

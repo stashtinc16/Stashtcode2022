@@ -46,8 +46,12 @@ class Memory_Lane extends GetView<MemoriesController> {
                         controller.detailMemoryModel!.memoryId!,
                         controller.detailMemoryModel!);
                   },
-                  child: SvgPicture.asset(addPhotos),
-                  backgroundColor: AppColors.primaryColor),
+                  // child: SvgPicture.asset(addPhotos),
+                  child: Image.asset(
+                      "assets/images/photosIcon.png",
+                  ),
+                  // backgroundColor: AppColors.primaryColor
+              ),
             ),
             body: controller.hasMemory.value == 2
                 ? Column(
@@ -122,7 +126,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                             ),
                                           ),
                                         const SizedBox(
-                                          width: 15,
+                                          width: 25,
                                         ),
                                         if (userId ==
                                             controller
@@ -208,7 +212,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                           height: 60,
                                                           alignment:
                                                               Alignment.center,
-                                                          decoration: BoxDecoration(
+                                                          decoration: const BoxDecoration(
                                                               shape: BoxShape
                                                                   .circle,
                                                               image: DecorationImage(
@@ -438,7 +442,9 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   style: const TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
-                                                      fontFamily: robotoBold),
+                                                      // fontFamily: robotoBold
+                                                      fontFamily: gibsonRegularItalic
+                                                  ),
                                                 ),
                                                 const SizedBox(
                                                   height: 5,
@@ -473,8 +479,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                       .withOpacity(
                                                                           0.67),
                                                                   fontSize: 12,
-                                                                  fontFamily:
-                                                                      gibsonRegularItalic)),
+                                                                  fontFamily: gibsonRegularItalic
+                                                              )),
                                                     ],
                                                   ),
                                                 )
@@ -614,7 +620,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                       .imagesCaption![index]
                                                       .caption!
                                                       .isEmpty
-                                                  ? 'Add caption to this Post...'
+                                                  ? 'Add caption to this post...'
                                                   : controller
                                                       .detailMemoryModel!
                                                       .imagesCaption![index]
@@ -686,7 +692,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                     topLeft: Radius.circular(15)),
                 color: Colors.white),
             height: 220,
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
                 SizedBox(
@@ -798,7 +804,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                       width: 60,
                       height: 60,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(image: AssetImage(userIcon))),
                     ),
@@ -980,7 +986,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       Border.all(width: 1, color: Colors.white),
                                   borderRadius: BorderRadius.circular(40),
                                   color: Colors.black),
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(5),
                               child: Text(
                                 "+$restValue",
                                 style: const TextStyle(
@@ -1140,7 +1146,7 @@ class Memory_Lane extends GetView<MemoriesController> {
       color: Colors.white,
       splashRadius: 5,
       elevation: 2,
-      icon: Icon(Icons.more_vert),
+      icon: const Icon(Icons.more_vert),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
       onSelected: (value) {

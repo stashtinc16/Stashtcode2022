@@ -124,7 +124,7 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
             ],
           ),
           const SizedBox(
-            width: 17,
+            // width: 17,
           ),
           InkWell(
             onTap: () {

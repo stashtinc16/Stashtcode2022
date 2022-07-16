@@ -51,6 +51,7 @@ class SignIn extends GetView<SignupController> {
                             stashtLogo,
                             color: Colors.white,
                           ))),
+
                       Expanded(
                           flex: 3,
                           child: Column(
@@ -67,6 +68,7 @@ class SignIn extends GetView<SignupController> {
                                 ),
                               ),
                               const SizedBox(height: 15),
+
                               MaterialButton(
                                 onPressed: () {
                                   // controller.facebookSignin();
@@ -141,7 +143,7 @@ class SignIn extends GetView<SignupController> {
                                   keyboardType: TextInputType.emailAddress,
                                   textInputAction: TextInputAction.next,
                                   decoration: const InputDecoration(
-                                      labelText: "E-mail",
+                                      labelText: "Email",
                                       labelStyle: TextStyle(
                                         color: Colors.white,
                                         fontSize: 11,

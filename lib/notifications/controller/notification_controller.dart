@@ -36,6 +36,7 @@ class NotificationController extends GetxController {
         .listen((event) {
       print(
           'listenEvent ${event.docs.length} ${event.docChanges.length} $userId');
+      hasNotification.value = event.docChanges.isNotEmpty;
       if (event.docChanges.isNotEmpty) {
         for (var element in event.docChanges) {
           NotificationsModel notificationsModel = element.doc.data()!;
@@ -63,14 +64,14 @@ class NotificationController extends GetxController {
               } catch (e) {
                 print('Exception $e');
               }
-              hasNotification.value = false;
+              // hasNotification.value = false;
               update();
             }
           });
           // notificationList.value.add(element.data());
         }
       } else {
-        hasNotification.value = false;
+        hasNotification.value = true;
         update();
       }
     });

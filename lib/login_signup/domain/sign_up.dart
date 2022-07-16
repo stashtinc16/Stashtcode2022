@@ -51,6 +51,7 @@ class Signup extends GetView<SignupController> {
                         flex: 3,
                         child: SingleChildScrollView(
                           child: Column(
+
                             children: [
                               const Center(
                                 child: Text(
@@ -177,8 +178,8 @@ class Signup extends GetView<SignupController> {
                                     textInputAction: TextInputAction.next,
                                     keyboardType: TextInputType.emailAddress,
                                     decoration: const InputDecoration(
-                                        labelText: "E-mail",
-                                        hintText: 'E-mail',
+                                        labelText: "Email",
+                                        hintText: 'Email',
                                         hintStyle: TextStyle(
                                             color: AppColors.hintPrimaryColor,
                                             fontSize: 21),
@@ -210,8 +211,8 @@ class Signup extends GetView<SignupController> {
                               Container(
                                   decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.only(
-                                        bottomLeft: Radius.circular(11.0),
-                                        bottomRight: Radius.circular(11.0),
+                                        // bottomLeft: Radius.circular(11.0),
+                                        // bottomRight: Radius.circular(11.0),
                                       ),
                                       color: Colors.black.withOpacity(0.18)),
                                   padding: const EdgeInsets.only(bottom: 10),

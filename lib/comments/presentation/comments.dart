@@ -57,8 +57,8 @@ class Comments extends GetView<CommentsController> {
                                   child: Row(
                                     children: [
                                       Container(
-                                        height: 30,
-                                        width: 30,
+                                        height: 35,
+                                        width: 35,
                                         margin: const EdgeInsets.only(right: 5),
                                         alignment: Alignment.center,
                                         decoration: const BoxDecoration(
@@ -98,7 +98,7 @@ class Comments extends GetView<CommentsController> {
                                             controller.commentsList[index]
                                                 .userModel.displayName,
                                             style: const TextStyle(
-                                                fontSize: 11.0,
+                                                fontSize: 13.0,
                                                 color: Colors.white,
                                                 fontFamily: robotoBold),
                                           ),
@@ -106,7 +106,7 @@ class Comments extends GetView<CommentsController> {
                                             controller
                                                 .commentsList[index].comment,
                                             style: const TextStyle(
-                                                fontSize: 10.0,
+                                                fontSize: 12.0,
                                                 color: Colors.white),
                                           )
                                         ],
@@ -118,7 +118,7 @@ class Comments extends GetView<CommentsController> {
                                                 .toDate())
                                             .toString(),
                                         style: const TextStyle(
-                                            fontSize: 9.0, color: Colors.white),
+                                            fontSize: 11.0, color: Colors.white),
                                       )
                                     ],
                                   ),

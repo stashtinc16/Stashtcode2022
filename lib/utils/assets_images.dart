@@ -22,4 +22,5 @@ const tickIcon = assetPath + "tick_icon.png";
 const copyIcon = assetPath + "copy_icon.png";
 const deleteIcon = assetPath + "delete_icon.png";
 const addPhotos = assetPath + "add_photos.svg";
+const addPhotosIcon = assetPath + "add_photo_icon.png";
 const publishIcon = assetPath + "publish_icon.png";
