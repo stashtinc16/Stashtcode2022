@@ -37,7 +37,8 @@ class Memory_Lane extends GetView<MemoriesController> {
             resizeToAvoidBottomInset: false,
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: SizedBox(
+
+            floatingActionButton: (userId == controller.detailMemoryModel?.createdBy)?SizedBox(
               height: 70,
               width: 70,
               child: FloatingActionButton(
@@ -52,7 +53,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                   ),
                   // backgroundColor: AppColors.primaryColor
               ),
-            ),
+            ):Container(),
             body: controller.hasMemory.value == 2
                 ? Column(
                     children: [
@@ -85,7 +86,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                           Container(
                               width: MediaQuery.of(context).size.width,
                               height: 170,
-                              padding: const EdgeInsets.only(top: 45),
+                              padding: const EdgeInsets.only(top: 40),
                               decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.15),
                               ),
@@ -128,9 +129,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                         const SizedBox(
                                           width: 25,
                                         ),
-                                        if (userId ==
-                                            controller
-                                                .detailMemoryModel!.createdBy)
+                                        if (userId == controller.detailMemoryModel!.createdBy)
                                           InkWell(
                                             onTap: () {
                                               Get.toNamed(

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/notifications/domain/notification_model.dart';
@@ -21,6 +22,7 @@ class NotificationController extends GetxController {
       );
   RxList notificationList = List.empty(growable: true).obs;
   RxBool hasNotification = true.obs;
+  ScrollController scrollController=ScrollController();
   @override
   void onInit() {
     super.onInit();

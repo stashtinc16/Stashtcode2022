@@ -32,7 +32,9 @@ class Notifications extends GetView<NotificationController> {
                     itemCount: controller.notificationList.length,
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
-                    itemBuilder: (context, index) {
+                    controller: controller.scrollController,
+
+              itemBuilder: (context, index) {
                       print(
                           'MemoryId ${controller.notificationList[index].memoryId}');
                       return Column(

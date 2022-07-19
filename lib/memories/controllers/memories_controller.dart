@@ -48,6 +48,7 @@ class MemoriesController extends GetxController  {
   RxBool showPermissions = false.obs;
   RxBool sharedMemoriesExpand = false.obs;
   RxBool publishMemoriesExpand = false.obs;
+  RxBool allowBackPress = true.obs;
   RxInt hasMemory = 0.obs;
   Rx<PermissionStatus> permissionStatus = PermissionStatus.denied.obs;
   RxBool hasFocus = false.obs;
@@ -920,6 +921,8 @@ class MemoriesController extends GetxController  {
     if (resultList.isNotEmpty) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
+        allowBackPress.value=false;
+
         imageCaptionUrls.clear();
       }
       //selectedIndexList = index of selected items from main photos list

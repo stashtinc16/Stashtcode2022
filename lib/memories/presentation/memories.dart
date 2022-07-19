@@ -123,7 +123,7 @@ class Memories extends GetView<MemoriesController>  {
                               ? myMemoriesUI(controller.memoriesList, "My")
                               : Container())),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       Container(
                         height: 2,
@@ -131,13 +131,12 @@ class Memories extends GetView<MemoriesController>  {
                         color: AppColors.bgColor,
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       InkWell(
                         onTap: () {
                           if (controller.sharedMemoriesList.isNotEmpty) {
-                            controller.sharedMemoriesExpand.value =
-                                !controller.sharedMemoriesExpand.value;
+                            controller.sharedMemoriesExpand.value = !controller.sharedMemoriesExpand.value;
                           }
                           controller.update();
                         },
@@ -427,7 +426,7 @@ class Memories extends GetView<MemoriesController>  {
                               : Container()),
                       // sharedMemoryUI(),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       Container(
                         height: 2,
@@ -435,7 +434,7 @@ class Memories extends GetView<MemoriesController>  {
                         color: AppColors.bgColor,
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       InkWell(
                         onTap: () {
@@ -481,7 +480,7 @@ class Memories extends GetView<MemoriesController>  {
                                   controller.publishMemoryList, "Publish")
                               : Container())),
                       const SizedBox(
-                        height: 30,
+                        height: 10,
                       ),
                       Container(
                         height: 2,
