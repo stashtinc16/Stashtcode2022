@@ -13,7 +13,8 @@ class UserModel {
   int? notificationCount = 0;
 
   UserModel(
-      {this.userName,
+      {
+        this.userName,
       this.email,
       this.displayName,
       this.profileImage,
@@ -22,7 +23,8 @@ class UserModel {
       this.status,
       this.deviceType,
       this.deviceToken,
-      this.notificationCount});
+      this.notificationCount
+      });
 
   UserModel.fromJson(Map<String, dynamic> json) {
     userName = json['user_name'];

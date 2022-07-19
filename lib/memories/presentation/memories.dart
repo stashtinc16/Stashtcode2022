@@ -10,7 +10,7 @@ import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:stasht/utils/constants.dart';
 
-class Memories extends GetView<MemoriesController> {
+class Memories extends GetView<MemoriesController>  {
   bool isCheck = false;
 
   @override
@@ -940,15 +940,16 @@ class Memories extends GetView<MemoriesController> {
                                       fontSize: 14),
                                 ),
                               ),
+                              Container(
+                                  // alignment: Alignment.topRight,
+                                  // margin: const EdgeInsets.only(right: 5, top: 5),
+                                  child: moreIcon(context, memoriesList[index]))
                             ],
                           ),
                         ),
                        
                        
-                          Container(
-                              alignment: Alignment.topRight,
-                              margin: const EdgeInsets.only(right: 5, top: 5),
-                              child: moreIcon(context, memoriesList[index]))
+
                       ],
                     ),
                   ),

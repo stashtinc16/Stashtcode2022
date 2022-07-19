@@ -74,7 +74,6 @@ class SignupController extends GetxController {
     if (formkey.currentState!.validate()) {
       try {
         EasyLoading.show(status: 'Processing..');
-
         await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
           email: emailController.value.text.toString().trim(),
@@ -110,10 +109,7 @@ class SignupController extends GetxController {
                 email: email1Controller.text.toString().trim(),
                 password: password1Controller.text)
             .then((value1) {
-          usersRef
-              .where("email", isEqualTo: value1.user!.email)
-              .get()
-              .then((value) => {
+          usersRef.where("email", isEqualTo: value1.user!.email).get().then((value) => {
                     EasyLoading.dismiss(),
                     if (value.docs.isNotEmpty)
                       {
@@ -146,12 +142,10 @@ class SignupController extends GetxController {
           Get.back(result: {"email": email1Controller.text.toString()});
           Get.snackbar("Error", "User not found, Please signup new user",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
-
           return Future.error(
               "User Not Found", StackTrace.fromString("User Not Found"));
         } else if (e.code == 'wrong-password') {
           print("Incorrect password");
-
           Get.snackbar("Error", "Password is incorrect",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           return Future.error("Incorrect password",

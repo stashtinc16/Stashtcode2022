@@ -24,7 +24,7 @@ import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/splash/domain/share_links_model.dart';
 import 'package:stasht/utils/constants.dart';
 
-class MemoriesController extends GetxController {
+class MemoriesController extends GetxController  {
   RxBool showNext = false.obs;
   var mediaPages = List.empty(growable: true).obs;
   var memoriesList = List.empty(growable: true).obs;
@@ -610,26 +610,14 @@ class MemoriesController extends GetxController {
       int shareIndex, String type) {
     print('memoriesModel ${memoriesModel}');
     memoriesModel.sharedWith!.removeAt(shareIndex);
-    memoriesRef
-        .doc(memoryId)
-        .set(memoriesModel)
-        .then((value) => debugPrint('DeleteCollaborator'));
+    memoriesRef.doc(memoryId).set(memoriesModel).then((value) => debugPrint('DeleteCollaborator'));
   }
 
   Future<void> acceptInviteNotification(MemoriesModel memoriesModel) async {
     var receiverToken = "";
-    var db = await FirebaseFirestore.instance
-        .collection("users")
-        .withConverter<UserModel>(
-          fromFirestore: (snapshots, _) =>
-              UserModel.fromJson(snapshots.data()!),
-          toFirestore: (users, _) => users.toJson(),
-        )
-        .doc(memoriesModel.createdBy)
-        .get();
-
+    var db = await FirebaseFirestore.instance.collection("users").withConverter<UserModel>(fromFirestore: (snapshots, _) =>
+              UserModel.fromJson(snapshots.data()!), toFirestore: (users, _) => users.toJson(),).doc(memoriesModel.createdBy).get();
     receiverToken = db.data()!.deviceToken!;
-
     String title = "Invite Accepted";
     String description = "$userName has accepted your memory.";
     // String receiverToken = globalNotificationToken;
@@ -654,12 +642,68 @@ class MemoriesController extends GetxController {
     sendPushMessage(receiverToken, dataPayload);
     saveNotificationData(memoriesModel.createdBy!, memoriesModel);
   }
+  // add New photo Notification
+  Future<void> addNewPhotoNotification(MemoriesModel memoriesModel) async {
+    var receiverToken = "";
+    var db = await FirebaseFirestore.instance.collection(userCollection).withConverter<UserModel>(fromFirestore: (snapshots, _) =>
+        UserModel.fromJson(snapshots.data()!), toFirestore: (users, _) => users.toJson(),).doc(memoriesModel.createdBy).get();
+    receiverToken = db.data()!.deviceToken!;
+    String title = "Photo Added";
+    String description = "$userName  has added a new photo to your memory";
+    // String receiverToken = globalNotificationToken;
+    var dataPayload = jsonEncode({
+      'to': receiverToken,
+      'data': {
+        "type": "photo-add",
+        "priority": "high",
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "sound": "default",
+        "senderId": userId,
+        "memoryID": memoriesModel.memoryId,
+        "memoryImage": ""
+      },
+      'notification': {
+        'title': title,
+        'body': description,
+        "badge": "1",
+        "sound": "default"
+      },
+    });
+    sendPushMessage(receiverToken, dataPayload);
+    saveAddPhotoNotificationData(memoriesModel.createdBy!, memoriesModel);
+  }
+  // Save Add Photo Notification data in DB
+  void saveAddPhotoNotificationData(String receivedId, MemoriesModel memoriesModel) {
 
+    String memoryCover = memoriesModel.imagesCaption!.isNotEmpty ? memoriesModel.imagesCaption![0].image! : "";
+    NotificationsModel notificationsModel = NotificationsModel(
+        memoryTitle: memoriesModel.title,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        isRead: false,
+        memoryImage: "",
+        description: " has added a new photo to your memory",
+        type: 'photo-add',
+        memoryCover: memoryCover,
+        memoryId: memoriesModel.memoryId,
+        receivedId: receivedId,
+        receiverIds: [receivedId],
+        userId: userId);
+    notificationsRef
+        .add(notificationsModel)
+        .then((value) => print('SaveNotification $value'));
+    usersRef.doc(receivedId).get().then((value) => {
+      usersRef.doc(receivedId).update({
+        "notification_count": value.data()!.notificationCount != null
+            ? value.data()!.notificationCount! + 1
+            : 1
+      })
+    });
+  }
   // Save Notification data in DB
   void saveNotificationData(String receivedId, MemoriesModel memoriesModel) {
-    String memoryCover = memoriesModel.imagesCaption!.isNotEmpty
-        ? memoriesModel.imagesCaption![0].image!
-        : "";
+
+    String memoryCover = memoriesModel.imagesCaption!.isNotEmpty ? memoriesModel.imagesCaption![0].image! : "";
     NotificationsModel notificationsModel = NotificationsModel(
         memoryTitle: memoriesModel.title,
         createdAt: Timestamp.now(),
@@ -972,7 +1016,12 @@ class MemoriesController extends GetxController {
                     if (memoriesModel == null)
                       {createMemories()}
                     else
-                      {updateMemory(memoryId, memoriesModel)}
+                      {updateMemory(memoryId, memoriesModel),
+                      if(memoriesModel.createdBy!=userId ){
+                        print("Photo add"),
+                         addNewPhotoNotification(memoriesModel)
+                      }
+                      }
                   }
               })
         });

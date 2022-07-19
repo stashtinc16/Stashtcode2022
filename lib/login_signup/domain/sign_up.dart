@@ -32,7 +32,7 @@ class Signup extends GetView<SignupController> {
           ],
         )),
         child: Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
+            padding: const EdgeInsets.only(left: 25, right: 25,top: 25),
             child: Form(
                 key: controller.formkey,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -40,29 +40,41 @@ class Signup extends GetView<SignupController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Center(
-                            child: SvgPicture.asset(
-                          stashtLogo,
-                          color: Colors.white,
-                        )),
-                        flex: 1,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  stashtLogo,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              flex: 1,
+                            ),
+                            Expanded(
+                              child: const Center(
+                                child: Text(
+                                  "Sign-up",
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: Colors.white,
+                                    fontFamily: gibsonSemiBold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+
                       Expanded(
                         flex: 3,
                         child: SingleChildScrollView(
                           child: Column(
 
                             children: [
-                              const Center(
-                                child: Text(
-                                  "Sign-up",
-                                  style: TextStyle(
-                                    fontSize: 21,
-                                    color: Colors.white,
-                                    fontFamily: gibsonSemiBold,
-                                  ),
-                                ),
-                              ),
+
+
                               const SizedBox(height: 15),
                               MaterialButton(
                                 onPressed: () {
@@ -141,7 +153,7 @@ class Signup extends GetView<SignupController> {
                                     labelText: "Username",
                                     labelStyle: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 11,
+                                      fontSize: 13,
                                     ),
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.symmetric(
@@ -185,7 +197,7 @@ class Signup extends GetView<SignupController> {
                                             fontSize: 21),
                                         labelStyle: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 11,
+                                          fontSize: 13,
                                         ),
                                         errorStyle: TextStyle(
                                             color: AppColors.errorColor),
@@ -228,7 +240,7 @@ class Signup extends GetView<SignupController> {
                                               fontSize: 21),
                                           labelStyle: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 11,
+                                            fontSize: 13,
                                           ),
                                           errorStyle: const TextStyle(
                                               color: AppColors.errorColor),
@@ -286,7 +298,7 @@ class Signup extends GetView<SignupController> {
                                               fontSize: 21),
                                           labelStyle: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 11,
+                                            fontSize: 13,
                                           ),
                                           errorStyle: const TextStyle(
                                               color: AppColors.errorColor),

@@ -45,30 +45,38 @@ class SignIn extends GetView<SignupController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                          flex: 1,
-                          child: Center(
-                              child: SvgPicture.asset(
-                            stashtLogo,
-                            color: Colors.white,
-                          ))),
-
-                      Expanded(
-                          flex: 3,
-                          child: Column(
-                            children: [
-                              const Center(
+                        child: Column(
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Center(
+                                    child: SvgPicture.asset(
+                                  stashtLogo,
+                                  color: Colors.white,
+                                ))),
+                            Expanded(
+                              child: const Center(
                                 child: Text(
                                   "Sign-in",
                                   style: TextStyle(
-                                    fontSize: 21,
+                                    fontSize: 24,
                                     fontFamily: "gibsonsemibold",
                                     color: Colors.white,
                                     fontWeight: FontWeight.w100,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 15),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                          flex: 3,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
 
+                              const SizedBox(height: 15),
                               MaterialButton(
                                 onPressed: () {
                                   // controller.facebookSignin();
@@ -146,7 +154,7 @@ class SignIn extends GetView<SignupController> {
                                       labelText: "Email",
                                       labelStyle: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 11,
+                                        fontSize: 13,
                                       ),
                                       errorStyle: TextStyle(
                                           color: AppColors.errorColor),
@@ -188,7 +196,7 @@ class SignIn extends GetView<SignupController> {
                                           labelText: "Password",
                                           labelStyle: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 11,
+                                            fontSize: 13,
                                           ),
                                           errorStyle: const TextStyle(
                                               color: AppColors.errorColor),

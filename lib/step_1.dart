@@ -31,13 +31,23 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios_outlined,
-                    color: Colors.black,
+                if (argument != "yes")
+                  IconButton(
+                    onPressed: () {
+
+                      Get.back();
+
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back_ios_outlined,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
+                if (argument == "yes")
+                  SizedBox(
+                    height: 20,
+                  ),
+
                 Expanded(
                   child: Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),

@@ -115,6 +115,10 @@ class Collaborators extends GetView<MemoriesController> {
               ),
               InkWell(
                 onTap: () {
+                  controller.checkIfLinkExpire(
+                      controller.detailMemoryModel!,
+                      controller.shareLink.value.toString(),false
+                  );
                   controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                 },
                 child: Container(
@@ -123,7 +127,6 @@ class Collaborators extends GetView<MemoriesController> {
                   child: Row(children: [
                     InkWell(
                       onTap: () {
-
                         controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                       },
                       child: Image.asset(

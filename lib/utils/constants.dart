@@ -6,6 +6,7 @@ import 'package:stasht/utils/app_colors.dart';
 
 String userId = "";
 String userName = "";
+String memoryName = "";
 var userImage = ValueNotifier<String>("");
 var notificationCount = ValueNotifier<int>(0);
 String userEmail = "";
