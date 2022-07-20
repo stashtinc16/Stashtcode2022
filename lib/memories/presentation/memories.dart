@@ -180,17 +180,9 @@ class Memories extends GetView<MemoriesController>  {
                                     int shareIndex = 0;
                                     int isJoined = 0;
 
-                                    if (controller.sharedMemoriesList[index]
-                                            .sharedWith.length >
-                                        0) {
-                                      var shareObject = controller
-                                          .sharedMemoriesList[index].sharedWith
-                                          .where(
-                                        (element) {
-                                          shareIndex = controller
-                                              .sharedMemoriesList[index]
-                                              .sharedWith
-                                              .indexOf(element);
+                                    if (controller.sharedMemoriesList[index].sharedWith.length > 0) {
+                                      var shareObject = controller.sharedMemoriesList[index].sharedWith.where((element) {
+                                          shareIndex = controller.sharedMemoriesList[index].sharedWith.indexOf(element);
                                           return element.userId == userId;
                                         },
                                       );
@@ -442,8 +434,7 @@ class Memories extends GetView<MemoriesController>  {
                             controller.publishMemoriesExpand.value =
                                 !controller.publishMemoriesExpand.value;
                           }
-                          print(
-                              'publishsss ${controller.publishMemoriesExpand.value}');
+                          print('publishsss ${controller.publishMemoriesExpand.value}');
                           controller.update();
                         },
                         child: Container(

@@ -599,16 +599,16 @@ class Memory_Lane extends GetView<MemoriesController> {
                                         ),
                                         InkWell(
                                           onTap: () {
-                                            if (userId ==
-                                                controller.detailMemoryModel!
-                                                    .createdBy) {
+                                            // if (userId ==
+                                            //     controller.detailMemoryModel!
+                                            //         .createdBy) {
                                               Get.toNamed(AppRoutes.addCaption,
                                                   arguments: {
                                                     'imageIndex': index,
                                                     'list': controller
                                                         .detailMemoryModel,
                                                   });
-                                            }
+                                            // }
                                           },
                                           child: Container(
                                             width:
