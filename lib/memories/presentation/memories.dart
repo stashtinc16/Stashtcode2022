@@ -169,17 +169,14 @@ class Memories extends GetView<MemoriesController>  {
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: controller.sharedMemoriesExpand.value
                               ? ListView.builder(
-                                  itemCount:
-                                      controller.sharedMemoriesList.length,
+                                  itemCount: controller.sharedMemoriesList.length,
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
                                   primary: false,
                                   scrollDirection: Axis.vertical,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
+                                  itemBuilder: (BuildContext context, int index) {
                                     int shareIndex = 0;
                                     int isJoined = 0;
-
                                     if (controller.sharedMemoriesList[index].sharedWith.length > 0) {
                                       var shareObject = controller.sharedMemoriesList[index].sharedWith.where((element) {
                                           shareIndex = controller.sharedMemoriesList[index].sharedWith.indexOf(element);
@@ -190,7 +187,6 @@ class Memories extends GetView<MemoriesController>  {
                                         isJoined = shareObject.first.status;
                                       }
                                     }
-
                                     return InkWell(
                                         onTap: () {
                                           if (isJoined == 1) {

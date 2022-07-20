@@ -64,7 +64,6 @@ class MemoriesController extends GetxController  {
     super.onInit();
 
     promptPermissionSetting();
-
     sharedMemoriesExpand.value = fromShare;
     getMyMemories();
     getSharedMemories();
@@ -129,6 +128,7 @@ class MemoriesController extends GetxController  {
   //get Shared memories
   void getSharedMemories() {
     sharedMemoriesList.clear();
+
     memoriesRef
         .where('shared_with', arrayContainsAny: [
           {'user_id': userId, 'status': 0},
@@ -138,8 +138,7 @@ class MemoriesController extends GetxController  {
         .snapshots()
         .listen((value) => {
               sharedMemoriesList.clear(),
-              print(
-                  'aaaa ${value.docs.length} =>  ${value.docChanges.length} =>> ${sharedMemoriesList.length}'),
+              print('aaaa ${value.docs.length} =>  ${value.docChanges.length} =>> ${sharedMemoriesList.length}'),
               value.docs.forEach((element) {
                 usersRef.doc(element.data().createdBy!).get().then((userValue) {
                   List<ImagesCaption> imagesList = List.empty(growable: true);
@@ -324,8 +323,9 @@ class MemoriesController extends GetxController  {
 // Get my memories list
   void getMyMemories() {
     memoriesList.clear();
-    memoriesRef
-        .where('created_by', isEqualTo: userId)
+    memoriesList;
+    print("asafsdfsdffsfskfsd${memoriesList.length}");
+    memoriesRef.where('created_by', isEqualTo: userId)
         .orderBy('created_at', descending: true)
         .where("published", isEqualTo: false)
         .snapshots()
@@ -384,6 +384,7 @@ class MemoriesController extends GetxController  {
 
   updateMemoriesWithData(MemoriesModel model, String memoryId,
       QuerySnapshot<MemoriesModel> value) {
+    print("asfskfsd${memoriesList.length}");
     // int index = 0;
     // var notificationValue = memoriesList.where((p0) {
     //   index = memoriesList.indexOf(p0);
