@@ -152,7 +152,7 @@ class SplashController extends GetxController {
       Get.offAndToNamed(AppRoutes.comments, arguments: {
         "memoryId": memoryId,
         "memoryImage": commentImage,
-        "imageId": imageId
+        "imageId": imageId,"fromNot":true
       });
     } else {
       Get.offAndToNamed(AppRoutes.memoryList,

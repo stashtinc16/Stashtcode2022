@@ -60,7 +60,8 @@ class Notifications extends GetView<NotificationController> {
                                     "memoryImage": controller
                                         .notificationList[index].memoryImage,
                                     "imageId": controller
-                                        .notificationList[index].imageId
+                                        .notificationList[index].imageId,
+                                    "fromNot":false
                                   });
                                 } else {
                                   Get.toNamed(AppRoutes.memoryList, arguments: {

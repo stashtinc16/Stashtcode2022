@@ -509,7 +509,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                             .imageId,
                                                         'list': controller
                                                             .detailMemoryModel,
-                                                        'imageIndex': index,
+                                                        'imageIndex': index,"fromNot":false
                                                       });
                                                 }
                                               },

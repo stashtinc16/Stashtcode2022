@@ -5,6 +5,8 @@ import 'package:stasht/comments/controller/comment_controller.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:intl/intl.dart';
 
+import '../../routes/app_routes.dart';
+
 class Comments extends GetView<CommentsController> {
   String memoryId = Get.arguments["memoryId"];
   String imagePath = Get.arguments!["memoryImage"];
@@ -19,7 +21,15 @@ class Comments extends GetView<CommentsController> {
           backgroundColor: Colors.black,
           leading: IconButton(
             onPressed: () {
-              Get.back();
+              if(Get.arguments!=null && Get.arguments["fromNot"]){
+                print("asfsdfdsfdsf");
+                Get.offNamed(AppRoutes.memories);
+                // Get.back();
+              }else{
+                print("asfdsf");
+                Get.back();
+              }
+
             },
             icon: const Icon(
               Icons.close,
