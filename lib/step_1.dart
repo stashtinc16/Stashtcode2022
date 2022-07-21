@@ -38,17 +38,15 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                   if (argument != "yes")
                     IconButton(
                       onPressed: () {
-
                         Get.back();
-
-                      },
+                        },
                       icon: const Icon(
                         Icons.arrow_back_ios_outlined,
                         color: Colors.black,
                       ),
                     ),
                   if (argument == "yes")
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
 
@@ -263,17 +261,11 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                     ),
                                     InkWell(
                                       onTap: () async {
-                                        print(
-                                            'controller.permissionStatus.value  ${controller.permissionStatus.value}');
-                                        if (controller.permissionStatus.value ==
-                                                PermissionStatus.granted &&
-                                            controller.permissionStatus.value ==
-                                                PermissionStatus.limited) {
+                                        print('controller.permissionStatus.value  ${controller.permissionStatus.value}');
+                                        if (controller.permissionStatus.value == PermissionStatus.granted && controller.permissionStatus.value == PermissionStatus.limited) {
                                           controller.promptPermissionSetting();
                                         } else {
-                                          var object =
-                                              await AppSettings.openAppSettings();
-
+                                          var object = await AppSettings.openAppSettings();
                                           controller.promptPermissionSetting();
                                         }
                                       },

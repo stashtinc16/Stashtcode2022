@@ -145,7 +145,7 @@ class SignIn extends GetView<SignupController> {
                                       topRight: Radius.circular(11.0),
                                     ),
                                     color: Colors.black.withOpacity(0.18)),
-                                padding: const EdgeInsets.only(bottom: 10),
+                                // padding: const EdgeInsets.only(bottom: 10),
                                 child: TextFormField(
                                   controller: controller.email1Controller,
                                   keyboardType: TextInputType.emailAddress,
@@ -180,7 +180,7 @@ class SignIn extends GetView<SignupController> {
                                 height: 2,
                               ),
                               Container(
-                                  padding: const EdgeInsets.only(bottom: 10),
+                                  // padding: const EdgeInsets.only(bottom: 10),
                                   decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(11.0),

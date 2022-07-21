@@ -51,8 +51,8 @@ class Signup extends GetView<SignupController> {
                               ),
                               flex: 1,
                             ),
-                            Expanded(
-                              child: const Center(
+                            const Expanded(
+                              child: Center(
                                 child: Text(
                                   "Sign-up",
                                   style: TextStyle(
@@ -145,7 +145,7 @@ class Signup extends GetView<SignupController> {
                                       topRight: Radius.circular(11.0),
                                     ),
                                     color: Colors.black.withOpacity(0.18)),
-                                padding: const EdgeInsets.only(bottom: 10),
+                                // padding: const EdgeInsets.only(bottom: 10),
                                 child: TextFormField(
                                   controller: controller.userNameController,
                                   textInputAction: TextInputAction.next,
@@ -182,7 +182,7 @@ class Signup extends GetView<SignupController> {
                               Container(
                                 decoration: BoxDecoration(
                                     color: Colors.black.withOpacity(0.18)),
-                                padding: const EdgeInsets.only(bottom: 10),
+                                // padding: const EdgeInsets.only(bottom: 10),
                                 child: Obx(
                                   () => TextFormField(
                                     controller:
@@ -227,7 +227,7 @@ class Signup extends GetView<SignupController> {
                                         // bottomRight: Radius.circular(11.0),
                                       ),
                                       color: Colors.black.withOpacity(0.18)),
-                                  padding: const EdgeInsets.only(bottom: 10),
+                                  // padding: const EdgeInsets.only(bottom: 10),
                                   child: Obx(
                                     () => TextFormField(
                                       obscureText: controller.isObscure.value,
@@ -284,7 +284,7 @@ class Signup extends GetView<SignupController> {
                                         bottomRight: Radius.circular(11.0),
                                       ),
                                       color: Colors.black.withOpacity(0.18)),
-                                  padding: const EdgeInsets.only(bottom: 10),
+                                  // padding: const EdgeInsets.only(bottom: 10),
                                   child: Obx(
                                     () => TextFormField(
                                       obscureText: controller.isObscureCP.value,

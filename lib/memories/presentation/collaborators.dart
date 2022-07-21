@@ -117,7 +117,8 @@ class Collaborators extends GetView<MemoriesController> {
                 onTap: () {
                   controller.checkIfLinkExpire(
                       controller.detailMemoryModel!,
-                      controller.shareLink.value.toString(),false
+                      controller.shareLink.value.toString(),
+                      false
                   );
                   controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                 },
@@ -155,8 +156,7 @@ class Collaborators extends GetView<MemoriesController> {
                 shrinkWrap: true,
                 primary: true,
                 itemBuilder: (BuildContext context, int index) {
-                  print(
-                      'ShareWith ${controller.getSharedUsers(memoriesModel!).length}');
+                  print('ShareWith ${controller.getSharedUsers(memoriesModel!).length}');
                   return FutureBuilder(
                     future: controller.getUserData(controller
                         .getSharedUsers(memoriesModel!)[index]
@@ -199,13 +199,16 @@ class Collaborators extends GetView<MemoriesController> {
                                         ),
                                 ),
                               ),
-                              Text(
-                                userModel.displayName!,
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: gibsonSemiBold,
-                                    color: Colors.black),
-                              )
+                              Expanded(
+                                child: Text(
+                                  userModel.displayName!,
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontFamily: gibsonSemiBold,
+                                      color: Colors.black),
+                                ),
+                              ),
+                              SizedBox(width: 10)
                             ]),
                             background: Container(
                               color: AppColors.redBgColor,

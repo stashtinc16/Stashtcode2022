@@ -54,7 +54,7 @@ Future<void> sendPushMessage(var receiverFBToken, String payload) async {
               "key=AAAA2627rvU:APA91bGisn9zzHeXgs5i0rqS46twn2qFhW0tQCn_s97NmsxsOQW4GfsTbyYgA-zXqt4dw97vInpFIQE9Y2GovMUELIS08ryGuEC6zNpnKEaQTFEHE-rJZ9SL6r4MuVftUP4LFmRhOTWL",
         },
         body: payload);
-    print("reason phrase....${response!.reasonPhrase}");
+    print("reason phrase....${response.reasonPhrase}");
     print("response=> ${response.request} ${response.statusCode}");
 
     if (response.statusCode == 200) {

@@ -62,7 +62,6 @@ class MemoriesController extends GetxController  {
   @override
   void onInit() {
     super.onInit();
-
     promptPermissionSetting();
     sharedMemoriesExpand.value = fromShare;
     getMyMemories();
@@ -73,6 +72,7 @@ class MemoriesController extends GetxController  {
   // get Published memories list
   void getPublishedMemories() {
     publishMemoryList.clear();
+    publishMemoryList;
     print('userId $userId ');
     memoriesRef
         .where("created_by", isEqualTo: userId)
@@ -103,7 +103,7 @@ class MemoriesController extends GetxController  {
                   imagesCaption.userModel = imageUser.data()!;
                   imagesList.add(imagesCaption);
                   if (imagesList.length ==
-                      element.data()!.imagesCaption!.length) {
+                      element.data().imagesCaption!.length) {
                     memoriesModel.imagesCaption = imagesList;
                     try {
                       memoriesModel.imagesCaption!.sort((first, second) {
@@ -128,6 +128,7 @@ class MemoriesController extends GetxController  {
   //get Shared memories
   void getSharedMemories() {
     sharedMemoriesList.clear();
+    sharedMemoriesList;
 
     memoriesRef
         .where('shared_with', arrayContainsAny: [
@@ -162,7 +163,7 @@ class MemoriesController extends GetxController  {
                         imagesCaption.userModel = imageUser.data()!;
                         imagesList.add(imagesCaption);
                         if (imagesList.length ==
-                            element.data()!.imagesCaption!.length) {
+                            element.data().imagesCaption!.length) {
                           memoriesModel.imagesCaption = imagesList;
                           try {
                             memoriesModel.imagesCaption!.sort((first, second) {
@@ -337,7 +338,7 @@ class MemoriesController extends GetxController  {
                 usersRef.doc(userId).get().then(
                   (userValue) {
                     List<ImagesCaption> imagesList = List.empty(growable: true);
-                    MemoriesModel memoriesModel = element.data()!;
+                    MemoriesModel memoriesModel = element.data();
                     memoriesModel.memoryId = element.id;
                     memoriesModel.userModel = userValue.data()!;
                     if (element.data().sharedWith != null) {
@@ -358,7 +359,7 @@ class MemoriesController extends GetxController  {
                           imagesCaption.userModel = imageUser.data()!;
                           imagesList.add(imagesCaption);
                           if (imagesList.length ==
-                              element.data()!.imagesCaption!.length) {
+                              element.data().imagesCaption!.length) {
                             memoriesModel.imagesCaption = imagesList;
                             try {
                               memoriesModel.imagesCaption!
@@ -575,7 +576,7 @@ class MemoriesController extends GetxController  {
   final memoriesRef = FirebaseFirestore.instance
       .collection(memoriesCollection)
       .withConverter<MemoriesModel>(
-        fromFirestore: (snapshots, _) =>
+            fromFirestore: (snapshots, _) =>
             MemoriesModel.fromJson(snapshots.data()!),
         toFirestore: (memories, _) => memories.toJson(),
       );
@@ -923,7 +924,6 @@ class MemoriesController extends GetxController  {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
         allowBackPress.value=false;
-
         imageCaptionUrls.clear();
       }
       //selectedIndexList = index of selected items from main photos list
@@ -931,13 +931,11 @@ class MemoriesController extends GetxController  {
       final File file = await getImageFileFromAssets(resultList[imageIndex]);
       String fileName = "/temp${DateTime.now().millisecond}.jpg";
       final targetPath = dir.absolute.path + fileName;
-
       final File? newFile = await testCompressAndGetFile(file, targetPath);
       // final data = await readExifFromFile(newFile!);
 
       // print('ExifInterface_data $data');
-      final UploadTask? uploadTask =
-          await uploadFile(newFile!, fileName, memoryId, memoriesModel);
+      final UploadTask? uploadTask = await uploadFile(newFile!, fileName, memoryId, memoriesModel);
     } else {
       Get.snackbar('Error', "Please select images");
     }
@@ -945,9 +943,7 @@ class MemoriesController extends GetxController  {
 
   Future<File> getImageFileFromAssets(Asset asset) async {
     final byteData = await asset.getByteData();
-
-    final tempFile =
-        File("${(await getTemporaryDirectory()).path}/${asset.name}");
+    final tempFile = File("${(await getTemporaryDirectory()).path}/${asset.name}");
     final file = await tempFile.writeAsBytes(
       byteData.buffer
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),

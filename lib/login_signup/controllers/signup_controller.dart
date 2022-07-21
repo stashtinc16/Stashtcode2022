@@ -181,7 +181,7 @@ class SignupController extends GetxController {
           EasyLoading.dismiss(),
           saveSession(value.id, username, user.email!, "", 0),
           clearTexts(),
-          Get.snackbar('Success', "User registerd",
+          Get.snackbar('Success', "User registered",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
           Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
         });
@@ -301,6 +301,7 @@ class SignupController extends GetxController {
     passwordController.text = "";
     email1Controller.text = "";
     password1Controller.text = "";
+    confirmPasswordController.text="";
   }
 
   @override

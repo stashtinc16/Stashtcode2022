@@ -22,10 +22,11 @@ class Memory_Lane extends GetView<MemoriesController> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
-    memoryId = Get.arguments['memoryId'];
-    print('memoryId $memoryId');
-    // controller.getMyMemoryData(memoryId);
+    if(Get.arguments!=null) {
+      memoryId = Get.arguments['memoryId'];
+    }
+    // print('memoryId $memoryId');
+    // memoryId=  controller.getMyMemoryData(memoryId);
 
     return GetBuilder(
       initState: (state) {
@@ -194,6 +195,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                             height: 60,
                                                             decoration:
                                                                 BoxDecoration(
+
                                                               shape:
                                                                   BoxShape.circle,
                                                               border: Border.all(
@@ -278,6 +280,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                             controller.detailMemoryModel!.published!)
                           InkWell(
                             onTap: () {
+                              print("copy link");
                               controller.sharePublishMemory(
                                   controller.detailMemoryModel!.title!,
                                   controller.detailMemoryModel!.publishLink!);
@@ -288,10 +291,11 @@ class Memory_Lane extends GetView<MemoriesController> {
                               child: Row(children: [
                                 InkWell(
                                   onTap: () {
-                                    controller.copyPublishLink(
-                                        controller.detailMemoryModel!.title!,
-                                        controller
-                                            .detailMemoryModel!.publishLink!);
+                                    // print("copy link1");
+                                    // controller.copyPublishLink(
+                                    //     controller.detailMemoryModel!.title!,
+                                    //     controller
+                                    //         .detailMemoryModel!.publishLink!);
                                   },
                                   child: Image.asset(
                                     copyIcon,
@@ -341,6 +345,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       children: [
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
+
                                           children: [
                                             Container(
                                               height: 45,
@@ -446,7 +451,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                         color: Colors.black,
                                                         fontSize: 14,
                                                         // fontFamily: robotoBold
-                                                        fontFamily: gibsonRegularItalic
+                                                        // fontFamily: gibsonRegularItalic
                                                     ),
                                                   ),
                                                   const SizedBox(
@@ -490,6 +495,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                 ],
                                               ),
                                             ),
+
                                             InkWell(
                                               onTap: () {
                                                 if (controller.detailMemoryModel!
@@ -535,9 +541,9 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                 ],
                                               ),
                                             ),
-                                            const SizedBox(
-                                              width: 4,
-                                            ),
+                                            // const SizedBox(
+                                            //   width: 4,
+                                            // ),
                                             if (controller.detailMemoryModel!
                                                     .createdBy ==
                                                 userId)
@@ -550,9 +556,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   controller.detailMemoryModel!,
                                                   controller.detailMemoryModel!
                                                       .imagesCaption![index]),
-                                            const SizedBox(
-                                              width: 6,
-                                            ),
+
                                           ],
                                         ),
                                         const SizedBox(
@@ -695,79 +699,83 @@ class Memory_Lane extends GetView<MemoriesController> {
                     topRight: Radius.circular(15),
                     topLeft: Radius.circular(15)),
                 color: Colors.white),
-            height: 220,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: const Padding(
-                      padding: EdgeInsets.all(25.0),
-                      child: Text(
-                        "Would you like to publish your memory",
-                        style: TextStyle(
-                            fontSize: 18.0,
-                            color: Colors.black,
-                            fontFamily: robotoBold),
+            // height: 220,
+            // padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: const Padding(
+                        padding: EdgeInsets.all(25.0),
+                        child: Text(
+                          "Would you like to publish your memory",
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.black,
+                              fontFamily: robotoBold),
+                        )),
+                  ),
+                  Container(
+                    height: 1,
+                    color: AppColors.viewColor,
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: InkWell(
+                        onTap: () {
+                          controller.publishMemory(
+                              controller.detailMemoryModel!.title!,
+                              controller.detailMemoryModel!.memoryId!);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(40),
+                          child: const Text(
+                            'Yes',
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: AppColors.primaryColor,
+                                fontFamily: robotoBold),
+                            textAlign: TextAlign.center,
+                          ),
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              color: AppColors.hintTextColor),
+                        ),
                       )),
-                ),
-                Container(
-                  height: 1,
-                  color: AppColors.viewColor,
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                        child: InkWell(
-                      onTap: () {
-                        controller.publishMemory(
-                            controller.detailMemoryModel!.title!,
-                            controller.detailMemoryModel!.memoryId!);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(40),
-                        child: const Text(
-                          'Yes',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: AppColors.primaryColor,
-                              fontFamily: robotoBold),
-                          textAlign: TextAlign.center,
-                        ),
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: AppColors.hintTextColor),
+                      const SizedBox(
+                        width: 20,
                       ),
-                    )),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                        child: InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(40),
-                        child: const Text(
-                          'No',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: AppColors.primaryColor,
-                              fontFamily: robotoBold),
-                          textAlign: TextAlign.center,
+                      Expanded(
+                          child: InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(40),
+                          child: const Text(
+                            'No',
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: AppColors.primaryColor,
+                                fontFamily: robotoBold),
+                            textAlign: TextAlign.center,
+                          ),
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              color: AppColors.hintTextColor),
                         ),
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: AppColors.hintTextColor),
-                      ),
-                    )),
-                  ],
-                )
-              ],
+                      )),
+                    ],
+                  )
+                ],
+              ),
             ),
           );
         });
@@ -833,9 +841,10 @@ class Memory_Lane extends GetView<MemoriesController> {
                         border: Border.all(width: 0.5, color: Colors.grey),
                         image: const DecorationImage(
                             image: AssetImage(userIcon)))),
+
             Padding(
-                padding: const EdgeInsets.only(
-                  left: 75 / 2,
+                padding:  EdgeInsets.only(
+                  left: 75 / 2
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1129,27 +1138,30 @@ class Memory_Lane extends GetView<MemoriesController> {
       MemoriesModel memoriesModel,
       ImagesCaption imagesCaption) {
     return PopupMenuButton<int>(
+
       itemBuilder: (context) => [
         // popupmenu item 1
         PopupMenuItem(
           value: 1,
+
           // row has two child icon and text.
           child: Row(
             children: const [
               Icon(Icons.delete),
-              SizedBox(
-                // sized box with width 10
-                width: 10,
-              ),
+              // SizedBox(
+              //   // sized box with width 10
+              //   width: 10,
+              // ),
               Text("Delete")
             ],
           ),
         ),
       ],
-      offset: const Offset(0, 40),
+      offset: const Offset(-30, 50),
       color: Colors.white,
       splashRadius: 5,
       elevation: 2,
+      // position: RelativeRect.fromLTRB(100, 100, 100, 100),
       icon: const Icon(Icons.more_vert),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),

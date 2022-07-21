@@ -208,7 +208,7 @@ class Memories extends GetView<MemoriesController>  {
                                             Container(
                                               height: 100,
                                               margin: const EdgeInsets.only(
-                                                  top: 20),
+                                                  top: 10),
                                               width: MediaQuery.of(context)
                                                   .size
                                                   .width,
@@ -252,7 +252,7 @@ class Memories extends GetView<MemoriesController>  {
                                                         .withOpacity(0.22),
                                               ),
                                               margin: const EdgeInsets.only(
-                                                  top: 20),
+                                                  top: 10),
                                               child: Row(
                                                 children: [
                                                   Container(
@@ -791,7 +791,7 @@ class Memories extends GetView<MemoriesController>  {
               });
             },
             child: Container(
-              margin: const EdgeInsets.only(top: 20),
+              margin: const EdgeInsets.only(top: 0),
               child: Stack(
                 children: [
                   Card(

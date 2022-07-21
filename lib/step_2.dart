@@ -203,12 +203,14 @@ class Step_2 extends GetView<MemoriesController> {
                         ),
                         InkWell(
                           onTap: () {
+                            print("asfdsf");
                             if (controller.permissionStatus.value !=
                                     PermissionStatus.permanentlyDenied &&
                                 controller.permissionStatus.value !=
                                     PermissionStatus.limited) {
                               controller.promptPermissionSetting();
                             } else {
+                              print("asfdsdfsdfdsfsf");
                               AppSettings.openAppSettings();
                             }
                           },
