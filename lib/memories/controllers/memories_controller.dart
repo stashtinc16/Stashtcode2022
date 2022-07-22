@@ -24,7 +24,7 @@ import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/splash/domain/share_links_model.dart';
 import 'package:stasht/utils/constants.dart';
 
-class MemoriesController extends GetxController  {
+class MemoriesController extends GetxController {
   RxBool showNext = false.obs;
   var mediaPages = List.empty(growable: true).obs;
   var memoriesList = [].obs;
@@ -113,8 +113,21 @@ class MemoriesController extends GetxController  {
                       print('Exception $e');
                     }
 
-                    updatePublishMemoriesWithData(
-                        memoriesModel, element.id, publishElement);
+                    publishMemoryList.value.add(memoriesModel);
+                    print(
+                        'PublishMemory ${publishMemoryList.length} => ${publishElement.docs.length}');
+                    if (publishMemoryList.length ==
+                        publishElement.docChanges.length) {
+                      publishMemoryList.sort(
+                        (a, b) {
+                          return b.publishedCreatedAt!
+                              .compareTo(a.publishedCreatedAt);
+                        },
+                      );
+                      update();
+                    }
+                    // updatePublishMemoriesWithData(
+                    //     memoriesModel, element.id, publishElement);
                   }
                 }
               });
@@ -139,7 +152,8 @@ class MemoriesController extends GetxController  {
         .snapshots()
         .listen((value) => {
               sharedMemoriesList.clear(),
-              print('aaaa ${value.docs.length} =>  ${value.docChanges.length} =>> ${sharedMemoriesList.length}'),
+              print(
+                  'aaaa ${value.docs.length} =>  ${value.docChanges.length} =>> ${sharedMemoriesList.length}'),
               value.docs.forEach((element) {
                 usersRef.doc(element.data().createdBy!).get().then((userValue) {
                   List<ImagesCaption> imagesList = List.empty(growable: true);
@@ -325,7 +339,8 @@ class MemoriesController extends GetxController  {
     memoriesList.clear();
 
     print("asafsdfsdffsfskfsd${memoriesList.length}");
-    memoriesRef.where('created_by', isEqualTo: userId)
+    memoriesRef
+        .where('created_by', isEqualTo: userId)
         .orderBy('created_at', descending: true)
         .where("published", isEqualTo: false)
         .snapshots()
@@ -370,9 +385,25 @@ class MemoriesController extends GetxController  {
                               print('Exception $e');
                             }
 
+                            memoriesList.value.add(memoriesModel);
 
-                            updateMemoriesWithData(
-                                memoriesModel, element.id, value);
+                            print('Update ${memoriesList.length}');
+
+                            print(
+                                'sharedMemoriesExpand.value ${sharedMemoriesExpand.value} => ${myMemoriesExpand.value}');
+                            if (memoriesList.length == value.docs.length) {
+                              myMemoriesExpand.value =
+                                  !sharedMemoriesExpand.value;
+                              memoriesList.sort(
+                                (a, b) {
+                                  return b.createdAt.compareTo(a.createdAt);
+                                },
+                              );
+                              update();
+                            }
+
+                            // updateMemoriesWithData(
+                            //     memoriesModel, element.id, value);
                           }
                         }
                       });
@@ -386,22 +417,6 @@ class MemoriesController extends GetxController  {
   updateMemoriesWithData(MemoriesModel model, String memoryId,
       QuerySnapshot<MemoriesModel> value) {
     print("asfskfsd${memoriesList.length}");
-
-
-      memoriesList.value.add(model);
-
-
-    print('Update ${memoriesList.length}');
-
-    print(
-        'sharedMemoriesExpand.value ${sharedMemoriesExpand.value} => ${myMemoriesExpand.value}');
-    if (memoryId == value.docs[value.docs.length - 1].id) {
-      myMemoriesExpand.value = !sharedMemoriesExpand.value;
-      memoriesList.sort((a, b) {
-       return b.createdAt.compareTo(a.createdAt);
-      },);
-      update();
-    }
   }
 
   updatePublishMemoriesWithData(MemoriesModel model, String memoryId,
@@ -419,6 +434,7 @@ class MemoriesController extends GetxController  {
         publishMemoryList.value.add(model);
       }
     }
+    publishMemoryList.value.add(model);
     print('PublishMemory ${publishMemoryList.length} => ${value.docs.length}');
     if (memoryId == value.docChanges[value.docChanges.length - 1].doc.id) {
       publishMemoryList.sort(
@@ -498,12 +514,12 @@ class MemoriesController extends GetxController  {
     } on Exception catch (e) {
       print('Exception $e ');
       print('PermissionStatus ${permissionStatus.value}');
-      if(permissionStatus.value==PermissionStatus.granted || permissionStatus.value == PermissionStatus.limited){
+      if (permissionStatus.value == PermissionStatus.granted ||
+          permissionStatus.value == PermissionStatus.limited) {
         showPermissions.value = false;
-      }else{
+      } else {
         showPermissions.value = true;
       }
-
     }
 
     // images = resultList;
@@ -576,7 +592,7 @@ class MemoriesController extends GetxController  {
   final memoriesRef = FirebaseFirestore.instance
       .collection(memoriesCollection)
       .withConverter<MemoriesModel>(
-            fromFirestore: (snapshots, _) =>
+        fromFirestore: (snapshots, _) =>
             MemoriesModel.fromJson(snapshots.data()!),
         toFirestore: (memories, _) => memories.toJson(),
       );
@@ -613,13 +629,23 @@ class MemoriesController extends GetxController  {
       int shareIndex, String type) {
     print('memoriesModel ${memoriesModel}');
     memoriesModel.sharedWith!.removeAt(shareIndex);
-    memoriesRef.doc(memoryId).set(memoriesModel).then((value) => debugPrint('DeleteCollaborator'));
+    memoriesRef
+        .doc(memoryId)
+        .set(memoriesModel)
+        .then((value) => debugPrint('DeleteCollaborator'));
   }
 
   Future<void> acceptInviteNotification(MemoriesModel memoriesModel) async {
     var receiverToken = "";
-    var db = await FirebaseFirestore.instance.collection("users").withConverter<UserModel>(fromFirestore: (snapshots, _) =>
-              UserModel.fromJson(snapshots.data()!), toFirestore: (users, _) => users.toJson(),).doc(memoriesModel.createdBy).get();
+    var db = await FirebaseFirestore.instance
+        .collection("users")
+        .withConverter<UserModel>(
+          fromFirestore: (snapshots, _) =>
+              UserModel.fromJson(snapshots.data()!),
+          toFirestore: (users, _) => users.toJson(),
+        )
+        .doc(memoriesModel.createdBy)
+        .get();
     receiverToken = db.data()!.deviceToken!;
     String title = "Invite Accepted";
     String description = "$userName has accepted your memory.";
@@ -645,11 +671,19 @@ class MemoriesController extends GetxController  {
     sendPushMessage(receiverToken, dataPayload);
     saveNotificationData(memoriesModel.createdBy!, memoriesModel);
   }
+
   // add New photo Notification
   Future<void> addNewPhotoNotification(MemoriesModel memoriesModel) async {
     var receiverToken = "";
-    var db = await FirebaseFirestore.instance.collection(userCollection).withConverter<UserModel>(fromFirestore: (snapshots, _) =>
-        UserModel.fromJson(snapshots.data()!), toFirestore: (users, _) => users.toJson(),).doc(memoriesModel.createdBy).get();
+    var db = await FirebaseFirestore.instance
+        .collection(userCollection)
+        .withConverter<UserModel>(
+          fromFirestore: (snapshots, _) =>
+              UserModel.fromJson(snapshots.data()!),
+          toFirestore: (users, _) => users.toJson(),
+        )
+        .doc(memoriesModel.createdBy)
+        .get();
     receiverToken = db.data()!.deviceToken!;
     String title = "Photo Added";
     String description = "$userName  has added a new photo to your memory";
@@ -675,10 +709,13 @@ class MemoriesController extends GetxController  {
     sendPushMessage(receiverToken, dataPayload);
     saveAddPhotoNotificationData(memoriesModel.createdBy!, memoriesModel);
   }
-  // Save Add Photo Notification data in DB
-  void saveAddPhotoNotificationData(String receivedId, MemoriesModel memoriesModel) {
 
-    String memoryCover = memoriesModel.imagesCaption!.isNotEmpty ? memoriesModel.imagesCaption![0].image! : "";
+  // Save Add Photo Notification data in DB
+  void saveAddPhotoNotificationData(
+      String receivedId, MemoriesModel memoriesModel) {
+    String memoryCover = memoriesModel.imagesCaption!.isNotEmpty
+        ? memoriesModel.imagesCaption![0].image!
+        : "";
     NotificationsModel notificationsModel = NotificationsModel(
         memoryTitle: memoriesModel.title,
         createdAt: Timestamp.now(),
@@ -696,17 +733,19 @@ class MemoriesController extends GetxController  {
         .add(notificationsModel)
         .then((value) => print('SaveNotification $value'));
     usersRef.doc(receivedId).get().then((value) => {
-      usersRef.doc(receivedId).update({
-        "notification_count": value.data()!.notificationCount != null
-            ? value.data()!.notificationCount! + 1
-            : 1
-      })
-    });
+          usersRef.doc(receivedId).update({
+            "notification_count": value.data()!.notificationCount != null
+                ? value.data()!.notificationCount! + 1
+                : 1
+          })
+        });
   }
+
   // Save Notification data in DB
   void saveNotificationData(String receivedId, MemoriesModel memoriesModel) {
-
-    String memoryCover = memoriesModel.imagesCaption!.isNotEmpty ? memoriesModel.imagesCaption![0].image! : "";
+    String memoryCover = memoriesModel.imagesCaption!.isNotEmpty
+        ? memoriesModel.imagesCaption![0].image!
+        : "";
     NotificationsModel notificationsModel = NotificationsModel(
         memoryTitle: memoriesModel.title,
         createdAt: Timestamp.now(),
@@ -855,7 +894,6 @@ class MemoriesController extends GetxController  {
       }
       // status = await Permission.photos.status;
     } else {
-
       permission = Permission.storage;
       status = await Permission.storage.status;
       if (status == PermissionStatus.granted) {
@@ -930,7 +968,7 @@ class MemoriesController extends GetxController  {
     if (resultList.isNotEmpty) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
-        allowBackPress.value=false;
+        allowBackPress.value = false;
         imageCaptionUrls.clear();
       }
       //selectedIndexList = index of selected items from main photos list
@@ -942,7 +980,8 @@ class MemoriesController extends GetxController  {
       // final data = await readExifFromFile(newFile!);
 
       // print('ExifInterface_data $data');
-      final UploadTask? uploadTask = await uploadFile(newFile!, fileName, memoryId, memoriesModel);
+      final UploadTask? uploadTask =
+          await uploadFile(newFile!, fileName, memoryId, memoriesModel);
     } else {
       Get.snackbar('Error', "Please select images");
     }
@@ -950,7 +989,8 @@ class MemoriesController extends GetxController  {
 
   Future<File> getImageFileFromAssets(Asset asset) async {
     final byteData = await asset.getByteData();
-    final tempFile = File("${(await getTemporaryDirectory()).path}/${asset.name}");
+    final tempFile =
+        File("${(await getTemporaryDirectory()).path}/${asset.name}");
     final file = await tempFile.writeAsBytes(
       byteData.buffer
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
@@ -1023,11 +1063,13 @@ class MemoriesController extends GetxController  {
                     if (memoriesModel == null)
                       {createMemories()}
                     else
-                      {updateMemory(memoryId, memoriesModel),
-                      if(memoriesModel.createdBy!=userId ){
-                        print("Photo add"),
-                         addNewPhotoNotification(memoriesModel)
-                      }
+                      {
+                        updateMemory(memoryId, memoriesModel),
+                        if (memoriesModel.createdBy != userId)
+                          {
+                            print("Photo add"),
+                            addNewPhotoNotification(memoriesModel)
+                          }
                       }
                   }
               })
