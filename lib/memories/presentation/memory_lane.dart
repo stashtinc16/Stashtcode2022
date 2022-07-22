@@ -22,9 +22,15 @@ class Memory_Lane extends GetView<MemoriesController> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-    if(Get.arguments!=null) {
-      memoryId = Get.arguments['memoryId'];
+
+    if(Get.arguments!=null ) {
+
+        memoryId = Get.arguments['memoryId'];
+
+
     }
+
+
     // print('memoryId $memoryId');
     // memoryId=  controller.getMyMemoryData(memoryId);
 
@@ -59,11 +65,16 @@ class Memory_Lane extends GetView<MemoriesController> {
                     // backgroundColor: AppColors.primaryColor
                 ),
               ),
-              body: controller.hasMemory.value == 2
+              body:
+              controller.detailMemoryModel==null?
+              Center(child: CircularProgressIndicator(color: Colors.blue)):
+              controller.hasMemory.value == 2
                   ? Column(
                       children: [
                         Stack(
                           children: [
+                            controller.detailMemoryModel==null?
+                            Center(child: CircularProgressIndicator(color: Colors.black)):
                             Container(
                               width: MediaQuery.of(context).size.width,
                               height: 170,
@@ -115,6 +126,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               ],
                                             ),
                                           ),
+                                          if(controller.detailMemoryModel!=null)
                                           if (userId ==
                                                   controller.detailMemoryModel!
                                                       .createdBy &&
@@ -134,6 +146,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           const SizedBox(
                                             width: 25,
                                           ),
+                                          if(controller.detailMemoryModel!=null)
                                           if (userId == controller.detailMemoryModel!.createdBy)
                                             InkWell(
                                               onTap: () {
@@ -174,6 +187,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
+                                              if(controller.detailMemoryModel!=null)
                                               controller.detailMemoryModel!
                                                           .sharedWith!.length >
                                                       0
@@ -257,6 +271,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                               image: const DecorationImage(
                                                                   image: AssetImage(
                                                                       userIcon)))),
+                                              if(controller.detailMemoryModel!=null)
                                               Padding(
                                                   padding: const EdgeInsets.only(
                                                     top: 5,
@@ -276,6 +291,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                 )),
                           ],
                         ),
+                        if(controller.detailMemoryModel!=null)
                         if ((userId == controller.detailMemoryModel!.createdBy) &&
                             controller.detailMemoryModel!.published!)
                           InkWell(
@@ -317,6 +333,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                               ]),
                             ),
                           ),
+                        if(controller.detailMemoryModel!=null)
                         Expanded(
                           child: ListView.builder(
                             padding: EdgeInsets.zero,
@@ -344,8 +361,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           mainAxisSize: MainAxisSize.min,
-
                                           children: [
                                             Container(
                                               height: 45,
@@ -433,6 +450,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.stretch,
+                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Text(
                                                     controller
@@ -496,47 +514,70 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               ),
                                             ),
 
-                                            InkWell(
-                                              onTap: () {
-                                                if (controller.detailMemoryModel!
-                                                    .imagesCaption!.isNotEmpty) {
-                                                  Get.toNamed(AppRoutes.comments,
-                                                      arguments: {
-                                                        "memoryId": controller
-                                                            .detailMemoryModel!
-                                                            .memoryId!,
-                                                        "memoryImage": controller
-                                                            .detailMemoryModel!
-                                                            .imagesCaption![index]
-                                                            .image,
-                                                        "imageId": controller
-                                                            .detailMemoryModel!
-                                                            .imagesCaption![index]
-                                                            .imageId,
-                                                        'list': controller
-                                                            .detailMemoryModel,
-                                                        'imageIndex': index,"fromNot":false
-                                                      });
-                                                }
-                                              },
+                                            Align(
+                                              alignment: Alignment.centerRight,
                                               child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
                                                 children: [
-                                                  Text(
-                                                    controller
-                                                        .detailMemoryModel!
-                                                        .imagesCaption![index]
-                                                        .commentCount
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  Image.asset(
-                                                    messageIcon,
-                                                    width: 12,
-                                                    height: 12,
+                                                  InkWell(
+                                                    onTap: () {
+                                                      if (controller.detailMemoryModel!
+                                                          .imagesCaption!.isNotEmpty) {
+                                                        Get.toNamed(AppRoutes.comments,
+                                                            arguments: {
+                                                              "memoryId": controller
+                                                                  .detailMemoryModel!
+                                                                  .memoryId!,
+                                                              "memoryImage": controller
+                                                                  .detailMemoryModel!
+                                                                  .imagesCaption![index]
+                                                                  .image,
+                                                              "imageId": controller
+                                                                  .detailMemoryModel!
+                                                                  .imagesCaption![index]
+                                                                  .imageId,
+                                                              'list': controller
+                                                                  .detailMemoryModel,
+                                                              'imageIndex': index,"fromNot":false
+                                                            });
+                                                      }
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          controller
+                                                              .detailMemoryModel!
+                                                              .imagesCaption![index]
+                                                              .commentCount
+                                                              .toString(),
+                                                          style: const TextStyle(
+                                                              color: Colors.black),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 3,
+                                                        ),
+                                                        Image.asset(
+                                                          messageIcon,
+                                                          width: 12,
+                                                          height: 12,
+                                                        ),
+                                                        if (controller.detailMemoryModel!
+                                                            .createdBy ==
+                                                            userId)
+                                                          Container(
+                                                            width:30,
+                                                            child: moreButton(
+                                                                context,
+                                                                controller.detailMemoryModel!
+                                                                    .memoryId!,
+                                                                index,
+                                                                controller,
+                                                                controller.detailMemoryModel!,
+                                                                controller.detailMemoryModel!
+                                                                    .imagesCaption![index]),
+                                                          ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -544,18 +585,18 @@ class Memory_Lane extends GetView<MemoriesController> {
                                             // const SizedBox(
                                             //   width: 4,
                                             // ),
-                                            if (controller.detailMemoryModel!
-                                                    .createdBy ==
-                                                userId)
-                                              moreButton(
-                                                  context,
-                                                  controller.detailMemoryModel!
-                                                      .memoryId!,
-                                                  index,
-                                                  controller,
-                                                  controller.detailMemoryModel!,
-                                                  controller.detailMemoryModel!
-                                                      .imagesCaption![index]),
+                                            // if (controller.detailMemoryModel!
+                                            //         .createdBy ==
+                                            //     userId)
+                                            //   moreButton(
+                                            //       context,
+                                            //       controller.detailMemoryModel!
+                                            //           .memoryId!,
+                                            //       index,
+                                            //       controller,
+                                            //       controller.detailMemoryModel!,
+                                            //       controller.detailMemoryModel!
+                                            //           .imagesCaption![index]),
 
                                           ],
                                         ),
@@ -1138,7 +1179,6 @@ class Memory_Lane extends GetView<MemoriesController> {
       MemoriesModel memoriesModel,
       ImagesCaption imagesCaption) {
     return PopupMenuButton<int>(
-
       itemBuilder: (context) => [
         // popupmenu item 1
         PopupMenuItem(
@@ -1157,7 +1197,7 @@ class Memory_Lane extends GetView<MemoriesController> {
           ),
         ),
       ],
-      offset: const Offset(-30, 50),
+      offset: const Offset(-10, 40),
       color: Colors.white,
       splashRadius: 5,
       elevation: 2,

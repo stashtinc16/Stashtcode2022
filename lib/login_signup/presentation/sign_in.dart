@@ -45,17 +45,18 @@ class SignIn extends GetView<SignupController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Column(
-                          children: [
-                            Expanded(
-                                flex: 1,
-                                child: Center(
-                                    child: SvgPicture.asset(
-                                  stashtLogo,
-                                  color: Colors.white,
-                                ))),
-                            Expanded(
-                              child: const Center(
+                          flex: 1,
+                          child: Center(
+                              child: SvgPicture.asset(
+                            stashtLogo,
+                            color: Colors.white,
+                          ))),
+                      Expanded(
+                          flex: 3,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Center(
                                 child: Text(
                                   "Sign-in",
                                   style: TextStyle(
@@ -66,15 +67,6 @@ class SignIn extends GetView<SignupController> {
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                          flex: 3,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
 
                               const SizedBox(height: 15),
                               MaterialButton(

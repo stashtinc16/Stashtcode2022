@@ -40,19 +40,21 @@ class Signup extends GetView<SignupController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  stashtLogo,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              flex: 1,
-                            ),
-                            const Expanded(
-                              child: Center(
+                        child: Center(
+                          child: SvgPicture.asset(
+                            stashtLogo,
+                            color: Colors.white,
+                          ),
+                        ),
+                        flex: 1,
+                      ),
+
+                      Expanded(
+                        flex: 3,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Center(
                                 child: Text(
                                   "Sign-up",
                                   style: TextStyle(
@@ -62,18 +64,6 @@ class Signup extends GetView<SignupController> {
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      Expanded(
-                        flex: 3,
-                        child: SingleChildScrollView(
-                          child: Column(
-
-                            children: [
-
 
                               const SizedBox(height: 15),
                               MaterialButton(
@@ -113,7 +103,8 @@ class Signup extends GetView<SignupController> {
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              Row(children: const <Widget>[
+                              Row(
+                                  children: const <Widget>[
                                 Expanded(
                                     child: Divider(
                                   height: 1,
@@ -185,8 +176,7 @@ class Signup extends GetView<SignupController> {
                                 // padding: const EdgeInsets.only(bottom: 10),
                                 child: Obx(
                                   () => TextFormField(
-                                    controller:
-                                        controller.emailController.value,
+                                    controller: controller.emailController.value,
                                     textInputAction: TextInputAction.next,
                                     keyboardType: TextInputType.emailAddress,
                                     decoration: const InputDecoration(

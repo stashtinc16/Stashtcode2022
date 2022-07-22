@@ -190,6 +190,7 @@ class Memories extends GetView<MemoriesController>  {
                                     return InkWell(
                                         onTap: () {
                                           if (isJoined == 1) {
+                                            controller.detailMemoryModel=null;  // to clear the older reference
                                             Get.toNamed(AppRoutes.memoryList,
                                                 arguments: {
                                                   'mainIndex': index,
@@ -525,125 +526,150 @@ class Memories extends GetView<MemoriesController>  {
                     topRight: Radius.circular(15),
                     topLeft: Radius.circular(15)),
                 color: Colors.white),
-            height: 220,
-            child: Column(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    children: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25.0, right: 25.0, top: 25.0, bottom: 7),
-                          child: RichText(
-                              text: TextSpan(
-                                  text: memoriesModel.userModel!.displayName!,
-                                  style: const TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.black,
-                                      fontFamily: robotoBold),
-                                  children: const [
-                                TextSpan(
-                                  text: " invited you to join a memory:",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppColors.darkColor,
-                                      fontFamily: robotoRegular,
-                                      fontStyle: FontStyle.italic),
-                                ),
-                              ])),
-                        ),
-                      ),
-                      // Positioned(
-                      //   top: 0,
-                      //   bottom: 0,
-                      //   right: 10,
-                      //   child: IconButton(
-                      //     onPressed: () {
-                      //       fromShare = false;
-                      //       Get.back();
-                      //     },
-                      //     icon: const Icon(
-                      //       Icons.close,
-                      //       color: AppColors.darkColor,
-                      //       size: 20,
-                      //     ),
-                      //   ),
-                      // )
-                    ],
+            // height: 220,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RichText(
+                      text: TextSpan(
+                          text: memoriesModel.userModel!.displayName!,
+                          style: const TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.black,
+                              fontFamily: robotoBold),
+                          children:  [
+                            TextSpan(
+                              text: " invited you to join a memory: ",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.darkColor,
+                                  fontFamily: robotoRegular,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                            TextSpan(
+                              text: memoriesModel.title!,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: AppColors.darkColor,
+                                  fontFamily: robotoBold),
+                            ),
+                          ])),
+                  // SizedBox(
+                  //   width: MediaQuery.of(context).size.width,
+                  //   child: Stack(
+                  //     children: [
+                  //       // padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0, bottom: 7),
+                  //       Center(
+                  //         child: RichText(
+                  //             text: TextSpan(
+                  //                 text: memoriesModel.userModel!.displayName!,
+                  //                 style: const TextStyle(
+                  //                     fontSize: 18.0,
+                  //                     color: Colors.black,
+                  //                     fontFamily: robotoBold),
+                  //                 children: const [
+                  //               TextSpan(
+                  //                 text: " invited you to join a memory:",
+                  //                 style: TextStyle(
+                  //                     fontSize: 16,
+                  //                     color: AppColors.darkColor,
+                  //                     fontFamily: robotoRegular,
+                  //                     fontStyle: FontStyle.italic),
+                  //               ),
+                  //             ])),
+                  //       ),
+                  //       // Positioned(
+                  //       //   top: 0,
+                  //       //   bottom: 0,
+                  //       //   right: 10,
+                  //       //   child: IconButton(
+                  //       //     onPressed: () {
+                  //       //       fromShare = false;
+                  //       //       Get.back();
+                  //       //     },
+                  //       //     icon: const Icon(
+                  //       //       Icons.close,
+                  //       //       color: AppColors.darkColor,
+                  //       //       size: 20,
+                  //       //     ),
+                  //       //   ),
+                  //       // )
+                  //     ],
+                  //   ),
+                  // ),
+                  // Text(
+                  //   memoriesModel.title!,
+                  //   style: const TextStyle(
+                  //       fontSize: 18,
+                  //       color: AppColors.darkColor,
+                  //       fontFamily: robotoBold),
+                  // ),
+                  const SizedBox(
+                    height: 25,
                   ),
-                ),
-                Text(
-                  memoriesModel.title!,
-                  style: const TextStyle(
-                      fontSize: 18,
-                      color: AppColors.darkColor,
-                      fontFamily: robotoBold),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                        child: InkWell(
-                      onTap: () {
-                       
-                        controller.expireSharedLink(memoriesModel, 1, mainIndex, shareIndex);
-                        Get.back();
-                        
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(40),
-                        child: const Text(
-                          'Yes',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: AppColors.primaryColor,
-                              fontFamily: robotoBold),
-                          textAlign: TextAlign.center,
-                        ),
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: AppColors.hintTextColor),
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 20,
                       ),
-                    )),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                        child: InkWell(
-                      onTap: () {
-                       
-                        controller.expireSharedLink(memoriesModel,2,mainIndex,shareIndex);
-                       
-                        Get.back();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(40),
-                        child: const Text(
-                          'No',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: AppColors.primaryColor,
-                              fontFamily: robotoBold),
-                          textAlign: TextAlign.center,
+                      Expanded(
+                          child: InkWell(
+                        onTap: () {
+
+                          controller.expireSharedLink(memoriesModel, 1, mainIndex, shareIndex);
+                          Get.back();
+
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(40),
+                          child: const Text(
+                            'Yes',
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: AppColors.primaryColor,
+                                fontFamily: robotoBold),
+                            textAlign: TextAlign.center,
+                          ),
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              color: AppColors.hintTextColor),
                         ),
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: AppColors.hintTextColor),
+                      )),
+                      const SizedBox(
+                        width: 20,
                       ),
-                    )),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                )
-              ],
+                      Expanded(
+                          child: InkWell(
+                        onTap: () {
+
+                          controller.expireSharedLink(memoriesModel,2,mainIndex,shareIndex);
+
+                          Get.back();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(40),
+                          child: const Text(
+                            'No',
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: AppColors.primaryColor,
+                                fontFamily: robotoBold),
+                            textAlign: TextAlign.center,
+                          ),
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              color: AppColors.hintTextColor),
+                        ),
+                      )),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           );
         });
@@ -783,6 +809,7 @@ class Memories extends GetView<MemoriesController>  {
       itemBuilder: (BuildContext context, int index) {
         return InkWell(
             onTap: () {
+              controller.detailMemoryModel=null;  // to clear the older reference
               Get.toNamed(AppRoutes.memoryList, arguments: {
                 'mainIndex': index,
                 'list': memoriesList[index],

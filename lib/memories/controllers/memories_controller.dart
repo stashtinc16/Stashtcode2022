@@ -27,10 +27,10 @@ import 'package:stasht/utils/constants.dart';
 class MemoriesController extends GetxController  {
   RxBool showNext = false.obs;
   var mediaPages = List.empty(growable: true).obs;
-  var memoriesList = List.empty(growable: true).obs;
+  var memoriesList = [].obs;
   var noData = false.obs;
-  RxList publishMemoryList = List.empty(growable: true).obs;
-  RxList sharedMemoriesList = List.empty(growable: true).obs;
+  RxList publishMemoryList = [].obs;
+  RxList sharedMemoriesList = [].obs;
   RxList selectionList = List.empty(growable: true).obs;
   RxList selectedIndexList = List.empty(growable: true).obs;
   final titleController = TextEditingController();
@@ -152,7 +152,6 @@ class MemoriesController extends GetxController  {
                           memoriesModel.sharedWithCount! + 1;
                     }
                   });
-
                   element.data().imagesCaption!.forEach((innerElement) async {
                     await usersRef
                         .doc(innerElement.userId)
@@ -324,7 +323,7 @@ class MemoriesController extends GetxController  {
 // Get my memories list
   void getMyMemories() {
     memoriesList.clear();
-    memoriesList;
+
     print("asafsdfsdffsfskfsd${memoriesList.length}");
     memoriesRef.where('created_by', isEqualTo: userId)
         .orderBy('created_at', descending: true)
@@ -371,6 +370,7 @@ class MemoriesController extends GetxController  {
                               print('Exception $e');
                             }
 
+
                             updateMemoriesWithData(
                                 memoriesModel, element.id, value);
                           }
@@ -386,26 +386,20 @@ class MemoriesController extends GetxController  {
   updateMemoriesWithData(MemoriesModel model, String memoryId,
       QuerySnapshot<MemoriesModel> value) {
     print("asfskfsd${memoriesList.length}");
-    // int index = 0;
-    // var notificationValue = memoriesList.where((p0) {
-    //   index = memoriesList.indexOf(p0);
-    //   return p0.memoryId == memoryId;
-    // });
 
-    if (value.docs.isNotEmpty) {
-      //   if (notificationValue.isNotEmpty) {
-      //     memoriesList[index] = model;
-      //   } else {
+
       memoriesList.value.add(model);
-      // }
-    }
+
+
     print('Update ${memoriesList.length}');
 
     print(
         'sharedMemoriesExpand.value ${sharedMemoriesExpand.value} => ${myMemoriesExpand.value}');
     if (memoryId == value.docs[value.docs.length - 1].id) {
       myMemoriesExpand.value = !sharedMemoriesExpand.value;
-
+      memoriesList.sort((a, b) {
+       return b.createdAt.compareTo(a.createdAt);
+      },);
       update();
     }
   }
@@ -481,7 +475,7 @@ class MemoriesController extends GetxController  {
       shareLink.value = await dynamicLinks.buildLink(parameters);
     }
     if (copy) {
-      copyShareLink(shareLink.value.toString(), memoriesModel.title!);
+      // copyShareLink(shareLink.value.toString(), memoriesModel.title!);
     } else {
       if (shouldShare) {
         share(
@@ -503,7 +497,13 @@ class MemoriesController extends GetxController  {
       );
     } on Exception catch (e) {
       print('Exception $e ');
-      showPermissions.value = true;
+      print('PermissionStatus ${permissionStatus.value}');
+      if(permissionStatus.value==PermissionStatus.granted || permissionStatus.value == PermissionStatus.limited){
+        showPermissions.value = false;
+      }else{
+        showPermissions.value = true;
+      }
+
     }
 
     // images = resultList;
@@ -520,7 +520,7 @@ class MemoriesController extends GetxController  {
         .then((value) {
       if (value.docs.isNotEmpty) {
         if (copy) {
-          copyShareLink(shareText, memoriesModel.title!);
+          // copyShareLink(shareText, memoriesModel.title!);
         } else {
           share(memoriesModel, shareText);
         }
@@ -531,10 +531,10 @@ class MemoriesController extends GetxController  {
     });
   }
 
-  void copyShareLink(String link, String memoryTitle) {
-    Clipboard.setData(ClipboardData(text: "$shareLink"));
-    Get.snackbar(memoryTitle, "Link copied", colorText: Colors.white);
-  }
+  // void copyShareLink(String link, String memoryTitle) {
+  //   Clipboard.setData(ClipboardData(text: "$shareLink"));
+  //   Get.snackbar(memoryTitle, "Link copied", colorText: Colors.white);
+  // }
 
   // Share Dynamic Link
   Future<void> share(MemoriesModel memoriesModel, String shareText) async {
@@ -782,7 +782,8 @@ class MemoriesController extends GetxController  {
     var status;
     Permission permission;
     if (Platform.isIOS) {
-      permission = Permission.photos;
+      // permission = Permission.photos;
+      permission = Permission.storage;
       if (await permission.isGranted) {
         // Either the permission was already granted before or the user just granted it.
         status = await permission.status;
@@ -812,8 +813,10 @@ class MemoriesController extends GetxController  {
       status = await Permission.storage.status;
       if (status == PermissionStatus.granted) {
         // showPermissions.value = false;
+        print("sajkflsdfds");
         print('showPermissions.value 3 ${showPermissions.value}');
       }
+      print("sajkflsdfsafddds");
       print('status $status');
       permissionStatus.value = status;
       return true;
@@ -825,7 +828,8 @@ class MemoriesController extends GetxController  {
     var status;
     Permission permission;
     if (Platform.isIOS) {
-      permission = Permission.photos;
+      // permission = Permission.photos;
+      permission = Permission.storage;
       if (await permission.isGranted) {
         // Either the permission was already granted before or the user just granted it.
         status = await permission.status;
@@ -851,14 +855,17 @@ class MemoriesController extends GetxController  {
       }
       // status = await Permission.photos.status;
     } else {
+
       permission = Permission.storage;
       status = await Permission.storage.status;
       if (status == PermissionStatus.granted) {
         showPermissions.value = false;
+        print("asjfassafsdfff");
         print('showPermissions.value 3 ${showPermissions.value}');
       } else {
         showPermissions.value = true;
       }
+      print("asjfasf");
       print('status $status');
       permissionStatus.value = status;
       return true;

@@ -49,13 +49,12 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                     const SizedBox(
                       height: 20,
                     ),
-
                   Expanded(
                     child: Padding(
                         padding: const EdgeInsets.only(left: 10, right: 10),
                         child:  !controller.showPermissions.value
                             ? Column(
-                          children: [
+                            children: [
                                   Expanded(
                                     child: Column(children: [
                                       Center(
@@ -117,6 +116,7 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                             onChanged: (text) {
                                               if (text.isNotEmpty) {
                                                 controller.showNext.value = true;
+
                                               } else {
                                                 controller.showNext.value = false;
                                               }
@@ -150,6 +150,7 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                                   Get.offNamed(AppRoutes.memories);
                                                 } else {
                                                   Get.back();
+                                                  // controller.titleController.clear();
                                                 }
                                               },
                                               child: const Padding(
@@ -263,9 +264,12 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                       onTap: () async {
                                         print('controller.permissionStatus.value  ${controller.permissionStatus.value}');
                                         if (controller.permissionStatus.value == PermissionStatus.granted && controller.permissionStatus.value == PermissionStatus.limited) {
+                                          print(" PermissionStatusGranted");
                                           controller.promptPermissionSetting();
                                         } else {
-                                          var object = await AppSettings.openAppSettings();
+                                          print(" PermissionStatusDenied");
+                                          // var object = await AppSettings.openAppSettings();
+                                           AppSettings.openAppSettings();
                                           controller.promptPermissionSetting();
                                         }
                                       },
