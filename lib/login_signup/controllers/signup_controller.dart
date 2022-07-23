@@ -62,8 +62,7 @@ class SignupController extends GetxController {
                 {signupUser()}
               else
                 {
-                  Get.snackbar("Email Exists",
-                      "This email id is already registered with us, please sign-in!",
+                  Get.snackbar("Email Exists", "This email id is already registered with us, please sign-in!",
                       colorText: Colors.white)
                 }
             });
@@ -84,12 +83,12 @@ class SignupController extends GetxController {
           saveUserToDB(value.user, userNameController.text.toString().trim());
         }).onError((error, stackTrace) {
           if (error.toString().contains("email-already-in-use")) {
-            Get.snackbar("Email exits",
-                "The email address is already in use by another account.",
-                snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
+            Get.snackbar("Email exits", "The email address is already in use by another account.", snackPosition: SnackPosition.BOTTOM, colorText: Colors.white
+            );
           }
           EasyLoading.dismiss();
           print("FirebaseAuthExceptionError ${error.toString()}");
+          Get.snackbar("Email exits","Enter a valid email",snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
         });
       } on FirebaseAuthException catch (e) {
         EasyLoading.dismiss();

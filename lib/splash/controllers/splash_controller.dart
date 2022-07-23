@@ -156,7 +156,10 @@ class SplashController extends GetxController {
       });
     } else {
       Get.offAndToNamed(AppRoutes.memoryList,
-          arguments: {"memoryId": memoryId});
+          arguments: {"memoryId": memoryId,
+            "fromNot":true
+
+      });
     }
   }
 

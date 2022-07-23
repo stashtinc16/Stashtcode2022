@@ -66,7 +66,8 @@ class Notifications extends GetView<NotificationController> {
                                 } else {
                                   Get.toNamed(AppRoutes.memoryList, arguments: {
                                     "memoryId": controller
-                                        .notificationList[index].memoryId
+                                        .notificationList[index].memoryId,
+                                    "fromNot":false
                                   });
                                 }
                               },

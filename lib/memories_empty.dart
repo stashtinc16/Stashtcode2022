@@ -44,7 +44,7 @@ class _Memories_Empty extends State<Memories_Empty> {
             this.isMemory = isMemory;
             this.isPhotos = isPhotos;
             this.isNotification = isNotification;
-            isSetting = isSettings;
+             isSetting = isSettings;
           });
         },
       ),

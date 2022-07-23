@@ -21,6 +21,7 @@ class SplashScreen extends GetView<SplashController> {
                     ))),
             child: Image.asset(
               logo,
+              color: Color.fromRGBO(108, 96, 255, 1),
               height: 40,
               width: 40,
             )));

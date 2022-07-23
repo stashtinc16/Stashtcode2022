@@ -72,7 +72,6 @@ class MemoriesController extends GetxController {
   // get Published memories list
   void getPublishedMemories() {
     publishMemoryList.clear();
-    publishMemoryList;
     print('userId $userId ');
     memoriesRef
         .where("created_by", isEqualTo: userId)
@@ -142,7 +141,6 @@ class MemoriesController extends GetxController {
   void getSharedMemories() {
     sharedMemoriesList.clear();
     sharedMemoriesList;
-
     memoriesRef
         .where('shared_with', arrayContainsAny: [
           {'user_id': userId, 'status': 0},
@@ -281,7 +279,6 @@ class MemoriesController extends GetxController {
 
 //get memory data for detail page
   void getMyMemoryData(memoryId) {
-    print('memoryId $memoryId');
     memoriesRef.doc(memoryId).snapshots().listen((event) {
       List<SharedWith> shareWithList = List.empty(growable: true);
       if (event.data()!.sharedWith != null) {
@@ -337,7 +334,6 @@ class MemoriesController extends GetxController {
 // Get my memories list
   void getMyMemories() {
     memoriesList.clear();
-
     print("asafsdfsdffsfskfsd${memoriesList.length}");
     memoriesRef
         .where('created_by', isEqualTo: userId)
@@ -468,8 +464,7 @@ class MemoriesController extends GetxController {
       MemoriesModel memoriesModel, bool copy) async {
     print(
         'createDynamicLink => ${DateTime.now().millisecondsSinceEpoch} ${Timestamp.now().millisecondsSinceEpoch}');
-    String link =
-        "$DEFAULT_FALLBACK_URL_ANDROID?memory_id=$memoryId&timestamp=${DateTime.now().millisecondsSinceEpoch}";
+    String link = "$DEFAULT_FALLBACK_URL_ANDROID?memory_id=$memoryId&timestamp=${DateTime.now().millisecondsSinceEpoch}";
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: URI_PREFIX_FIREBASE,
       link: Uri.parse(link),
@@ -482,10 +477,8 @@ class MemoriesController extends GetxController {
         minimumVersion: '1',
       ),
     );
-
     if (short) {
-      final ShortDynamicLink shortLink =
-          await dynamicLinks.buildShortLink(parameters);
+      final ShortDynamicLink shortLink = await dynamicLinks.buildShortLink(parameters);
       shareLink.value = shortLink.shortUrl;
     } else {
       shareLink.value = await dynamicLinks.buildLink(parameters);
@@ -535,11 +528,12 @@ class MemoriesController extends GetxController {
         .get()
         .then((value) {
       if (value.docs.isNotEmpty) {
-        if (copy) {
-          // copyShareLink(shareText, memoriesModel.title!);
-        } else {
-          share(memoriesModel, shareText);
-        }
+        share(memoriesModel, shareText);
+        // if (copy) {
+        //   // copyShareLink(shareText, memoriesModel.title!);
+        // } else {
+        //   // share(memoriesModel, shareText);
+        // }
       } else {
         createDynamicLink(
             memoriesModel.memoryId!, true, true, memoriesModel, copy);
@@ -919,7 +913,6 @@ class MemoriesController extends GetxController {
   Future<void> getAlbums() async {
     final List<Album> imageAlbums =
         await PhotoGallery.listAlbums(mediumType: MediumType.image);
-
     for (int i = 0; i < imageAlbums.length; i++) {
       if (imageAlbums[i].name == "All" || imageAlbums[i].name == "Recent") {
         getListData(imageAlbums[i]);
@@ -934,7 +927,6 @@ class MemoriesController extends GetxController {
     MediaPage imagePage = await album.listMedia(
       newest: true,
     );
-
     totalCount = imagePage.total;
     selectionList = List.filled(totalCount, false).obs;
     mediaPages.value.addAll(imagePage.items);

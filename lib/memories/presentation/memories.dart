@@ -13,11 +13,14 @@ import 'package:stasht/utils/constants.dart';
 class Memories extends GetView<MemoriesController>  {
   bool isCheck = false;
 
+
   @override
   Widget build(BuildContext context) {
+
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     // Future.delayed(Duration.zero, () {
     print('FutureDelay $fromShare');
+
 
     return GetBuilder(
         builder: (MemoriesController controller) => Container(
@@ -195,12 +198,12 @@ class Memories extends GetView<MemoriesController>  {
                                                 arguments: {
                                                   'mainIndex': index,
                                                   'list': controller
-                                                          .sharedMemoriesList[
-                                                      index],
+                                                          .sharedMemoriesList[index],
                                                   'type': "2",
                                                   "memoryId": controller
                                                       .sharedMemoriesList[index]
-                                                      .memoryId
+                                                      .memoryId,
+                                                  "fromNot":false
                                                 });
                                           }
                                         },
@@ -494,7 +497,8 @@ class Memories extends GetView<MemoriesController>  {
                           color: Colors.white,
                           size: 25,
                         ),
-                        backgroundColor: Colors.deepPurpleAccent,
+                        // backgroundColor: Colors.deepPurpleAccent,
+                        backgroundColor: Color.fromRGBO(108, 96, 255, 1),
                         elevation: 0,
                       ),
                     )),
@@ -814,7 +818,8 @@ class Memories extends GetView<MemoriesController>  {
                 'mainIndex': index,
                 'list': memoriesList[index],
                 'type': "1",
-                "memoryId": memoriesList[index].memoryId
+                "memoryId": memoriesList[index].memoryId,
+                "fromNot":false
               });
             },
             child: Container(

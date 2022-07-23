@@ -19,26 +19,18 @@ class Memory_Lane extends GetView<MemoriesController> {
   bool closeTopContainer = false;
   double topContainer = 0;
 
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
-    if(Get.arguments!=null ) {
-
-        memoryId = Get.arguments['memoryId'];
-
-
+    if(Get.arguments!=null) {
+      memoryId = Get.arguments['memoryId'];
     }
-
-
-    // print('memoryId $memoryId');
-    // memoryId=  controller.getMyMemoryData(memoryId);
-
     return GetBuilder(
       initState: (state) {
         print('InitState');
         controller.getMyMemoryData(memoryId);
-      },
+          },
       builder: (MemoriesController controller) {
         return WillPopScope(
           onWillPop: () {
@@ -117,7 +109,17 @@ class Memory_Lane extends GetView<MemoriesController> {
                                             child: Row(
                                               children: [
                                                 IconButton(
-                                                  onPressed: () => Get.back(),
+                                                  // onPressed: () => Get.back(),
+                                                  onPressed: (){
+                                                    if(Get.arguments!=null && Get.arguments["fromNot"]){
+                                                      print("asfsdfdsfdsf");
+                                                      Get.offNamed(AppRoutes.memories);
+                                                      // Get.back();
+                                                    }else{
+                                                      print("asfdsf");
+                                                      Get.back();
+                                                    }
+                                                  },
                                                   icon: const Icon(
                                                     Icons.arrow_back_ios_outlined,
                                                     color: Colors.white,
@@ -191,7 +193,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               controller.detailMemoryModel!
                                                           .sharedWith!.length >
                                                       0
-                                                  ? getCollaboratorsImage(context)
+                                                  ? getCollaboratorsImage(context,controller)
                                                   : controller
                                                           .detailMemoryModel!
                                                           .userModel!
@@ -440,7 +442,8 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                           fontSize: 22,
                                                           color: Colors.white,
                                                           fontFamily:
-                                                              gibsonSemiBold),
+                                                              gibsonSemiBold
+                                                      ),
                                                     ),
                                             ),
                                             const SizedBox(
@@ -468,7 +471,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                     style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 14,
-                                                        // fontFamily: robotoBold
+                                                        fontFamily: robotoBold
                                                         // fontFamily: gibsonRegularItalic
                                                     ),
                                                   ),
@@ -502,8 +505,9 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                 TextStyle(
                                                                     color: AppColors
                                                                         .primaryColor
-                                                                        .withOpacity(
+                                                                         .withOpacity(
                                                                             0.67),
+                                                                    // color: Colors.black,
                                                                     fontSize: 12,
                                                                     fontFamily: gibsonRegularItalic
                                                                 )),
@@ -822,15 +826,41 @@ class Memory_Lane extends GetView<MemoriesController> {
         });
   }
 
-  getCollaboratorsImage(BuildContext context) {
+  getCollaboratorsImage(BuildContext context,controller) {
     int listSize = 0;
+    int evenListSize=0;
+    int oldListSize=0;
     int restValue = 0;
-    if (controller.detailMemoryModel!.sharedWith!.length > 3) {
-      listSize = 3;
-      restValue = controller.detailMemoryModel!.sharedWith!.length - listSize;
+    List<SharedWith>? leftWith=[];
+    List<SharedWith>? rightWith=[];
+
+
+    if (controller.detailMemoryModel!.sharedWith!.length > 6) {
+      for(int i=0;i<6;i++){
+        if(i%2==0){
+          leftWith.add(controller.detailMemoryModel!.sharedWith![i]);
+        }else{
+          rightWith.add(controller.detailMemoryModel!.sharedWith![i]);
+        }
+      }
+
+      print("leftWith${leftWith.length}");
+      print("rightWith${rightWith.length}");
+
     } else {
-      listSize = controller.detailMemoryModel!.sharedWith!.length;
+      for(int i=0;i<controller.detailMemoryModel!.sharedWith!.length;i++){
+        if(i%2==0){
+          leftWith.add(controller.detailMemoryModel!.sharedWith![i]);
+        }else{
+          rightWith.add(controller.detailMemoryModel!.sharedWith![i]);
+        }
+      }
+
+      print("leftWith${leftWith.length}");
+      print("rightWith${rightWith.length}");
+
     }
+    print('listSize ${listSize}');
     return Container(
         width: MediaQuery.of(context).size.width,
         child: Stack(
@@ -882,10 +912,10 @@ class Memory_Lane extends GetView<MemoriesController> {
                         border: Border.all(width: 0.5, color: Colors.grey),
                         image: const DecorationImage(
                             image: AssetImage(userIcon)))),
-
+                // i%2==0?
             Padding(
                 padding:  EdgeInsets.only(
-                  left: 75 / 2
+                  left: 60
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -893,9 +923,9 @@ class Memory_Lane extends GetView<MemoriesController> {
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        for (int i = 0; i < listSize; i++)
+                        for (int i = 0; i < leftWith.length; i++)
                           i == 0
-                              ? controller.detailMemoryModel!.sharedWith![i]
+                              ? leftWith[i]
                                       .sharedUser!.profileImage!
                                       .contains("http")
                                   ? CachedNetworkImage(
@@ -952,13 +982,12 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           image: const DecorationImage(
                                               image: AssetImage(userIcon))),
                                     )
-                              : Padding(
+                              :
+                          Padding(
                                   padding: EdgeInsets.only(
                                     left: i * (75) / 2,
                                   ),
-                                  child: controller
-                                          .detailMemoryModel!
-                                          .sharedWith![i]
+                                  child: leftWith[i]
                                           .sharedUser!
                                           .profileImage!
                                           .contains("http")
@@ -970,9 +999,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                 color: Colors.white),
                                           ),
                                           child: CachedNetworkImage(
-                                            imageUrl: controller
-                                                .detailMemoryModel!
-                                                .sharedWith![i]
+                                            imageUrl: leftWith[i]
                                                 .sharedUser!
                                                 .profileImage!,
                                             imageBuilder:
@@ -1031,9 +1058,9 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   image: AssetImage(userIcon))),
                                         ),
                                 ),
-                        if (restValue > 0)
+                        if (controller.detailMemoryModel!.sharedWith!.length > 6)
                           Padding(
-                            padding: EdgeInsets.only(left: listSize * (75) / 2),
+                            padding: EdgeInsets.only(left: 3 * (75) / 2),
                             child: Container(
                               decoration: BoxDecoration(
                                   border:
@@ -1042,12 +1069,176 @@ class Memory_Lane extends GetView<MemoriesController> {
                                   color: Colors.black),
                               padding: const EdgeInsets.all(5),
                               child: Text(
-                                "+$restValue",
+                                "+${controller.detailMemoryModel!.sharedWith!.length-6}",
                                 style: const TextStyle(
                                     fontSize: 9, color: Colors.white),
                               ),
                             ),
                           )
+                      ],
+                    ),
+                  ],
+                )),
+            for (int i = 0; i < rightWith.length; i++)
+            Padding(
+                padding:  EdgeInsets.only(
+                    right: 60
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        for (int i = 0; i < rightWith.length; i++)
+                          i== 0
+                              ? rightWith[i]
+                              .sharedUser!.profileImage!
+                              .contains("http")
+                              ? CachedNetworkImage(
+                            imageUrl:rightWith[i]
+                                .sharedUser!
+                                .profileImage!,
+                            imageBuilder: (context, imageProvider) =>
+                                Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        width: 0.5, color: Colors.white),
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                            placeholder: (context, url) => Container(
+                              width: 30,
+                              height: 30,
+                              alignment: Alignment.center,
+                              decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image: AssetImage(userIcon))),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        width: 1, color: Colors.black),
+                                  ),
+                                  child: const Icon(
+                                    Icons.error,
+                                    size: 30,
+                                  ),
+                                ),
+                          )
+                              : Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    width: 1, color: Colors.grey),
+                                image: const DecorationImage(
+                                    image: AssetImage(userIcon))),
+                          )
+                              : Padding(
+                            padding: EdgeInsets.only(
+                              right: i * (75) / 2,
+                            ),
+                            child: rightWith[i]
+                                .sharedUser!
+                                .profileImage!
+                                .contains("http")
+                                ? Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    width: 0.5,
+                                    color: Colors.white),
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl:rightWith[i]
+                                    .sharedUser!
+                                    .profileImage!,
+                                imageBuilder:
+                                    (context, imageProvider) =>
+                                    Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            width: 1,
+                                            color: Colors.white),
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                placeholder: (context, url) =>
+                                    Container(
+                                      width: 30,
+                                      height: 30,
+                                      alignment: Alignment.center,
+                                      decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  userIcon))),
+                                    ),
+                                errorWidget:
+                                    (context, url, error) =>
+                                    Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            width: 1,
+                                            color: Colors.black),
+                                      ),
+                                      child: const Icon(
+                                        Icons.error,
+                                        size: 30,
+                                      ),
+                                    ),
+                              ),
+                            )
+                                : Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      width: 1, color: Colors.grey),
+                                  image: const DecorationImage(
+                                      image: AssetImage(userIcon))),
+                            ),
+                          ),
+                        // if (restValue > 0)
+                        //   Padding(
+                        //     padding: EdgeInsets.only(right: listSize * (75) / 2),
+                        //     child: Container(
+                        //       decoration: BoxDecoration(
+                        //           border:
+                        //           Border.all(width: 1, color: Colors.white),
+                        //           borderRadius: BorderRadius.circular(40),
+                        //           color: Colors.black),
+                        //       padding: const EdgeInsets.all(5),
+                        //       child: Text(
+                        //         "+$restValue",
+                        //         style: const TextStyle(
+                        //             fontSize: 9, color: Colors.white),
+                        //       ),
+                        //     ),
+                        //   )
                       ],
                     ),
                   ],

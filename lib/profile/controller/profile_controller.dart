@@ -99,7 +99,6 @@ class ProfileController extends GetxController {
   logoutUser() {
     usersRef.doc(userId).update({"device_token": ""}).then((value) {
       print('Token Removed');
-
       firebaseAuth.signOut();
       facebookAuth.logOut();
       userEmail = "";
@@ -117,16 +116,14 @@ class ProfileController extends GetxController {
  // update notification count as 0 
   void updateNotificationCount(){
      usersRef
-          .doc(userId)
+         .doc(userId)
           .update({"notification_count": 0});
   }
 
   void changeUserNameFunc() {
+    print("ask;fdas");
     if (formkey.currentState!.validate()) {
-      usersRef
-          .doc(userId)
-          .update({"display_name": nameController.value.text.toString().trim()}).then(
-              (value) => {print('onNameChange '), memoriesController.onInit()});
+      usersRef.doc(userId).update({"display_name": nameController.value.text.toString().trim()}).then((value) => {print('onNameChange '), memoriesController.onInit()});
     }
   }
 }

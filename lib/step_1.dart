@@ -162,7 +162,8 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                                   style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
-                                                      fontFamily: gibsonRegular),
+                                                      fontFamily: robotoRegular
+                                                  ),
                                                 ),
                                               ),
                                             ),

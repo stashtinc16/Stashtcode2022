@@ -120,7 +120,7 @@ class Collaborators extends GetView<MemoriesController> {
                       controller.shareLink.value.toString(),
                       false
                   );
-                  controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
+                  // controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(15),
@@ -166,8 +166,7 @@ class Collaborators extends GetView<MemoriesController> {
                       if (snapshot.data == null) {
                         return Container();
                       }
-                      DocumentSnapshot<UserModel> userModelSnapshot =
-                          snapshot.data! as DocumentSnapshot<UserModel>;
+                      DocumentSnapshot<UserModel> userModelSnapshot = snapshot.data! as DocumentSnapshot<UserModel>;
                       UserModel userModel = userModelSnapshot.data()!;
                       return Column(
                         children: [
