@@ -112,21 +112,21 @@ class MemoriesController extends GetxController {
                       print('Exception $e');
                     }
 
-                    publishMemoryList.value.add(memoriesModel);
-                    print(
-                        'PublishMemory ${publishMemoryList.length} => ${publishElement.docs.length}');
-                    if (publishMemoryList.length ==
-                        publishElement.docChanges.length) {
-                      publishMemoryList.sort(
-                        (a, b) {
-                          return b.publishedCreatedAt!
-                              .compareTo(a.publishedCreatedAt);
-                        },
-                      );
-                      update();
-                    }
-                    // updatePublishMemoriesWithData(
-                    //     memoriesModel, element.id, publishElement);
+                    // publishMemoryList.value.add(memoriesModel);
+                    // print(
+                    //     'PublishMemory ${publishMemoryList.length} => ${publishElement.docs.length}');
+                    // if (publishMemoryList.length ==
+                    //     publishElement.docChanges.length) {
+                    //   publishMemoryList.sort(
+                    //     (a, b) {
+                    //       return b.publishedCreatedAt!
+                    //           .compareTo(a.publishedCreatedAt);
+                    //     },
+                    //   );
+                    //   update();
+                    // }
+                    updatePublishMemoriesWithData(
+                        memoriesModel, element.id, publishElement);
                   }
                 }
               });
@@ -184,17 +184,19 @@ class MemoriesController extends GetxController {
                           } catch (e) {
                             print('Exception $e');
                           }
+                          if (sharedMemoriesList.length < value.docs.length) {
+                            sharedMemoriesList.add(memoriesModel);
+                          }
+
+                          if (sharedMemoriesList.length == value.docs.length ||
+                              sharedMemoriesList.length > value.docs.length) {
+                            update();
+                           
+                          }
                         }
                       }
                     });
                   });
-
-                  sharedMemoriesList.value.add(memoriesModel);
-
-                  if (sharedMemoriesList.length == value.docChanges.length ||
-                      sharedMemoriesList.length > value.docs.length) {
-                    update();
-                  }
                 });
               }),
               if (value.docs.isEmpty)
@@ -343,6 +345,7 @@ class MemoriesController extends GetxController {
         .listen((value) => {
               memoriesList.clear(),
               noData.value = value.docs.isNotEmpty,
+              myMemoriesExpand.value = value.docs.isNotEmpty,
               print('Docs ${value.docs.length} => ${value.docChanges.length}'),
               value.docs.forEach((element) {
                 usersRef.doc(userId).get().then(
@@ -381,25 +384,25 @@ class MemoriesController extends GetxController {
                               print('Exception $e');
                             }
 
-                            memoriesList.value.add(memoriesModel);
+                            // memoriesList.value.add(memoriesModel);
 
-                            print('Update ${memoriesList.length}');
+                            // print('Update ${memoriesList.length}');
 
-                            print(
-                                'sharedMemoriesExpand.value ${sharedMemoriesExpand.value} => ${myMemoriesExpand.value}');
-                            if (memoriesList.length == value.docs.length) {
-                              myMemoriesExpand.value =
-                                  !sharedMemoriesExpand.value;
-                              memoriesList.sort(
-                                (a, b) {
-                                  return b.createdAt.compareTo(a.createdAt);
-                                },
-                              );
-                              update();
-                            }
+                            // print(
+                            //     'sharedMemoriesExpand.value ${sharedMemoriesExpand.value} => ${myMemoriesExpand.value}');
+                            // if (memoriesList.length == value.docs.length) {
+                            //   myMemoriesExpand.value =
+                            //       !sharedMemoriesExpand.value;
+                            //   memoriesList.sort(
+                            //     (a, b) {
+                            //       return b.createdAt.compareTo(a.createdAt);
+                            //     },
+                            //   );
+                            //   update();
+                            // }
 
-                            // updateMemoriesWithData(
-                            //     memoriesModel, element.id, value);
+                            updateMemoriesWithData(
+                                memoriesModel, element.id, value);
                           }
                         }
                       });
@@ -412,7 +415,35 @@ class MemoriesController extends GetxController {
 
   updateMemoriesWithData(MemoriesModel model, String memoryId,
       QuerySnapshot<MemoriesModel> value) {
-    print("asfskfsd${memoriesList.length}");
+    int index = 0;
+    var notificationValue = memoriesList.where((p0) {
+      index = memoriesList.indexOf(p0);
+      return p0.memoryId == memoryId;
+    });
+
+    if (value.docs.isNotEmpty) {
+      if (notificationValue.isNotEmpty) {
+        memoriesList[index] = model;
+      } else {
+        if (memoriesList.length < value.docs.length) {
+          memoriesList.add(model);
+        }
+      }
+    } else {
+      if (memoriesList.length < value.docs.length) {
+        memoriesList.add(model);
+      }
+    }
+
+    if (memoryId == value.docs[value.docs.length - 1].id) {
+      memoriesList.sort(
+        (a, b) {
+          return b.createdAt!.compareTo(a.createdAt);
+        },
+      );
+      update();
+
+    }
   }
 
   updatePublishMemoriesWithData(MemoriesModel model, String memoryId,
@@ -427,18 +458,25 @@ class MemoriesController extends GetxController {
       if (notificationValue.isNotEmpty) {
         publishMemoryList[index] = model;
       } else {
-        publishMemoryList.value.add(model);
+        if (publishMemoryList.length < value.docs.length) {
+          publishMemoryList.add(model);
+        }
+      }
+    } else {
+      if (publishMemoryList.length < value.docs.length) {
+        publishMemoryList.add(model);
       }
     }
-    publishMemoryList.value.add(model);
+
     print('PublishMemory ${publishMemoryList.length} => ${value.docs.length}');
-    if (memoryId == value.docChanges[value.docChanges.length - 1].doc.id) {
+    if (memoryId == value.docs[value.docs.length - 1].id) {
       publishMemoryList.sort(
         (a, b) {
           return b.publishedCreatedAt!.compareTo(a.publishedCreatedAt);
         },
       );
       update();
+      
     }
   }
 
@@ -464,7 +502,8 @@ class MemoriesController extends GetxController {
       MemoriesModel memoriesModel, bool copy) async {
     print(
         'createDynamicLink => ${DateTime.now().millisecondsSinceEpoch} ${Timestamp.now().millisecondsSinceEpoch}');
-    String link = "$DEFAULT_FALLBACK_URL_ANDROID?memory_id=$memoryId&timestamp=${DateTime.now().millisecondsSinceEpoch}";
+    String link =
+        "$DEFAULT_FALLBACK_URL_ANDROID?memory_id=$memoryId&timestamp=${DateTime.now().millisecondsSinceEpoch}";
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: URI_PREFIX_FIREBASE,
       link: Uri.parse(link),
@@ -478,11 +517,20 @@ class MemoriesController extends GetxController {
       ),
     );
     if (short) {
-      final ShortDynamicLink shortLink = await dynamicLinks.buildShortLink(parameters);
+      final ShortDynamicLink shortLink =
+          await dynamicLinks.buildShortLink(parameters);
       shareLink.value = shortLink.shortUrl;
     } else {
       shareLink.value = await dynamicLinks.buildLink(parameters);
     }
+
+    ShareLinkModel linkModel = ShareLinkModel(
+        shareLink: link.toString(),
+        linkUsed: false,
+        memoryId: memoryId,
+        createdAt: Timestamp.now(),
+        usedBy: userId);
+    linkRef.add(linkModel).then((value) => print('ShareLinkSaved $value'));
     if (copy) {
       // copyShareLink(shareLink.value.toString(), memoriesModel.title!);
     } else {
@@ -527,6 +575,7 @@ class MemoriesController extends GetxController {
         .where("link_used", isEqualTo: false)
         .get()
         .then((value) {
+      print('value ${memoriesModel.memoryId} =>${value.docs.length}');
       if (value.docs.isNotEmpty) {
         share(memoriesModel, shareText);
         // if (copy) {

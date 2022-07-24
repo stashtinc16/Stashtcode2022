@@ -77,11 +77,12 @@ class Collaborators extends GetView<MemoriesController> {
                           top: 0,
                           child: IconButton(
                             onPressed: () => {
-                              print('controller.shareLink.value.toString() ${controller.shareLink.value.toString()}'),
+                              print(
+                                  'controller.shareLink.value.toString() ${controller.shareLink.value.toString()}'),
                               controller.checkIfLinkExpire(
-                                controller.detailMemoryModel!,
-                                controller.shareLink.value.toString(),false
-                              )
+                                  controller.detailMemoryModel!,
+                                  controller.shareLink.value.toString(),
+                                  false)
                               // controller.createDynamicLink(
                               //     controller.detailMemoryModel!.memoryId!,
                               //     true,
@@ -115,11 +116,8 @@ class Collaborators extends GetView<MemoriesController> {
               ),
               InkWell(
                 onTap: () {
-                  controller.checkIfLinkExpire(
-                      controller.detailMemoryModel!,
-                      controller.shareLink.value.toString(),
-                      false
-                  );
+                  controller.checkIfLinkExpire(controller.detailMemoryModel!,
+                      controller.shareLink.value.toString(), false);
                   // controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                 },
                 child: Container(
@@ -128,7 +126,11 @@ class Collaborators extends GetView<MemoriesController> {
                   child: Row(children: [
                     InkWell(
                       onTap: () {
-                        controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
+                        controller.checkIfLinkExpire(
+                            controller.detailMemoryModel!,
+                            controller.shareLink.value.toString(),
+                            false);
+                        // controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                       },
                       child: Image.asset(
                         copyIcon,
@@ -156,7 +158,8 @@ class Collaborators extends GetView<MemoriesController> {
                 shrinkWrap: true,
                 primary: true,
                 itemBuilder: (BuildContext context, int index) {
-                  print('ShareWith ${controller.getSharedUsers(memoriesModel!).length}');
+                  print(
+                      'ShareWith ${controller.getSharedUsers(memoriesModel!).length}');
                   return FutureBuilder(
                     future: controller.getUserData(controller
                         .getSharedUsers(memoriesModel!)[index]
@@ -166,7 +169,8 @@ class Collaborators extends GetView<MemoriesController> {
                       if (snapshot.data == null) {
                         return Container();
                       }
-                      DocumentSnapshot<UserModel> userModelSnapshot = snapshot.data! as DocumentSnapshot<UserModel>;
+                      DocumentSnapshot<UserModel> userModelSnapshot =
+                          snapshot.data! as DocumentSnapshot<UserModel>;
                       UserModel userModel = userModelSnapshot.data()!;
                       return Column(
                         children: [
@@ -252,7 +256,6 @@ class Collaborators extends GetView<MemoriesController> {
       },
     );
   }
-
 
   //delete collaborator
   void deleteCollaborator(int index, String type) {
