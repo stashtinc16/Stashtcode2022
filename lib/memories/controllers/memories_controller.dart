@@ -28,7 +28,7 @@ class MemoriesController extends GetxController {
   RxBool showNext = false.obs;
   var mediaPages = List.empty(growable: true).obs;
   var memoriesList = [].obs;
-  var noData = false.obs;
+  var noData = true.obs;
   RxList publishMemoryList = [].obs;
   RxList sharedMemoriesList = [].obs;
   RxList selectionList = List.empty(growable: true).obs;
@@ -54,7 +54,7 @@ class MemoriesController extends GetxController {
   RxBool hasFocus = false.obs;
   FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
   List<Asset> images = List<Asset>.empty(growable: true).obs;
-
+RxBool isPageOpened = true.obs;
   String URI_PREFIX_FIREBASE = "https://stasht.page.link";
   String DEFAULT_FALLBACK_URL_ANDROID = "https://stasht.page.link";
   List<Asset> resultList = List<Asset>.empty(growable: true);
@@ -80,6 +80,7 @@ class MemoriesController extends GetxController {
         .snapshots()
         .listen((publishElement) {
       print('publishElement ${publishElement.docs.length}');
+      publishMemoryList.clear();
       publishElement.docs.forEach((element) {
         usersRef.doc(userId).get().then(
           (userValue) {
@@ -112,19 +113,6 @@ class MemoriesController extends GetxController {
                       print('Exception $e');
                     }
 
-                    // publishMemoryList.value.add(memoriesModel);
-                    // print(
-                    //     'PublishMemory ${publishMemoryList.length} => ${publishElement.docs.length}');
-                    // if (publishMemoryList.length ==
-                    //     publishElement.docChanges.length) {
-                    //   publishMemoryList.sort(
-                    //     (a, b) {
-                    //       return b.publishedCreatedAt!
-                    //           .compareTo(a.publishedCreatedAt);
-                    //     },
-                    //   );
-                    //   update();
-                    // }
                     updatePublishMemoriesWithData(
                         memoriesModel, element.id, publishElement);
                   }
@@ -191,7 +179,6 @@ class MemoriesController extends GetxController {
                           if (sharedMemoriesList.length == value.docs.length ||
                               sharedMemoriesList.length > value.docs.length) {
                             update();
-                           
                           }
                         }
                       }
@@ -217,7 +204,7 @@ class MemoriesController extends GetxController {
     MemoriesModel memoriesModels = memoriesModel;
     memoriesModels.imagesCaption!.removeAt(removeIndex);
     memoriesRef.doc(memoryId).update(memoriesModels.toJson()).then((value) => {
-          memoriesList.removeAt(removeIndex),
+          memoriesList.remove(removeIndex),
           update(),
           if (memoriesModels.imagesCaption!.isEmpty)
             {
@@ -281,9 +268,10 @@ class MemoriesController extends GetxController {
 
 //get memory data for detail page
   void getMyMemoryData(memoryId) {
+    print("memoryId......${memoryId}");
     memoriesRef.doc(memoryId).snapshots().listen((event) {
       List<SharedWith> shareWithList = List.empty(growable: true);
-      if (event.data()!.sharedWith != null) {
+      if (event.data() != null && event.data()!.sharedWith != null) {
         for (var element in event.data()!.sharedWith!) {
           if (element.status == 1) {
             usersRef.doc(element.userId).get().then((value) {
@@ -345,7 +333,6 @@ class MemoriesController extends GetxController {
         .listen((value) => {
               memoriesList.clear(),
               noData.value = value.docs.isNotEmpty,
-              myMemoriesExpand.value = value.docs.isNotEmpty,
               print('Docs ${value.docs.length} => ${value.docChanges.length}'),
               value.docs.forEach((element) {
                 usersRef.doc(userId).get().then(
@@ -383,23 +370,6 @@ class MemoriesController extends GetxController {
                             } catch (e) {
                               print('Exception $e');
                             }
-
-                            // memoriesList.value.add(memoriesModel);
-
-                            // print('Update ${memoriesList.length}');
-
-                            // print(
-                            //     'sharedMemoriesExpand.value ${sharedMemoriesExpand.value} => ${myMemoriesExpand.value}');
-                            // if (memoriesList.length == value.docs.length) {
-                            //   myMemoriesExpand.value =
-                            //       !sharedMemoriesExpand.value;
-                            //   memoriesList.sort(
-                            //     (a, b) {
-                            //       return b.createdAt.compareTo(a.createdAt);
-                            //     },
-                            //   );
-                            //   update();
-                            // }
 
                             updateMemoriesWithData(
                                 memoriesModel, element.id, value);
@@ -441,8 +411,11 @@ class MemoriesController extends GetxController {
           return b.createdAt!.compareTo(a.createdAt);
         },
       );
-      update();
+      if (memoriesList.isEmpty) {
+        myMemoriesExpand.value = false;
+      }
 
+      update();
     }
   }
 
@@ -469,14 +442,16 @@ class MemoriesController extends GetxController {
     }
 
     print('PublishMemory ${publishMemoryList.length} => ${value.docs.length}');
-    if (memoryId == value.docs[value.docs.length - 1].id) {
+    if (publishMemoryList.length - 1 == value.docs.length - 1) {
       publishMemoryList.sort(
         (a, b) {
           return b.publishedCreatedAt!.compareTo(a.publishedCreatedAt);
         },
       );
+      if (publishMemoryList.isEmpty) {
+        publishMemoriesExpand.value = false;
+      }
       update();
-      
     }
   }
 
@@ -500,6 +475,10 @@ class MemoriesController extends GetxController {
 // Create Dynamic Link
   Future<void> createDynamicLink(String memoryId, bool short, bool shouldShare,
       MemoriesModel memoriesModel, bool copy) async {
+  
+  // if(shareLink.value !=null){
+  //   return;
+  // }
     print(
         'createDynamicLink => ${DateTime.now().millisecondsSinceEpoch} ${Timestamp.now().millisecondsSinceEpoch}');
     String link =
@@ -523,11 +502,11 @@ class MemoriesController extends GetxController {
     } else {
       shareLink.value = await dynamicLinks.buildLink(parameters);
     }
-
+print('ShareLink ${shareLink.value}');
     ShareLinkModel linkModel = ShareLinkModel(
         shareLink: link.toString(),
         linkUsed: false,
-        memoryId: memoryId,
+        memoryId: memoryId,inviteLink: shareLink.value.toString(),
         createdAt: Timestamp.now(),
         usedBy: userId);
     linkRef.add(linkModel).then((value) => print('ShareLinkSaved $value'));
@@ -578,14 +557,36 @@ class MemoriesController extends GetxController {
       print('value ${memoriesModel.memoryId} =>${value.docs.length}');
       if (value.docs.isNotEmpty) {
         share(memoriesModel, shareText);
-        // if (copy) {
-        //   // copyShareLink(shareText, memoriesModel.title!);
-        // } else {
-        //   // share(memoriesModel, shareText);
-        // }
+       
       } else {
         createDynamicLink(
             memoriesModel.memoryId!, true, true, memoriesModel, copy);
+      }
+    });
+  }
+
+
+  createLinkForDetail(MemoriesModel memoriesModel) {
+    linkRef
+        .where("memory_id", isEqualTo: memoriesModel.memoryId)
+        .where("link_used", isEqualTo: false)
+        .get()
+        .then((value) {
+      print('value ${memoriesModel.memoryId} =>${value.docs.length}');
+      if (value.docs.isEmpty) {
+       
+        createDynamicLink(
+            memoriesModel.memoryId!, true, false, memoriesModel, false);
+      }else{
+        
+if(value.docs[0].data().inviteLink != null){
+  shareLink.value = Uri.parse(value.docs[0].data().inviteLink!);
+
+}else{
+createDynamicLink(
+            memoriesModel.memoryId!, true, false, memoriesModel, false);
+}
+          
       }
     });
   }

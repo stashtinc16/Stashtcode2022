@@ -6,12 +6,13 @@ class ShareLinkModel {
   String? usedBy;
   String? memoryId;
   Timestamp? createdAt;
+  String? inviteLink;
   ShareLinkModel(
       {this.shareLink,
       this.linkUsed,
       this.usedBy,
       this.createdAt,
-      this.memoryId});
+      this.memoryId,this.inviteLink});
 
   ShareLinkModel.fromJson(Map<String, dynamic> json) {
     shareLink = json['share_link'];
@@ -19,6 +20,7 @@ class ShareLinkModel {
     usedBy = json['used_by'];
     createdAt = json['created_at'];
     memoryId = json['memory_id'];
+    inviteLink = json['invite_link'];
   }
 
   Map<String, dynamic> toJson() {
@@ -28,6 +30,7 @@ class ShareLinkModel {
     data['used_by'] = usedBy;
     data['created_at'] = createdAt;
     data['memory_id'] = memoryId;
+    data['invite_link'] = inviteLink;
     return data;
   }
 }

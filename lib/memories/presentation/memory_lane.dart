@@ -161,13 +161,11 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                           .detailMemoryModel!,
                                                       // 'type': type
                                                     });
-                                                controller.createDynamicLink(
+                                                    
+                                                controller.createLinkForDetail(
                                                     controller.detailMemoryModel!
-                                                        .memoryId!,
-                                                    true,
-                                                    false,
-                                                    controller
-                                                        .detailMemoryModel!,false);
+                                                        ,
+                                                   );
                                               },
                                               child: const Icon(
                                                 Icons.person_add_alt_1_outlined,

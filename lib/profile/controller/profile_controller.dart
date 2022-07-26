@@ -121,9 +121,12 @@ class ProfileController extends GetxController {
   }
 
   void changeUserNameFunc() {
-    print("ask;fdas");
     if (formkey.currentState!.validate()) {
-      usersRef.doc(userId).update({"display_name": nameController.value.text.toString().trim()}).then((value) => {print('onNameChange '), memoriesController.onInit()});
+      usersRef.doc(userId).update({"display_name": nameController.value.text.toString().trim()}).then((value) => {
+        print('onNameChange...${nameController.value.text.toString()} '),
+            memoriesController.onInit(),
+            userName = nameController.value.text.toString()
+            });
     }
   }
 }
