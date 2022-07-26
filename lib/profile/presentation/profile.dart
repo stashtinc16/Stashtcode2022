@@ -19,7 +19,6 @@ class Profile extends GetView<ProfileController> {
   File? _image;
   final picker = ImagePicker();
 
-
   Future getImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -64,10 +63,9 @@ class Profile extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
-        return Future.value(controller
-            .allowBackPress.value); // if true allow back else block it
-      },
+      onWillPop: Platform.isAndroid
+          ? () async => controller.allowBackPress.value
+          : null,
       child: Scaffold(
           backgroundColor: Colors.white,
           appBar: commonAppbar(
@@ -78,12 +76,13 @@ class Profile extends GetView<ProfileController> {
                 {
                   Get.back()
                   // Get.offNamed(AppRoutes.memories)
-                  }
+                }
               else if (isNotification)
                 {
-                  notificationCount.value=0,
+                  notificationCount.value = 0,
                   controller.updateNotificationCount(),
-                  Get.offNamed(AppRoutes.notifications)}
+                  Get.offNamed(AppRoutes.notifications)
+                }
             },
           ),
           body: SingleChildScrollView(
@@ -106,14 +105,12 @@ class Profile extends GetView<ProfileController> {
                               color: AppColors.bgColor,
                               alignment: Alignment.center,
                               child: InkWell(
-                                onTap: (){
+                                onTap: () {
                                   getImage();
                                 },
                                 child: ValueListenableBuilder(
                                   builder: (context, value, child) {
                                     return ClipRRect(
-
-
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(100)),
                                       child: Container(
@@ -140,8 +137,8 @@ class Profile extends GetView<ProfileController> {
                                                                 downloadProgress
                                                                     .progress))
                                             : Padding(
-                                                padding:
-                                                    const EdgeInsets.only(top: 0),
+                                                padding: const EdgeInsets.only(
+                                                    top: 0),
                                                 child: Container(
                                                   height: 108,
                                                   width: 108,
@@ -150,8 +147,9 @@ class Profile extends GetView<ProfileController> {
                                                     color: const Color.fromRGBO(
                                                         234, 243, 248, 1),
                                                     border: Border.all(
-                                                      color: const Color.fromRGBO(
-                                                          207, 216, 220, 1),
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                              207, 216, 220, 1),
                                                     ),
                                                   ),
                                                   child: Image.asset(userIcon),
@@ -164,7 +162,7 @@ class Profile extends GetView<ProfileController> {
                                 ),
                               )),
                           InkWell(
-                            onTap: (){
+                            onTap: () {
                               getImage();
                             },
                             child: const Padding(
@@ -219,8 +217,9 @@ class Profile extends GetView<ProfileController> {
                                     if (controller.changeUserName.value) {
                                       controller.changeUserNameFunc();
                                     }
-                                    controller.changeUserName.value = !controller.changeUserName.value;
-                                    },
+                                    controller.changeUserName.value =
+                                        !controller.changeUserName.value;
+                                  },
                                   child: Obx(() => Text(
                                         controller.changeUserName.value
                                             ? "Save"

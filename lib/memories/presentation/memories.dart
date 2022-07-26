@@ -10,17 +10,14 @@ import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:stasht/utils/constants.dart';
 
-class Memories extends GetView<MemoriesController>  {
+class Memories extends GetView<MemoriesController> {
   bool isCheck = false;
-
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     // Future.delayed(Duration.zero, () {
     print('FutureDelay $fromShare');
-
 
     return GetBuilder(
         builder: (MemoriesController controller) => Container(
@@ -139,7 +136,8 @@ class Memories extends GetView<MemoriesController>  {
                       InkWell(
                         onTap: () {
                           if (controller.sharedMemoriesList.isNotEmpty) {
-                            controller.sharedMemoriesExpand.value = !controller.sharedMemoriesExpand.value;
+                            controller.sharedMemoriesExpand.value =
+                                !controller.sharedMemoriesExpand.value;
                           }
                           controller.update();
                         },
@@ -172,17 +170,27 @@ class Memories extends GetView<MemoriesController>  {
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: controller.sharedMemoriesExpand.value
                               ? ListView.builder(
-                                  itemCount: controller.sharedMemoriesList.length,
+                                  itemCount:
+                                      controller.sharedMemoriesList.length,
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
                                   primary: false,
                                   scrollDirection: Axis.vertical,
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     int shareIndex = 0;
                                     int isJoined = 0;
-                                    if (controller.sharedMemoriesList[index].sharedWith.length > 0) {
-                                      var shareObject = controller.sharedMemoriesList[index].sharedWith.where((element) {
-                                          shareIndex = controller.sharedMemoriesList[index].sharedWith.indexOf(element);
+                                    if (controller.sharedMemoriesList[index]
+                                            .sharedWith.length >
+                                        0) {
+                                      var shareObject = controller
+                                          .sharedMemoriesList[index].sharedWith
+                                          .where(
+                                        (element) {
+                                          shareIndex = controller
+                                              .sharedMemoriesList[index]
+                                              .sharedWith
+                                              .indexOf(element);
                                           return element.userId == userId;
                                         },
                                       );
@@ -193,17 +201,19 @@ class Memories extends GetView<MemoriesController>  {
                                     return InkWell(
                                         onTap: () {
                                           if (isJoined == 1) {
-                                            controller.detailMemoryModel=null;  // to clear the older reference
+                                            controller.detailMemoryModel =
+                                                null; // to clear the older reference
                                             Get.toNamed(AppRoutes.memoryList,
                                                 arguments: {
                                                   'mainIndex': index,
                                                   'list': controller
-                                                          .sharedMemoriesList[index],
+                                                          .sharedMemoriesList[
+                                                      index],
                                                   'type': "2",
                                                   "memoryId": controller
                                                       .sharedMemoriesList[index]
                                                       .memoryId,
-                                                  "fromNot":false
+                                                  "fromNot": false
                                                 });
                                           }
                                         },
@@ -434,7 +444,8 @@ class Memories extends GetView<MemoriesController>  {
                             controller.publishMemoriesExpand.value =
                                 !controller.publishMemoriesExpand.value;
                           }
-                          print('publishsss ${controller.publishMemoriesExpand.value}');
+                          print(
+                              'publishsss ${controller.publishMemoriesExpand.value}');
                           controller.update();
                         },
                         child: Container(
@@ -543,23 +554,23 @@ class Memories extends GetView<MemoriesController>  {
                               fontSize: 18.0,
                               color: Colors.black,
                               fontFamily: robotoBold),
-                          children:  [
-                            TextSpan(
-                              text: " invited you to join a memory: ",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.darkColor,
-                                  fontFamily: robotoRegular,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                            TextSpan(
-                              text: memoriesModel.title!,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: AppColors.darkColor,
-                                  fontFamily: robotoBold),
-                            ),
-                          ])),
+                          children: [
+                        TextSpan(
+                          text: " invited you to join a memory: ",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: AppColors.darkColor,
+                              fontFamily: robotoRegular,
+                              fontStyle: FontStyle.italic),
+                        ),
+                        TextSpan(
+                          text: memoriesModel.title!,
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: AppColors.darkColor,
+                              fontFamily: robotoBold),
+                        ),
+                      ])),
                   // SizedBox(
                   //   width: MediaQuery.of(context).size.width,
                   //   child: Stack(
@@ -621,10 +632,9 @@ class Memories extends GetView<MemoriesController>  {
                       Expanded(
                           child: InkWell(
                         onTap: () {
-
-                          controller.expireSharedLink(memoriesModel, 1, mainIndex, shareIndex);
+                          controller.expireSharedLink(
+                              memoriesModel, 1, mainIndex, shareIndex);
                           Get.back();
-
                         },
                         child: Container(
                           padding: const EdgeInsets.all(40),
@@ -637,7 +647,8 @@ class Memories extends GetView<MemoriesController>  {
                             textAlign: TextAlign.center,
                           ),
                           decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                               color: AppColors.hintTextColor),
                         ),
                       )),
@@ -647,8 +658,8 @@ class Memories extends GetView<MemoriesController>  {
                       Expanded(
                           child: InkWell(
                         onTap: () {
-
-                          controller.expireSharedLink(memoriesModel,2,mainIndex,shareIndex);
+                          controller.expireSharedLink(
+                              memoriesModel, 2, mainIndex, shareIndex);
 
                           Get.back();
                         },
@@ -663,7 +674,8 @@ class Memories extends GetView<MemoriesController>  {
                             textAlign: TextAlign.center,
                           ),
                           decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                               color: AppColors.hintTextColor),
                         ),
                       )),
@@ -813,13 +825,14 @@ class Memories extends GetView<MemoriesController>  {
       itemBuilder: (BuildContext context, int index) {
         return InkWell(
             onTap: () {
-              controller.detailMemoryModel=null;  // to clear the older reference
+              controller.detailMemoryModel =
+                  null; // to clear the older reference
               Get.toNamed(AppRoutes.memoryList, arguments: {
                 'mainIndex': index,
                 'list': memoriesList[index],
                 'type': "1",
                 "memoryId": memoriesList[index].memoryId,
-                "fromNot":false
+                "fromNot": false
               });
             },
             child: Container(
@@ -965,9 +978,6 @@ class Memories extends GetView<MemoriesController>  {
                             ],
                           ),
                         ),
-                       
-                       
-
                       ],
                     ),
                   ),

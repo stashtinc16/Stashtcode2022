@@ -62,7 +62,8 @@ class SignupController extends GetxController {
                 {signupUser()}
               else
                 {
-                  Get.snackbar("Email Exists", "This email id is already registered with us, please sign-in!",
+                  Get.snackbar("Email Exists",
+                      "This email id is already registered with us, please sign-in!",
                       colorText: Colors.white)
                 }
             });
@@ -83,12 +84,14 @@ class SignupController extends GetxController {
           saveUserToDB(value.user, userNameController.text.toString().trim());
         }).onError((error, stackTrace) {
           if (error.toString().contains("email-already-in-use")) {
-            Get.snackbar("Email exits", "The email address is already in use by another account.", snackPosition: SnackPosition.BOTTOM, colorText: Colors.white
-            );
+            Get.snackbar("Email exits",
+                "The email address is already in use by another account.",
+                snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           }
           EasyLoading.dismiss();
           print("FirebaseAuthExceptionError ${error.toString()}");
-          Get.snackbar("Email exits","Enter a valid email",snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
+          Get.snackbar("Email exits", "Enter a valid email",
+              snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
         });
       } on FirebaseAuthException catch (e) {
         EasyLoading.dismiss();
@@ -108,15 +111,19 @@ class SignupController extends GetxController {
                 email: email1Controller.text.toString().trim(),
                 password: password1Controller.text)
             .then((value1) {
-          usersRef.where("email", isEqualTo: value1.user!.email).get().then((value) => {
+          usersRef
+              .where("email", isEqualTo: value1.user!.email)
+              .get()
+              .then((value) => {
                     EasyLoading.dismiss(),
                     if (value.docs.isNotEmpty)
                       {
                         // if (value.docs[0].data().deviceToken!.isEmpty)
                         //   {
-                            usersRef.doc(value.docs[0].id).update(
-                                {"device_token": globalNotificationToken}),
-                          // },
+                        usersRef
+                            .doc(value.docs[0].id)
+                            .update({"device_token": globalNotificationToken}),
+                        // },
                         saveSession(
                             value.docs[0].id,
                             value.docs[0].data().displayName!,
@@ -199,9 +206,8 @@ class SignupController extends GetxController {
       FacebookPermission.publicProfile,
       FacebookPermission.email,
     ]);
-      await _updateLoginInfo();
-      EasyLoading.dismiss();
-  
+    await _updateLoginInfo();
+    EasyLoading.dismiss();
 
     return _isLogged!;
   }
@@ -236,6 +242,7 @@ class SignupController extends GetxController {
               }
             else
               {
+                isSocailUser = true,
                 saveSession(
                     value.docs[0].id,
                     value.docs[0].data().displayName!,
@@ -300,7 +307,7 @@ class SignupController extends GetxController {
     passwordController.text = "";
     email1Controller.text = "";
     password1Controller.text = "";
-    confirmPasswordController.text="";
+    confirmPasswordController.text = "";
   }
 
   @override
