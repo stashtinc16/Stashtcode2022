@@ -15,6 +15,8 @@ bool isSocailUser = false;
 String changePassword = "Change Password";
 
 bool fromShare = false;
+bool expandShareMemory = false;
+var sharedMemoryCount = ValueNotifier<int>(0);
  MemoriesModel? globalShareMemoryModel ;
 //collections
 String memoriesCollection = "memories";

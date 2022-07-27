@@ -128,7 +128,7 @@ class MemoriesController extends GetxController {
   //get Shared memories
   void getSharedMemories() {
     sharedMemoriesList.clear();
-    sharedMemoriesList;
+
     memoriesRef
         .where('shared_with', arrayContainsAny: [
           {'user_id': userId, 'status': 0},
@@ -176,8 +176,10 @@ class MemoriesController extends GetxController {
                             sharedMemoriesList.add(memoriesModel);
                           }
 
-                          if (sharedMemoriesList.length == value.docs.length ||
-                              sharedMemoriesList.length > value.docs.length) {
+                          print(
+                              'SharedMemList ${sharedMemoriesList.length} => ${value.docs.length}');
+                          if (sharedMemoriesList.length == value.docs.length-1) {
+                            sharedMemoryCount.value = sharedMemoriesList.length;
                             update();
                           }
                         }
@@ -416,6 +418,8 @@ class MemoriesController extends GetxController {
       );
       if (memoriesList.isEmpty) {
         myMemoriesExpand.value = false;
+      } else {
+        myMemoriesExpand.value = true;
       }
 
       update();

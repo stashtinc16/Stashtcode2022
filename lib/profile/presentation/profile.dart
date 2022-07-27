@@ -126,16 +126,23 @@ class Profile extends GetView<ProfileController> {
                                         ),
                                         margin: const EdgeInsets.all(1.0),
                                         child: userImage.value.isNotEmpty
-                                            ? CachedNetworkImage(
-                                                imageUrl: userImage.value,
-                                                fit: BoxFit.cover,
-                                                progressIndicatorBuilder:
-                                                    (context, url,
+                                            ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        10000.0),
+                                                child: CachedNetworkImage(
+                                                    imageUrl: userImage.value,
+                                                    fit: BoxFit.cover,
+                                                    height: 108,
+                                                    width: 108,
+                                                    progressIndicatorBuilder: (context,
+                                                            url,
                                                             downloadProgress) =>
                                                         CircularProgressIndicator(
                                                             value:
                                                                 downloadProgress
-                                                                    .progress))
+                                                                    .progress)),
+                                              )
                                             : Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 0),

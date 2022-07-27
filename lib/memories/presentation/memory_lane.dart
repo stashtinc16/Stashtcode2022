@@ -243,7 +243,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                       BoxDecoration(
                                                                           shape:
                                                                               BoxShape.circle,
-                                                                          border: Border.all(width: 0.5, color: Colors.white),
+                                                                          border: Border.all(width: 2, color: Colors.white),
                                                                           image: DecorationImage(
                                                                             image:
                                                                                 imageProvider,
@@ -379,7 +379,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       ),
                                       Expanded(
                                         child: Text(
-                                          'Share link: ${controller.detailMemoryModel!.publishLink}',
+                                          'Publish link: ${controller.detailMemoryModel!.publishLink}',
                                           maxLines: 2,
                                           style: const TextStyle(
                                               fontSize: 15,
@@ -467,7 +467,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                           url) {
                                                                     return Image
                                                                         .asset(
-                                                                            profileIcon);
+                                                                            userIcon);
                                                                   },
                                                                   errorWidget:
                                                                       (context,
@@ -475,12 +475,12 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                           error) {
                                                                     return Image
                                                                         .asset(
-                                                                            profileIcon);
+                                                                            userIcon);
                                                                   },
                                                                 ),
                                                               )
                                                             : Image.asset(
-                                                                profileIcon,
+                                                                userIcon,
                                                                 width: 45,
                                                                 height: 45,
                                                               )
@@ -737,68 +737,75 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   ),
                                                 ),
                                               ),
-                                              InkWell(
-                                                onTap: () {
-                                                  // if (userId ==
-                                                  //     controller.detailMemoryModel!
-                                                  //         .createdBy) {
-                                                  Get.toNamed(
-                                                      AppRoutes.addCaption,
-                                                      arguments: {
-                                                        'imageIndex': index,
-                                                        'list': controller
-                                                            .detailMemoryModel,
-                                                      });
-                                                  // }
-                                                },
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  margin: const EdgeInsets.only(
-                                                      top: 10),
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      vertical: 10,
-                                                      horizontal: 5),
-                                                  child: Text(
-                                                      controller
-                                                              .detailMemoryModel!
-                                                              .imagesCaption![
-                                                                  index]
-                                                              .caption!
-                                                              .isEmpty
-                                                          ? 'Add caption to this post...'
-                                                          : controller
-                                                              .detailMemoryModel!
-                                                              .imagesCaption![
-                                                                  index]
-                                                              .caption!,
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      style: TextStyle(
-                                                          color: controller
-                                                                  .detailMemoryModel!
-                                                                  .imagesCaption![
-                                                                      index]
-                                                                  .caption!
-                                                                  .isEmpty
-                                                              ? AppColors
-                                                                  .textColor
-                                                              : AppColors
-                                                                  .darkColor,
-                                                          fontSize: 12,
-                                                          fontStyle: controller
-                                                                  .detailMemoryModel!
-                                                                  .imagesCaption![
-                                                                      index]
-                                                                  .caption!
-                                                                  .isEmpty
-                                                              ? FontStyle.italic
-                                                              : FontStyle
-                                                                  .normal)),
+                                              if (userId ==
+                                                  controller.detailMemoryModel!
+                                                      .createdBy)
+                                                InkWell(
+                                                  onTap: () {
+                                                    if (userId ==
+                                                        controller
+                                                            .detailMemoryModel!
+                                                            .createdBy) {
+                                                      Get.toNamed(
+                                                          AppRoutes.addCaption,
+                                                          arguments: {
+                                                            'imageIndex': index,
+                                                            'list': controller
+                                                                .detailMemoryModel,
+                                                          });
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            top: 10),
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 10,
+                                                        horizontal: 5),
+                                                    child: Text(
+                                                        controller
+                                                                .detailMemoryModel!
+                                                                .imagesCaption![
+                                                                    index]
+                                                                .caption!
+                                                                .isEmpty
+                                                            ? 'Add caption to this post...'
+                                                            : controller
+                                                                .detailMemoryModel!
+                                                                .imagesCaption![
+                                                                    index]
+                                                                .caption!,
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                        style: TextStyle(
+                                                            color: controller
+                                                                    .detailMemoryModel!
+                                                                    .imagesCaption![
+                                                                        index]
+                                                                    .caption!
+                                                                    .isEmpty
+                                                                ? AppColors
+                                                                    .textColor
+                                                                : AppColors
+                                                                    .darkColor,
+                                                            fontSize: 12,
+                                                            fontStyle: controller
+                                                                    .detailMemoryModel!
+                                                                    .imagesCaption![
+                                                                        index]
+                                                                    .caption!
+                                                                    .isEmpty
+                                                                ? FontStyle
+                                                                    .italic
+                                                                : FontStyle
+                                                                    .normal)),
+                                                  ),
                                                 ),
-                                              ),
                                             ],
                                           ),
                                         ),
@@ -1003,7 +1010,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                       height: 60,
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(width: 0.5, color: Colors.white),
+                          border: Border.all(width: 2, color: Colors.white),
                           image: DecorationImage(
                             image: imageProvider,
                             fit: BoxFit.cover,
@@ -1029,7 +1036,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                       height: 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(width: 1, color: Colors.black),
+                        border: Border.all(width: 2, color: Colors.black),
                       ),
                       child: const Icon(
                         Icons.error,
@@ -1042,16 +1049,11 @@ class Memory_Lane extends GetView<MemoriesController> {
                     height: 60,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(0.8),
+                        color: Colors.white,
                         border: Border.all(width: 0.5, color: Colors.grey),
                         image: const DecorationImage(
                             image: AssetImage(profileIcon)),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.white60,
-                              spreadRadius: 2,
-                              blurRadius: 2)
-                        ])),
+                        boxShadow: [])),
             // i%2==0?
             Padding(
                 padding: EdgeInsets.only(left: 60),
@@ -1080,18 +1082,12 @@ class Memory_Lane extends GetView<MemoriesController> {
                                         decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                                width: 0.5,
-                                                color: Colors.white),
+                                                width: 2, color: Colors.white),
                                             image: DecorationImage(
                                               image: imageProvider,
                                               fit: BoxFit.cover,
                                             ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Colors.white60,
-                                                  spreadRadius: 2,
-                                                  blurRadius: 2)
-                                            ]),
+                                            boxShadow: []),
                                       ),
                                       placeholder: (context, url) => Container(
                                         width: 30,
@@ -1110,7 +1106,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                              width: 1, color: Colors.black),
+                                              width: 2, color: Colors.black),
                                         ),
                                         child: const Icon(
                                           Icons.error,
@@ -1124,15 +1120,10 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                              width: 1, color: Colors.grey),
+                                              width: 2, color: Colors.grey),
                                           image: const DecorationImage(
                                               image: AssetImage(profileIcon)),
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Colors.white60,
-                                                spreadRadius: 2,
-                                                blurRadius: 2)
-                                          ]),
+                                          boxShadow: []),
                                     )
                               : Padding(
                                   padding: EdgeInsets.only(
@@ -1146,8 +1137,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                                width: 0.5,
-                                                color: Colors.white),
+                                                width: 2, color: Colors.white),
                                           ),
                                           child: CachedNetworkImage(
                                             imageUrl: leftWith[i]
@@ -1161,18 +1151,13 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               decoration: BoxDecoration(
                                                   shape: BoxShape.circle,
                                                   border: Border.all(
-                                                      width: 1,
+                                                      width: 2,
                                                       color: Colors.white),
                                                   image: DecorationImage(
                                                     image: imageProvider,
                                                     fit: BoxFit.cover,
                                                   ),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        color: Colors.white60,
-                                                        spreadRadius: 2,
-                                                        blurRadius: 2)
-                                                  ]),
+                                                  boxShadow: []),
                                             ),
                                             placeholder: (context, url) =>
                                                 Container(
@@ -1193,7 +1178,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
-                                                    width: 1,
+                                                    width: 2,
                                                     color: Colors.black),
                                               ),
                                               child: const Icon(
@@ -1208,16 +1193,11 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           height: 30,
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                  width: 1, color: Colors.grey),
+                                                  width: 2, color: Colors.grey),
                                               image: const DecorationImage(
                                                   image:
                                                       AssetImage(profileIcon)),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    color: Colors.white60,
-                                                    spreadRadius: 2,
-                                                    blurRadius: 2)
-                                              ]),
+                                              boxShadow: []),
                                         ),
                                 ),
                         if (controller.detailMemoryModel!.sharedWith!.length >
@@ -1227,7 +1207,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                             child: Container(
                               decoration: BoxDecoration(
                                   border:
-                                      Border.all(width: 1, color: Colors.white),
+                                      Border.all(width: 2, color: Colors.white),
                                   borderRadius: BorderRadius.circular(40),
                                   color: Colors.black),
                               padding: const EdgeInsets.all(5),
@@ -1275,12 +1255,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                 image: imageProvider,
                                                 fit: BoxFit.cover,
                                               ),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    color: Colors.white60,
-                                                    spreadRadius: 2,
-                                                    blurRadius: 2)
-                                              ]),
+                                              boxShadow: []),
                                         ),
                                         placeholder: (context, url) =>
                                             Container(
@@ -1317,12 +1292,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                 width: 1, color: Colors.grey),
                                             image: const DecorationImage(
                                                 image: AssetImage(profileIcon)),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Colors.white60,
-                                                  spreadRadius: 2,
-                                                  blurRadius: 2)
-                                            ]),
+                                            boxShadow: []),
                                       )
                                 : Padding(
                                     padding: EdgeInsets.only(
@@ -1357,12 +1327,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                       image: imageProvider,
                                                       fit: BoxFit.cover,
                                                     ),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                          color: Colors.white60,
-                                                          spreadRadius: 2,
-                                                          blurRadius: 2)
-                                                    ]),
+                                                    boxShadow: []),
                                               ),
                                               placeholder: (context, url) =>
                                                   Container(

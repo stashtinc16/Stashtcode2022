@@ -72,26 +72,29 @@ class Collaborators extends GetView<MemoriesController> {
                                 fontSize: 18),
                           ),
                         ),
-                        Positioned(
-                          right: 10,
-                          top: 0,
-                          child: IconButton(
-                            onPressed: () => {
-                              print(
-                                  'controller.shareLink.value.toString() ${controller.shareLink.value.toString()}'),
-                              controller.checkIfLinkExpire(
-                                  controller.detailMemoryModel!,
-                                  controller.shareLink.value.toString(),
-                                  false)
-                              // controller.createDynamicLink(
-                              //     controller.detailMemoryModel!.memoryId!,
-                              //     true,
-                              //     true,
-                              //     controller.detailMemoryModel!)
-                            },
-                            icon: const Icon(
-                              Icons.share,
-                              color: Colors.white,
+                        Visibility(
+                          visible: false,
+                          child: Positioned(
+                            right: 10,
+                            top: 0,
+                            child: IconButton(
+                              onPressed: () => {
+                                print(
+                                    'controller.shareLink.value.toString() ${controller.shareLink.value.toString()}'),
+                                controller.checkIfLinkExpire(
+                                    controller.detailMemoryModel!,
+                                    controller.shareLink.value.toString(),
+                                    false)
+                                // controller.createDynamicLink(
+                                //     controller.detailMemoryModel!.memoryId!,
+                                //     true,
+                                //     true,
+                                //     controller.detailMemoryModel!)
+                              },
+                              icon: const Icon(
+                                Icons.share,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
