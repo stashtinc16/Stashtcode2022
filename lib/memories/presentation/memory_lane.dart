@@ -737,9 +737,20 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   ),
                                                 ),
                                               ),
-                                              if (userId ==
-                                                  controller.detailMemoryModel!
-                                                      .createdBy)
+                                              if ((userId ==
+                                                      controller
+                                                          .detailMemoryModel!
+                                                          .createdBy) ||
+                                                  controller
+                                                          .detailMemoryModel!
+                                                          .imagesCaption![index]
+                                                          .caption!
+                                                          .toString()
+                                                          .isNotEmpty &&
+                                                      userId !=
+                                                          controller
+                                                              .detailMemoryModel!
+                                                              .createdBy)
                                                 InkWell(
                                                   onTap: () {
                                                     if (userId ==
@@ -774,7 +785,12 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                     index]
                                                                 .caption!
                                                                 .isEmpty
-                                                            ? 'Add caption to this post...'
+                                                            ? userId ==
+                                                                    controller
+                                                                        .detailMemoryModel!
+                                                                        .createdBy
+                                                                ? 'Add caption to this post...'
+                                                                : ''
                                                             : controller
                                                                 .detailMemoryModel!
                                                                 .imagesCaption![

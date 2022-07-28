@@ -178,7 +178,7 @@ class MemoriesController extends GetxController {
 
                           print(
                               'SharedMemList ${sharedMemoriesList.length} => ${value.docs.length}');
-                          if (sharedMemoriesList.length == value.docs.length-1) {
+                          if (sharedMemoriesList.length == value.docs.length) {
                             sharedMemoryCount.value = sharedMemoriesList.length;
                             update();
                           }
@@ -191,6 +191,7 @@ class MemoriesController extends GetxController {
               if (value.docs.isEmpty)
                 {
                   sharedMemoriesList.clear(),
+                  sharedMemoryCount.value = 0,
                   sharedMemoriesExpand.value = false,
                   update()
                 },

@@ -148,7 +148,7 @@ class Memories extends GetView<MemoriesController> {
                             children: [
                               Obx(
                                 () => Icon(
-                                  controller.sharedMemoriesExpand.value
+                                  controller.sharedMemoriesExpand.value || expandShareMemory
                                       ? Icons.arrow_drop_down
                                       : Icons.arrow_right,
                                   color: Colors.black,
