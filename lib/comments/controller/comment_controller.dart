@@ -301,7 +301,10 @@ class CommentsController extends GetxController {
   }
 
   void scrollDown() {
-    if (scrollController != null && scrollController.position != null) {
+    if (scrollController != null &&
+        scrollController.positions != null &&
+        scrollController.positions.isNotEmpty &&
+        scrollController.position.maxScrollExtent != null) {
       scrollController.animateTo(
         Platform.isIOS
             ? scrollController.position.maxScrollExtent

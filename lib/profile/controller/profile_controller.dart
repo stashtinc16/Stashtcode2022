@@ -26,7 +26,7 @@ class ProfileController extends GetxController {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   GlobalKey<FormState> formkeyPassword = GlobalKey<FormState>();
-  MemoriesController memoriesController =  Get.isRegistered()
+  MemoriesController memoriesController = Get.isRegistered()
       ? Get.find<MemoriesController>()
       : Get.put(MemoriesController());
 
@@ -113,20 +113,20 @@ class ProfileController extends GetxController {
     });
   }
 
- // update notification count as 0 
-  void updateNotificationCount(){
-     usersRef
-         .doc(userId)
-          .update({"notification_count": 0});
+  // update notification count as 0
+  void updateNotificationCount() {
+    usersRef.doc(userId).update({"notification_count": 0});
   }
 
   void changeUserNameFunc() {
     if (formkey.currentState!.validate()) {
-      usersRef.doc(userId).update({"display_name": nameController.value.text.toString().trim()}).then((value) => {
-        print('onNameChange...${nameController.value.text.toString()} '),
+      usersRef.doc(userId).update({
+        "display_name": nameController.value.text.toString().trim()
+      }).then((value) => {
+            print('onNameChange...${nameController.value.text.toString()} '),
             memoriesController.onInit(),
             userName = nameController.value.text.toString()
-            });
+          });
     }
   }
 }

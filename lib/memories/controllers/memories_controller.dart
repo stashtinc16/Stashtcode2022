@@ -1084,7 +1084,8 @@ createDynamicLink(
 
     uploadTask = ref.putFile(io.File(file.path), metadata);
     uploadTask.whenComplete(() => {
-          uploadTask.snapshot.ref.getDownloadURL().then((value) => {
+          uploadTask.snapshot.ref.
+          getDownloadURL().then((value) => {
                 imageCaptionUrls.add(ImagesCaption(
                     caption: "",
                     image: value,
