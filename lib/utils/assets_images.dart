@@ -24,3 +24,4 @@ const deleteIcon = assetPath + "delete_icon.png";
 const addPhotos = assetPath + "add_photos.svg";
 const addPhotosIcon = assetPath + "add_photo_icon.png";
 const publishIcon = assetPath + "publish_icon.png";
+const profileIcon = assetPath + "profile.png";

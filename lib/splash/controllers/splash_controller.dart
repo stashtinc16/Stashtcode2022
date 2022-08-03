@@ -152,14 +152,12 @@ class SplashController extends GetxController {
       Get.offAndToNamed(AppRoutes.comments, arguments: {
         "memoryId": memoryId,
         "memoryImage": commentImage,
-        "imageId": imageId,"fromNot":true
+        "imageId": imageId,
+        "fromNot": true
       });
     } else {
       Get.offAndToNamed(AppRoutes.memoryList,
-          arguments: {"memoryId": memoryId,
-            "fromNot":true
-
-      });
+          arguments: {"memoryId": memoryId, "fromNot": true});
     }
   }
 
@@ -242,6 +240,7 @@ class SplashController extends GetxController {
               print('ExpireLink ${value.docs.length}'),
               if (value.docs.isNotEmpty)
                 {
+                  memoryController.sharedMemoriesExpand.value = true,
                   if (respondType == 2)
                     {
                       memoryController.deleteInvite(memoriesModel, shareIndex),
@@ -249,6 +248,8 @@ class SplashController extends GetxController {
                     }
                   else
                     {
+                      expandShareMemory = true,
+                      // sharedMemoryCount.value = sharedMemoryCount.value + 1,
                       memoryController.updateJoinStatus(
                           1, mainIndex, shareIndex, memoriesModel),
                       memoryController.acceptInviteNotification(memoriesModel),
@@ -327,9 +328,8 @@ class SplashController extends GetxController {
             Get.snackbar("Error", "This memory already exist.",
                 colorText: Colors.red);
             EasyLoading.dismiss();
-           //  https://stasht.page.link/Y72F   Jgxm
+            //  https://stasht.page.link/Y72F   Jgxm
           }
-
         } else {
           EasyLoading.dismiss();
         }
@@ -534,7 +534,6 @@ class SplashController extends GetxController {
                         expireSharedLink(
                             globalShareMemoryModel!, 1, 0, shareIndex);
                         Get.back();
-                        fromShare = false;
                       },
                       child: Container(
                         padding: const EdgeInsets.all(40),

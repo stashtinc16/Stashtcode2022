@@ -10,17 +10,14 @@ import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:stasht/utils/constants.dart';
 
-class Memories extends GetView<MemoriesController>  {
+class Memories extends GetView<MemoriesController> {
   bool isCheck = false;
-
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     // Future.delayed(Duration.zero, () {
     print('FutureDelay $fromShare');
-
 
     return GetBuilder(
         builder: (MemoriesController controller) => Container(
@@ -139,7 +136,9 @@ class Memories extends GetView<MemoriesController>  {
                       InkWell(
                         onTap: () {
                           if (controller.sharedMemoriesList.isNotEmpty) {
-                            controller.sharedMemoriesExpand.value = !controller.sharedMemoriesExpand.value;
+                            controller.sharedMemoriesExpand.value =
+                                !controller.sharedMemoriesExpand.value;
+                            expandShareMemory = false;
                           }
                           controller.update();
                         },
@@ -149,273 +148,302 @@ class Memories extends GetView<MemoriesController>  {
                             children: [
                               Obx(
                                 () => Icon(
-                                  controller.sharedMemoriesExpand.value
+                                  controller.sharedMemoriesExpand.value || expandShareMemory
                                       ? Icons.arrow_drop_down
                                       : Icons.arrow_right,
                                   color: Colors.black,
                                   size: 30,
                                 ),
                               ),
-                              Text(
-                                "Shared Memories (${controller.sharedMemoriesList.length}) ",
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold),
+                              ValueListenableBuilder(
+                                builder: (BuildContext context, value,
+                                    Widget? child) {
+                                  return Text(
+                                    "Shared Memories (${sharedMemoryCount.value}) ",
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  );
+                                },
+                                valueListenable: sharedMemoryCount,
                               )
                             ],
                           ),
                         ),
                       ),
 
-                      Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          child: controller.sharedMemoriesExpand.value
-                              ? ListView.builder(
-                                  itemCount: controller.sharedMemoriesList.length,
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  primary: false,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    int shareIndex = 0;
-                                    int isJoined = 0;
-                                    if (controller.sharedMemoriesList[index].sharedWith.length > 0) {
-                                      var shareObject = controller.sharedMemoriesList[index].sharedWith.where((element) {
-                                          shareIndex = controller.sharedMemoriesList[index].sharedWith.indexOf(element);
-                                          return element.userId == userId;
-                                        },
-                                      );
-                                      if (shareObject.length > 0) {
-                                        isJoined = shareObject.first.status;
+                      Obx(
+                        () => Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: controller.sharedMemoriesExpand.value ||
+                                    expandShareMemory
+                                ? ListView.builder(
+                                    itemCount:
+                                        controller.sharedMemoriesList.length,
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.zero,
+                                    primary: false,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      int shareIndex = 0;
+                                      int isJoined = 0;
+                                      if (controller.sharedMemoriesList[index]
+                                              .sharedWith.length >
+                                          0) {
+                                        var shareObject = controller
+                                            .sharedMemoriesList[index]
+                                            .sharedWith
+                                            .where(
+                                          (element) {
+                                            shareIndex = controller
+                                                .sharedMemoriesList[index]
+                                                .sharedWith
+                                                .indexOf(element);
+                                            return element.userId == userId;
+                                          },
+                                        );
+                                        if (shareObject.length > 0) {
+                                          isJoined = shareObject.first.status;
+                                        }
                                       }
-                                    }
-                                    return InkWell(
-                                        onTap: () {
-                                          if (isJoined == 1) {
-                                            controller.detailMemoryModel=null;  // to clear the older reference
-                                            Get.toNamed(AppRoutes.memoryList,
-                                                arguments: {
-                                                  'mainIndex': index,
-                                                  'list': controller
-                                                          .sharedMemoriesList[index],
-                                                  'type': "2",
-                                                  "memoryId": controller
-                                                      .sharedMemoriesList[index]
-                                                      .memoryId,
-                                                  "fromNot":false
-                                                });
-                                          }
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            Container(
-                                              height: 100,
-                                              margin: const EdgeInsets.only(
-                                                  top: 10),
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              decoration: controller
-                                                      .sharedMemoriesList[index]
-                                                      .imagesCaption
-                                                      .isNotEmpty
-                                                  ? BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
-                                                      image: DecorationImage(
-                                                          image: CachedNetworkImageProvider(controller
-                                                              .sharedMemoriesList[
-                                                                  index]
-                                                              .imagesCaption![controller
-                                                                      .sharedMemoriesList[
-                                                                          index]
-                                                                      .imagesCaption
-                                                                      .length -
-                                                                  1]
-                                                              .image),
-                                                          fit: BoxFit.cover))
-                                                  : null,
-                                              color: controller
-                                                      .sharedMemoriesList[index]
-                                                      .imagesCaption!
-                                                      .isNotEmpty
-                                                  ? null
-                                                  : Colors.grey,
-                                            ),
-                                            Container(
-                                              height: 100,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                color: isJoined == 0
-                                                    ? AppColors.primaryColor
-                                                        .withOpacity(0.62)
-                                                    : Colors.black
-                                                        .withOpacity(0.22),
+                                      return InkWell(
+                                          onTap: () {
+                                            if (isJoined == 1) {
+                                              controller.detailMemoryModel =
+                                                  null; // to clear the older reference
+                                              Get.toNamed(AppRoutes.memoryList,
+                                                  arguments: {
+                                                    'mainIndex': index,
+                                                    'list': controller
+                                                            .sharedMemoriesList[
+                                                        index],
+                                                    'type': "2",
+                                                    "memoryId": controller
+                                                        .sharedMemoriesList[
+                                                            index]
+                                                        .memoryId,
+                                                    "fromNot": false
+                                                  });
+                                            }
+                                          },
+                                          child: Stack(
+                                            children: [
+                                              Container(
+                                                height: 100,
+                                                margin: const EdgeInsets.only(
+                                                    top: 10),
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: controller
+                                                        .sharedMemoriesList[
+                                                            index]
+                                                        .imagesCaption
+                                                        .isNotEmpty
+                                                    ? BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                15),
+                                                        image: DecorationImage(
+                                                            image: CachedNetworkImageProvider(controller
+                                                                .sharedMemoriesList[
+                                                                    index]
+                                                                .imagesCaption![controller
+                                                                        .sharedMemoriesList[
+                                                                            index]
+                                                                        .imagesCaption
+                                                                        .length -
+                                                                    1]
+                                                                .image),
+                                                            fit: BoxFit.cover))
+                                                    : null,
+                                                color: controller
+                                                        .sharedMemoriesList[
+                                                            index]
+                                                        .imagesCaption!
+                                                        .isNotEmpty
+                                                    ? null
+                                                    : Colors.grey,
                                               ),
-                                              margin: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    height: 45,
-                                                    width: 45,
-                                                    margin: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 15),
-                                                    alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.grey,
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                            color: Colors.white,
-                                                            width: 1)),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                                  .all(
-                                                              Radius.circular(
-                                                                  30)),
-                                                      child: controller
-                                                                      .sharedMemoriesList[
-                                                                          index]
-                                                                      .userModel !=
-                                                                  null &&
-                                                              controller
-                                                                  .sharedMemoriesList[
-                                                                      index]
-                                                                  .userModel!
-                                                                  .profileImage!
-                                                                  .isNotEmpty
-                                                          ? CachedNetworkImage(
-                                                              imageUrl: controller
-                                                                  .sharedMemoriesList[
-                                                                      index]
-                                                                  .userModel!
-                                                                  .profileImage!,
-                                                              fit: BoxFit.cover,
-                                                              height: 45,
-                                                              width: 45,
-                                                            )
-                                                          : Image.asset(
-                                                              userIcon,
-                                                              fit: BoxFit.fill,
+                                              Container(
+                                                height: 100,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  color: isJoined == 0
+                                                      ? AppColors.primaryColor
+                                                          .withOpacity(0.62)
+                                                      : Colors.black
+                                                          .withOpacity(0.22),
+                                                ),
+                                                margin: const EdgeInsets.only(
+                                                    top: 10),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      height: 45,
+                                                      width: 45,
+                                                      margin: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 15),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.grey,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          border: Border.all(
                                                               color:
                                                                   Colors.white,
-                                                            ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          controller
-                                                                      .sharedMemoriesList[
-                                                                          index]
-                                                                      .userModel !=
-                                                                  null
-                                                              ? controller
-                                                                          .sharedMemoriesList[
-                                                                              index]
-                                                                          .sharedWithCount >
-                                                                      0
-                                                                  ? controller.sharedMemoriesList[index]
-                                                                              .sharedWithCount >
-                                                                          1
-                                                                      ? "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} others"
-                                                                      : "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} other"
-                                                                  : "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!}"
-                                                              : "",
-                                                          style:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 11),
-                                                        ),
-                                                        Text(
-                                                          controller
-                                                              .sharedMemoriesList[
-                                                                  index]
-                                                              .title,
-                                                          style: const TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontFamily:
-                                                                  gibsonSemiBold,
-                                                              fontSize: 16),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                      child: isJoined == 0
-                                                          ? InkWell(
-                                                              onTap: () {
-                                                                showInviteRepondDialog(
-                                                                    context,
-                                                                    controller
-                                                                            .sharedMemoriesList[
-                                                                        index],
-                                                                    index);
-
+                                                              width: 1)),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                    .all(
+                                                                Radius.circular(
+                                                                    30)),
+                                                        child: controller
+                                                                        .sharedMemoriesList[
+                                                                            index]
+                                                                        .userModel !=
+                                                                    null &&
                                                                 controller
-                                                                    .update();
-                                                              },
-                                                              child: Container(
-                                                                decoration: const BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.all(Radius.circular(
-                                                                            10.0)),
-                                                                    color: Colors
-                                                                        .white),
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        13.0,
-                                                                    vertical:
-                                                                        7.0),
-                                                                margin: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        13.0),
-                                                                child:
-                                                                    const Text(
-                                                                  'Join',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          14,
-                                                                      color: AppColors
-                                                                          .primaryColor,
-                                                                      fontFamily:
-                                                                          robotoBold),
-                                                                ),
+                                                                    .sharedMemoriesList[
+                                                                        index]
+                                                                    .userModel!
+                                                                    .profileImage!
+                                                                    .isNotEmpty
+                                                            ? CachedNetworkImage(
+                                                                imageUrl: controller
+                                                                    .sharedMemoriesList[
+                                                                        index]
+                                                                    .userModel!
+                                                                    .profileImage!,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                height: 45,
+                                                                width: 45,
+                                                              )
+                                                            : Image.asset(
+                                                                userIcon,
+                                                                fit:
+                                                                    BoxFit.fill,
+                                                                color: Colors
+                                                                    .white,
                                                               ),
-                                                            )
-                                                          : Container()
-                                                      // : SvgPicture.asset(
-                                                      //     checkBox,
-                                                      //     width: 45,
-                                                      //   ),
                                                       ),
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ));
-                                  },
-                                )
-                              : Container()),
+                                                    ),
+                                                    Expanded(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            controller
+                                                                        .sharedMemoriesList[
+                                                                            index]
+                                                                        .userModel !=
+                                                                    null
+                                                                ? controller
+                                                                            .sharedMemoriesList[
+                                                                                index]
+                                                                            .sharedWithCount >
+                                                                        0
+                                                                    ? controller.sharedMemoriesList[index].sharedWithCount >
+                                                                            1
+                                                                        ? "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} others"
+                                                                        : "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} other"
+                                                                    : "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!}"
+                                                                : "",
+                                                            style: const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 11),
+                                                          ),
+                                                          Text(
+                                                            controller
+                                                                .sharedMemoriesList[
+                                                                    index]
+                                                                .title,
+                                                            style: const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontFamily:
+                                                                    gibsonSemiBold,
+                                                                fontSize: 16),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        child: isJoined == 0
+                                                            ? InkWell(
+                                                                onTap: () {
+                                                                  showInviteRepondDialog(
+                                                                      context,
+                                                                      controller
+                                                                              .sharedMemoriesList[
+                                                                          index],
+                                                                      index);
+
+                                                                  controller
+                                                                      .update();
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  decoration: const BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.all(Radius.circular(
+                                                                              10.0)),
+                                                                      color: Colors
+                                                                          .white),
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          13.0,
+                                                                      vertical:
+                                                                          7.0),
+                                                                  margin: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          13.0),
+                                                                  child:
+                                                                      const Text(
+                                                                    'Join',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: AppColors
+                                                                            .primaryColor,
+                                                                        fontFamily:
+                                                                            robotoBold),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : Container()
+                                                        // : SvgPicture.asset(
+                                                        //     checkBox,
+                                                        //     width: 45,
+                                                        //   ),
+                                                        ),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ));
+                                    },
+                                  )
+                                : Container()),
+                      ),
                       // sharedMemoryUI(),
                       const SizedBox(
                         height: 10,
@@ -434,7 +462,8 @@ class Memories extends GetView<MemoriesController>  {
                             controller.publishMemoriesExpand.value =
                                 !controller.publishMemoriesExpand.value;
                           }
-                          print('publishsss ${controller.publishMemoriesExpand.value}');
+                          print(
+                              'publishsss ${controller.publishMemoriesExpand.value}');
                           controller.update();
                         },
                         child: Container(
@@ -543,23 +572,23 @@ class Memories extends GetView<MemoriesController>  {
                               fontSize: 18.0,
                               color: Colors.black,
                               fontFamily: robotoBold),
-                          children:  [
-                            TextSpan(
-                              text: " invited you to join a memory: ",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.darkColor,
-                                  fontFamily: robotoRegular,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                            TextSpan(
-                              text: memoriesModel.title!,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: AppColors.darkColor,
-                                  fontFamily: robotoBold),
-                            ),
-                          ])),
+                          children: [
+                        TextSpan(
+                          text: " invited you to join a memory: ",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: AppColors.darkColor,
+                              fontFamily: robotoRegular,
+                              fontStyle: FontStyle.italic),
+                        ),
+                        TextSpan(
+                          text: memoriesModel.title!,
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: AppColors.darkColor,
+                              fontFamily: robotoBold),
+                        ),
+                      ])),
                   // SizedBox(
                   //   width: MediaQuery.of(context).size.width,
                   //   child: Stack(
@@ -621,10 +650,10 @@ class Memories extends GetView<MemoriesController>  {
                       Expanded(
                           child: InkWell(
                         onTap: () {
-
-                          controller.expireSharedLink(memoriesModel, 1, mainIndex, shareIndex);
+                          print("expireSharedLink.. 1");
+                          controller.expireSharedLink(
+                              memoriesModel, 1, mainIndex, shareIndex);
                           Get.back();
-
                         },
                         child: Container(
                           padding: const EdgeInsets.all(40),
@@ -637,7 +666,8 @@ class Memories extends GetView<MemoriesController>  {
                             textAlign: TextAlign.center,
                           ),
                           decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                               color: AppColors.hintTextColor),
                         ),
                       )),
@@ -647,8 +677,9 @@ class Memories extends GetView<MemoriesController>  {
                       Expanded(
                           child: InkWell(
                         onTap: () {
-
-                          controller.expireSharedLink(memoriesModel,2,mainIndex,shareIndex);
+                          print("expireSharedLink.. 2");
+                          controller.expireSharedLink(
+                              memoriesModel, 2, mainIndex, shareIndex);
 
                           Get.back();
                         },
@@ -663,7 +694,8 @@ class Memories extends GetView<MemoriesController>  {
                             textAlign: TextAlign.center,
                           ),
                           decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                               color: AppColors.hintTextColor),
                         ),
                       )),
@@ -813,13 +845,14 @@ class Memories extends GetView<MemoriesController>  {
       itemBuilder: (BuildContext context, int index) {
         return InkWell(
             onTap: () {
-              controller.detailMemoryModel=null;  // to clear the older reference
+              controller.detailMemoryModel =
+                  null; // to clear the older reference
               Get.toNamed(AppRoutes.memoryList, arguments: {
                 'mainIndex': index,
                 'list': memoriesList[index],
                 'type': "1",
                 "memoryId": memoriesList[index].memoryId,
-                "fromNot":false
+                "fromNot": false
               });
             },
             child: Container(
@@ -965,9 +998,6 @@ class Memories extends GetView<MemoriesController>  {
                             ],
                           ),
                         ),
-                       
-                       
-
                       ],
                     ),
                   ),

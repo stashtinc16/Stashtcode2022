@@ -183,17 +183,21 @@ class CommentsController extends GetxController {
 
   void setCommentCount() {
     memoryRef.doc(memoryId).get().then((value) {
-      MemoriesModel memoriesModel = value.data()!;
-      outerLoop:
-      for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
-        if (memoriesModel.imagesCaption![i].imageId == imageId) {
-          memoriesModel.imagesCaption![i].commentCount = commentsList.length;
+      if (value.data() != null) {
+        MemoriesModel memoriesModel = value.data()!;
+        outerLoop:
+        for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
+          if (memoriesModel.imagesCaption![i].imageId == imageId) {
+            memoriesModel.imagesCaption![i].commentCount = commentsList.length;
 
-          memoryRef
-              .doc(memoryId)
-              .set(memoriesModel)
-              .then((value) => {print('Comment Count updated  '), update()})
-              .onError((error, stackTrace) => {});
+            memoryRef
+                .doc(memoryId)
+                .set(memoriesModel)
+                .then((value) => {print('Comment Count updated  '), update()})
+                .onError((error, stackTrace) => {});
+
+            break outerLoop;
+          }
         }
       }
     });

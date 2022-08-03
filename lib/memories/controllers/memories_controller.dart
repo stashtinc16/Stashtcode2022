@@ -54,7 +54,7 @@ class MemoriesController extends GetxController {
   RxBool hasFocus = false.obs;
   FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
   List<Asset> images = List<Asset>.empty(growable: true).obs;
-RxBool isPageOpened = true.obs;
+  RxBool isPageOpened = true.obs;
   String URI_PREFIX_FIREBASE = "https://stasht.page.link";
   String DEFAULT_FALLBACK_URL_ANDROID = "https://stasht.page.link";
   List<Asset> resultList = List<Asset>.empty(growable: true);
@@ -128,7 +128,7 @@ RxBool isPageOpened = true.obs;
   //get Shared memories
   void getSharedMemories() {
     sharedMemoriesList.clear();
-    sharedMemoriesList;
+
     memoriesRef
         .where('shared_with', arrayContainsAny: [
           {'user_id': userId, 'status': 0},
@@ -176,8 +176,10 @@ RxBool isPageOpened = true.obs;
                             sharedMemoriesList.add(memoriesModel);
                           }
 
-                          if (sharedMemoriesList.length == value.docs.length ||
-                              sharedMemoriesList.length > value.docs.length) {
+                          print(
+                              'SharedMemList ${sharedMemoriesList.length} => ${value.docs.length}');
+                          if (sharedMemoriesList.length == value.docs.length) {
+                            sharedMemoryCount.value = sharedMemoriesList.length;
                             update();
                           }
                         }
@@ -189,6 +191,7 @@ RxBool isPageOpened = true.obs;
               if (value.docs.isEmpty)
                 {
                   sharedMemoriesList.clear(),
+                  sharedMemoryCount.value = 0,
                   sharedMemoriesExpand.value = false,
                   update()
                 },
@@ -341,7 +344,9 @@ RxBool isPageOpened = true.obs;
                     MemoriesModel memoriesModel = element.data();
                     memoriesModel.memoryId = element.id;
                     memoriesModel.userModel = userValue.data()!;
-                    if (element.data().sharedWith != null) {
+                    if (element.data().sharedWith != null &&
+                        element.data().sharedWith!.isNotEmpty) {
+                      // if (element.data().sharedWith != null  {
                       element.data().sharedWith!.forEach((elementShare) {
                         if (elementShare.status == 1) {
                           memoriesModel.sharedWithCount =
@@ -349,6 +354,7 @@ RxBool isPageOpened = true.obs;
                         }
                       });
                     }
+                    // if(element.data().imagesCaption!.isNotEmpty)
                     element.data().imagesCaption!.forEach((innerElement) async {
                       await usersRef
                           .doc(innerElement.userId)
@@ -413,6 +419,8 @@ RxBool isPageOpened = true.obs;
       );
       if (memoriesList.isEmpty) {
         myMemoriesExpand.value = false;
+      } else {
+        myMemoriesExpand.value = true;
       }
 
       update();
@@ -475,10 +483,9 @@ RxBool isPageOpened = true.obs;
 // Create Dynamic Link
   Future<void> createDynamicLink(String memoryId, bool short, bool shouldShare,
       MemoriesModel memoriesModel, bool copy) async {
-  
-  // if(shareLink.value !=null){
-  //   return;
-  // }
+    // if(shareLink.value !=null){
+    //   return;
+    // }
     print(
         'createDynamicLink => ${DateTime.now().millisecondsSinceEpoch} ${Timestamp.now().millisecondsSinceEpoch}');
     String link =
@@ -502,11 +509,12 @@ RxBool isPageOpened = true.obs;
     } else {
       shareLink.value = await dynamicLinks.buildLink(parameters);
     }
-print('ShareLink ${shareLink.value}');
+    print('ShareLink ${shareLink.value}');
     ShareLinkModel linkModel = ShareLinkModel(
         shareLink: link.toString(),
         linkUsed: false,
-        memoryId: memoryId,inviteLink: shareLink.value.toString(),
+        memoryId: memoryId,
+        inviteLink: shareLink.value.toString(),
         createdAt: Timestamp.now(),
         usedBy: userId);
     linkRef.add(linkModel).then((value) => print('ShareLinkSaved $value'));
@@ -557,14 +565,12 @@ print('ShareLink ${shareLink.value}');
       print('value ${memoriesModel.memoryId} =>${value.docs.length}');
       if (value.docs.isNotEmpty) {
         share(memoriesModel, shareText);
-       
       } else {
         createDynamicLink(
             memoriesModel.memoryId!, true, true, memoriesModel, copy);
       }
     });
   }
-
 
   createLinkForDetail(MemoriesModel memoriesModel) {
     linkRef
@@ -574,19 +580,15 @@ print('ShareLink ${shareLink.value}');
         .then((value) {
       print('value ${memoriesModel.memoryId} =>${value.docs.length}');
       if (value.docs.isEmpty) {
-       
         createDynamicLink(
             memoriesModel.memoryId!, true, false, memoriesModel, false);
-      }else{
-        
-if(value.docs[0].data().inviteLink != null){
-  shareLink.value = Uri.parse(value.docs[0].data().inviteLink!);
-
-}else{
-createDynamicLink(
-            memoriesModel.memoryId!, true, false, memoriesModel, false);
-}
-          
+      } else {
+        if (value.docs[0].data().inviteLink != null) {
+          shareLink.value = Uri.parse(value.docs[0].data().inviteLink!);
+        } else {
+          createDynamicLink(
+              memoriesModel.memoryId!, true, false, memoriesModel, false);
+        }
       }
     });
   }
@@ -730,7 +732,8 @@ createDynamicLink(
         .get();
     receiverToken = db.data()!.deviceToken!;
     String title = "Photo Added";
-    String description = "$userName  has added a new photo to your memory";
+    String description =
+        "$userName  has added a new photo to ${memoriesModel.title}";
     // String receiverToken = globalNotificationToken;
     var dataPayload = jsonEncode({
       'to': receiverToken,

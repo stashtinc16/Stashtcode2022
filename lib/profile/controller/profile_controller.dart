@@ -106,6 +106,8 @@ class ProfileController extends GetxController {
       userImage.value = "";
       userName = "";
       fromShare = false;
+      sharedMemoryCount.value = 0;
+
       Get.offAllNamed(AppRoutes.signup);
       print('UserId==== $userId');
     }).onError((error, stackTrace) {

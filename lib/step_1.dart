@@ -23,7 +23,8 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
 
     return WillPopScope(
       onWillPop: () {
-        return Future.value(controller.allowBackPress.value); // if true allow back else block it
+        return Future.value(controller
+            .allowBackPress.value); // if true allow back else block it
       },
       child: Scaffold(
           body: SingleChildScrollView(
@@ -39,7 +40,7 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                     IconButton(
                       onPressed: () {
                         Get.back();
-                        },
+                      },
                       icon: const Icon(
                         Icons.arrow_back_ios_outlined,
                         color: Colors.black,
@@ -52,9 +53,9 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                   Expanded(
                     child: Padding(
                         padding: const EdgeInsets.only(left: 10, right: 10),
-                        child:  !controller.showPermissions.value
+                        child: !controller.showPermissions.value
                             ? Column(
-                            children: [
+                                children: [
                                   Expanded(
                                     child: Column(children: [
                                       Center(
@@ -72,7 +73,7 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                           style: TextStyle(
                                               fontSize: 21,
                                               color: AppColors.primaryColor,
-                                              fontFamily: gibsonRegular),
+                                              fontFamily: robotoMedium),
                                         ),
                                       const SizedBox(
                                         height: 10,
@@ -93,20 +94,24 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                         () => Focus(
                                           autofocus: false,
                                           child: TextFormField(
-                                            controller: controller.titleController,
+                                            controller:
+                                                controller.titleController,
 
                                             decoration: InputDecoration(
-                                                hintText: controller.hasFocus.value
-                                                    ? ""
-                                                    : "E.g. Wedding Photos",
+                                                hintText:
+                                                    controller.hasFocus.value
+                                                        ? ""
+                                                        : "E.g. Wedding Photos",
                                                 hintStyle: const TextStyle(
-                                                    color: AppColors.hintTextColor,
+                                                    color:
+                                                        AppColors.hintTextColor,
                                                     fontSize: 34,
                                                     fontFamily: robotoBold),
                                                 border: InputBorder.none,
                                                 alignLabelWithHint: true,
-                                                contentPadding: const EdgeInsets.only(
-                                                    bottom: 10, top: 5)),
+                                                contentPadding:
+                                                    const EdgeInsets.only(
+                                                        bottom: 10, top: 5)),
                                             style: const TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 34,
@@ -115,15 +120,17 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                             textAlign: TextAlign.center,
                                             onChanged: (text) {
                                               if (text.isNotEmpty) {
-                                                controller.showNext.value = true;
-
+                                                controller.showNext.value =
+                                                    true;
                                               } else {
-                                                controller.showNext.value = false;
+                                                controller.showNext.value =
+                                                    false;
                                               }
                                             },
                                           ),
                                           onFocusChange: (hasFocus) {
-                                            controller.hasFocus.value = hasFocus;
+                                            controller.hasFocus.value =
+                                                hasFocus;
                                           },
                                         ),
                                       ),
@@ -139,7 +146,8 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                       maintainState: true,
                                       visible: controller.showNext.value,
                                       child: Container(
-                                        margin: const EdgeInsets.only(bottom: 10),
+                                        margin:
+                                            const EdgeInsets.only(bottom: 10),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -147,7 +155,8 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                             InkWell(
                                               onTap: () {
                                                 if (argument == "yes") {
-                                                  Get.offNamed(AppRoutes.memories);
+                                                  Get.offNamed(
+                                                      AppRoutes.memories);
                                                 } else {
                                                   Get.back();
                                                   // controller.titleController.clear();
@@ -155,15 +164,16 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                               },
                                               child: const Padding(
                                                 padding: EdgeInsets.symmetric(
-                                                    horizontal: 3.0, vertical: 8),
+                                                    horizontal: 3.0,
+                                                    vertical: 8),
                                                 child: Text(
                                                   "Cancel",
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
-                                                      fontFamily: robotoRegular
-                                                  ),
+                                                      fontFamily:
+                                                          robotoRegular),
                                                 ),
                                               ),
                                             ),
@@ -175,35 +185,46 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                                 //   "title": controller.titleController.value.text,
                                                 //   "fromSignup": argument
                                                 // });
-                                                MemoriesModel? memoriesModel = null;
-                                                controller.pickImages("", memoriesModel);
+                                                MemoriesModel? memoriesModel =
+                                                    null;
+                                                controller.pickImages(
+                                                    "", memoriesModel);
                                               },
                                               child: Center(
                                                 child: Container(
-                                                  padding: const EdgeInsets.symmetric(
-                                                      horizontal: 18, vertical: 11),
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 18,
+                                                      vertical: 11),
                                                   alignment: Alignment.center,
                                                   decoration: BoxDecoration(
-                                                      color: AppColors.primaryColor,
+                                                      color: AppColors
+                                                          .primaryColor,
                                                       borderRadius:
-                                                          BorderRadius.circular(18)),
+                                                          BorderRadius.circular(
+                                                              18)),
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.center,
+                                                        MainAxisAlignment
+                                                            .center,
                                                     children: const [
                                                       Text(
                                                         "Next",
-                                                        textAlign: TextAlign.center,
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 14,
-                                                            fontFamily: gibsonSemiBold),
+                                                            fontFamily:
+                                                                gibsonSemiBold),
                                                       ),
                                                       Padding(
                                                           padding:
-                                                              EdgeInsets.only(left: 5),
+                                                              EdgeInsets.only(
+                                                                  left: 5),
                                                           child: Icon(
-                                                            Icons.arrow_forward_ios,
+                                                            Icons
+                                                                .arrow_forward_ios,
                                                             color: Colors.white,
                                                             size: 10,
                                                           ))
@@ -228,9 +249,11 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                           "Skip this step",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            color: Color.fromRGBO(108, 96, 255, 1),
+                                            color:
+                                                Color.fromRGBO(108, 96, 255, 1),
                                             fontSize: 14,
-                                            decoration: TextDecoration.underline,
+                                            decoration:
+                                                TextDecoration.underline,
                                           ),
                                         ),
                                       ),
@@ -248,8 +271,10 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                   children: [
                                     Text(
                                       controller.permissionStatus.value ==
-                                                  PermissionStatus.permanentlyDenied ||
-                                              controller.permissionStatus.value ==
+                                                  PermissionStatus
+                                                      .permanentlyDenied ||
+                                              controller
+                                                      .permissionStatus.value ==
                                                   PermissionStatus.limited
                                           ? 'Please grant Photos permission from settings to create memory'
                                           : 'Please grant Photos permission to create memory',
@@ -263,14 +288,18 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                     ),
                                     InkWell(
                                       onTap: () async {
-                                        print('controller.permissionStatus.value  ${controller.permissionStatus.value}');
-                                        if (controller.permissionStatus.value == PermissionStatus.granted && controller.permissionStatus.value == PermissionStatus.limited) {
+                                        print(
+                                            'controller.permissionStatus.value  ${controller.permissionStatus.value}');
+                                        if (controller.permissionStatus.value ==
+                                                PermissionStatus.granted &&
+                                            controller.permissionStatus.value ==
+                                                PermissionStatus.limited) {
                                           print(" PermissionStatusGranted");
                                           controller.promptPermissionSetting();
                                         } else {
                                           print(" PermissionStatusDenied");
                                           // var object = await AppSettings.openAppSettings();
-                                           AppSettings.openAppSettings();
+                                          AppSettings.openAppSettings();
                                           controller.promptPermissionSetting();
                                         }
                                       },
@@ -280,9 +309,11 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
                                             color: AppColors.primaryColor,
-                                            borderRadius: BorderRadius.circular(22)),
+                                            borderRadius:
+                                                BorderRadius.circular(22)),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: const [
                                             Text(
                                               "Allow permission",

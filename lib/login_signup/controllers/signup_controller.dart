@@ -242,6 +242,7 @@ class SignupController extends GetxController {
               }
             else
               {
+                isSocailUser = true,
                 saveSession(
                     value.docs[0].id,
                     value.docs[0].data().displayName!,
