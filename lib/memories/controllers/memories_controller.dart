@@ -55,8 +55,8 @@ class MemoriesController extends GetxController {
   FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
   List<Asset> images = List<Asset>.empty(growable: true).obs;
   RxBool isPageOpened = true.obs;
-  String URI_PREFIX_FIREBASE = "https://stasht.page.link";
-  String DEFAULT_FALLBACK_URL_ANDROID = "https://stasht.page.link";
+  String URI_PREFIX_FIREBASE = "https://stasht2.page.link";
+  String DEFAULT_FALLBACK_URL_ANDROID = "https://stasht2.page.link";
   List<Asset> resultList = List<Asset>.empty(growable: true);
   Rx<Uri> shareLink = Uri().obs;
   @override
@@ -1087,8 +1087,7 @@ class MemoriesController extends GetxController {
 
     uploadTask = ref.putFile(io.File(file.path), metadata);
     uploadTask.whenComplete(() => {
-          uploadTask.snapshot.ref.
-          getDownloadURL().then((value) => {
+          uploadTask.snapshot.ref.getDownloadURL().then((value) => {
                 imageCaptionUrls.add(ImagesCaption(
                     caption: "",
                     image: value,

@@ -17,7 +17,7 @@ String changePassword = "Change Password";
 bool fromShare = false;
 bool expandShareMemory = false;
 var sharedMemoryCount = ValueNotifier<int>(0);
- MemoriesModel? globalShareMemoryModel ;
+MemoriesModel? globalShareMemoryModel;
 //collections
 String memoriesCollection = "memories";
 String userCollection = "users";
@@ -29,7 +29,6 @@ String notificationsCollection = "notifications";
 String memoriesTitle = "Memories";
 String settingsTitle = "Settings";
 String notifications = "Notifications";
-
 
 bool checkValidEmail(String email) {
   return RegExp(
@@ -53,7 +52,7 @@ Future<void> sendPushMessage(var receiverFBToken, String payload) async {
           "X-Requested-With": "XMLHttpRequest",
           "Content-Type": "application/json",
           "Authorization":
-              "key=AAAA2627rvU:APA91bGisn9zzHeXgs5i0rqS46twn2qFhW0tQCn_s97NmsxsOQW4GfsTbyYgA-zXqt4dw97vInpFIQE9Y2GovMUELIS08ryGuEC6zNpnKEaQTFEHE-rJZ9SL6r4MuVftUP4LFmRhOTWL",
+              "key=AAAASUsV4Fk:APA91bHKYQ2XsHzBAhTmIvQU24DYB5K9GGY6457CkPIm0_-vkHTPCgfLpLBWrOL1Zgvb-4cnc0AXRgzFFzGmQXo32q3MeptLclkIhuwihgcDrnpP-DtCEQVly6F0MDg5JLj7V3FERL4p",
         },
         body: payload);
     print("reason phrase....${response.reasonPhrase}");

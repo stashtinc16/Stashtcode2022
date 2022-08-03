@@ -328,7 +328,7 @@ class SplashController extends GetxController {
             Get.snackbar("Error", "This memory already exist.",
                 colorText: Colors.red);
             EasyLoading.dismiss();
-            //  https://stasht.page.link/Y72F   Jgxm
+            //  https://stasht2.page.link/Y72F   Jgxm
           }
         } else {
           EasyLoading.dismiss();
