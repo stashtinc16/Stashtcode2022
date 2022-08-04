@@ -624,7 +624,7 @@ class MemoriesController extends GetxController {
 
   // Share Dynamic Link
   Future<void> publishMemory(String memoryTitle, String memoryId) async {
-    String publishLink = "https://stasht-mvp.web.app/?mId=$memoryId";
+    String publishLink = "https://stasht-246819.web.app/?mId=$memoryId";
     Get.back();
     sharePublishMemory(memoryId, publishLink);
 

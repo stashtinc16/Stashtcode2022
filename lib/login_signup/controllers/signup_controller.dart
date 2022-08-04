@@ -281,7 +281,6 @@ class SignupController extends GetxController {
 
     usersRef.add(userModel).then((value) => {
           EasyLoading.dismiss(),
-          isSocailUser = false,
           saveSession(value.id, name, email!, profileImage!, 0),
           Get.snackbar('Success', "User logged-in!",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
