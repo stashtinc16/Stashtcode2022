@@ -554,63 +554,63 @@ class MemoriesController extends GetxController {
 
     // images = resultList;
     if (resultList.isNotEmpty) {
-      var dss = await resultList[0].requestMetadata();
-      File pat = await getImageFileFromAssets(resultList[0]);
-      // final exif = await Exif.fromPath(pat.path);
-      // final originalDate = await exif.getOriginalDate();
-      // final attributes = await exif.getAttributes();
-      // final latlng = await exif.getLatLong();
+      // var dss = await resultList[0].requestMetadata();
+      // File pat = await getImageFileFromAssets(resultList[0]);
+      // // final exif = await Exif.fromPath(pat.path);
+      // // final originalDate = await exif.getOriginalDate();
+      // // final attributes = await exif.getAttributes();
+      // // final latlng = await exif.getLatLong();
 
-      Uint8List audioByte = await _readFileByte(pat.path);
+      // Uint8List audioByte = await _readFileByte(pat.path);
 
-      Map<String, IfdTag> dataz = await readExifFromBytes(
-        audioByte,
-        details: false,
-        debug: false,
-        strict: true,
-      );
-      final fileBytes = File(pat.path).readAsBytesSync();
-      final data = await readExifFromBytes(fileBytes);
+      // Map<String, IfdTag> dataz = await readExifFromBytes(
+      //   audioByte,
+      //   details: false,
+      //   debug: false,
+      //   strict: true,
+      // );
+      // final fileBytes = File(pat.path).readAsBytesSync();
+      // final data = await readExifFromBytes(fileBytes);
 
-      if (data.isEmpty) {
-        print("No EXIF information found");
-        return;
-      }
-
-      if (data.containsKey('JPEGThumbnail')) {
-        print('File has JPEG thumbnail');
-        data.remove('JPEGThumbnail');
-      }
-      if (data.containsKey('TIFFThumbnail')) {
-        print('File has TIFF thumbnail');
-        data.remove('TIFFThumbnail');
-      }
-
-      for (final entry in data.entries) {
-        print("${entry.key}: ${entry.value}");
-      }
-      getExifFromFile(pat);
-
-      await readExifFromFile(pat,
-              details: false, debug: false, strict: true, truncateTags: false)
-          .then(((value) {
-        // print('data....${dataz['EXIF ExifImageWidth']}');
-        print('data....${value}');
-      }));
-      // final data = readExifFromFile(pat, details: true);
-      // print(data);
-      // try {
-      //   Uint8List audioByte;
-
-      //   _readFileByte(pat.path).then((bytesData) {
-      //     audioByte = bytesData;
-      //     // final data =   readExifFromBytes(audioByte, details: true);
-      //   });
-      // } catch (e) {
-      //   print(e);
+      // if (data.isEmpty) {
+      //   print("No EXIF information found");
+      //   return;
       // }
 
-      // uploadImagesToMemories(0, memoryId, memoriesModel);
+      // if (data.containsKey('JPEGThumbnail')) {
+      //   print('File has JPEG thumbnail');
+      //   data.remove('JPEGThumbnail');
+      // }
+      // if (data.containsKey('TIFFThumbnail')) {
+      //   print('File has TIFF thumbnail');
+      //   data.remove('TIFFThumbnail');
+      // }
+
+      // for (final entry in data.entries) {
+      //   print("${entry.key}: ${entry.value}");
+      // }
+      // getExifFromFile(pat);
+
+      // await readExifFromFile(pat,
+      //         details: false, debug: false, strict: true, truncateTags: false)
+      //     .then(((value) {
+      //   // print('data....${dataz['EXIF ExifImageWidth']}');
+      //   print('data....${value}');
+      // }));
+      // // final data = readExifFromFile(pat, details: true);
+      // // print(data);
+      // // try {
+      // //   Uint8List audioByte;
+
+      // //   _readFileByte(pat.path).then((bytesData) {
+      // //     audioByte = bytesData;
+      // //     // final data =   readExifFromBytes(audioByte, details: true);
+      // //   });
+      // // } catch (e) {
+      // //   print(e);
+      // // }
+
+      uploadImagesToMemories(0, memoryId, memoriesModel);
     }
   }
 
