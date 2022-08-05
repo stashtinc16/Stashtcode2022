@@ -105,7 +105,7 @@ class Memories extends GetView<MemoriesController> {
                               ),
                               Obx(
                                 () => Text(
-                                  "My Memories (${controller.memoriesList.length}) ",
+                                  "Private (${controller.memoriesList.length}) ",
                                   style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 15,
@@ -148,7 +148,8 @@ class Memories extends GetView<MemoriesController> {
                             children: [
                               Obx(
                                 () => Icon(
-                                  controller.sharedMemoriesExpand.value || expandShareMemory
+                                  controller.sharedMemoriesExpand.value ||
+                                          expandShareMemory
                                       ? Icons.arrow_drop_down
                                       : Icons.arrow_right,
                                   color: Colors.black,
@@ -159,7 +160,7 @@ class Memories extends GetView<MemoriesController> {
                                 builder: (BuildContext context, value,
                                     Widget? child) {
                                   return Text(
-                                    "Shared Memories (${sharedMemoryCount.value}) ",
+                                    "Shared (${sharedMemoryCount.value}) ",
                                     style: const TextStyle(
                                         color: Colors.black,
                                         fontSize: 15,
@@ -276,7 +277,7 @@ class Memories extends GetView<MemoriesController> {
                                                       ? AppColors.primaryColor
                                                           .withOpacity(0.62)
                                                       : Colors.black
-                                                          .withOpacity(0.22),
+                                                          .withOpacity(0.4),
                                                 ),
                                                 margin: const EdgeInsets.only(
                                                     top: 10),
@@ -357,9 +358,9 @@ class Memories extends GetView<MemoriesController> {
                                                                         0
                                                                     ? controller.sharedMemoriesList[index].sharedWithCount >
                                                                             1
-                                                                        ? "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} others"
-                                                                        : "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} other"
-                                                                    : "Author : ${controller.sharedMemoriesList[index].userModel!.displayName!}"
+                                                                        ? "${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} others"
+                                                                        : "${controller.sharedMemoriesList[index].userModel!.displayName!} + ${controller.sharedMemoriesList[index].sharedWithCount} other"
+                                                                    : "${controller.sharedMemoriesList[index].userModel!.displayName!}"
                                                                 : "",
                                                             style: const TextStyle(
                                                                 color: Colors
@@ -482,7 +483,7 @@ class Memories extends GetView<MemoriesController> {
                                       size: 30,
                                     ),
                               Text(
-                                "My Published (${controller.publishMemoryList.length}) ",
+                                "Published (${controller.publishMemoryList.length}) ",
                                 style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 15,
@@ -893,7 +894,7 @@ class Memories extends GetView<MemoriesController> {
                     margin: const EdgeInsets.all(5),
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                      color: AppColors.shadowColor.withOpacity(0.27),
+                      color: AppColors.shadowColor.withOpacity(0.4),
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Row(
@@ -964,9 +965,9 @@ class Memories extends GetView<MemoriesController> {
                                               ? memoriesList[index]
                                                           .sharedWithCount >
                                                       1
-                                                  ? "Author : ${memoriesList[index].userModel!.displayName!} + ${memoriesList[index].sharedWithCount} others"
-                                                  : "Author : ${memoriesList[index].userModel!.displayName!} + ${memoriesList[index].sharedWithCount} other"
-                                              : "Author : ${memoriesList[index].userModel!.displayName!}"
+                                                  ? "${memoriesList[index].userModel!.displayName!} + ${memoriesList[index].sharedWithCount} others"
+                                                  : "${memoriesList[index].userModel!.displayName!} + ${memoriesList[index].sharedWithCount} other"
+                                              : "${memoriesList[index].userModel!.displayName!}"
                                           : "",
                                       style: const TextStyle(
                                           color: Colors.white, fontSize: 12),

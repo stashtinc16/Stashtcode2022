@@ -6,7 +6,9 @@ import 'package:stasht/utils/assets_images.dart';
 import 'package:stasht/utils/constants.dart';
 
 PreferredSizeWidget commonAppbar(BuildContext context, String title,
-    {required Function(bool isMemory, bool isPhotos, bool isNotification, bool isSettings)pageSelected}) {
+    {required Function(
+            bool isMemory, bool isPhotos, bool isNotification, bool isSettings)
+        pageSelected}) {
   return AppBar(
     backgroundColor: Colors.white,
     centerTitle: false,
@@ -75,6 +77,7 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                 child: Stack(
                   children: [
                     Container(
+                      margin: EdgeInsets.only(right: 10),
                       decoration: title == notifications
                           ? const BoxDecoration(
                               image: DecorationImage(
@@ -91,7 +94,7 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                       ),
                     ),
                     Positioned(
-                      right: 7,
+                      right: 17,
                       top: 7,
                       child: ValueListenableBuilder(
                         builder: (BuildContext context, value, Widget? child) {
@@ -122,8 +125,8 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
             ],
           ),
           const SizedBox(
-            // width: 17,
-          ),
+              // width: 17,
+              ),
           InkWell(
             onTap: () {
               pageSelected(false, false, false, true);

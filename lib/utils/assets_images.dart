@@ -2,6 +2,7 @@ const gibsonSemiBold = "gibsonsemibold";
 const robotoRegular = "robotoRegular";
 const robotoMedium = "robotoMedium";
 const robotoBold = "robotoBold";
+const robotoItalic = "robotoItalic";
 const gibsonBold = "gibsonbold";
 const gibsonRegular = "gibsonRegular";
 const gibsonRegularItalic = "gibsonRegularItalic";

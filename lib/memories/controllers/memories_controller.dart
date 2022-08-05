@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:io' as io;
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exif/exif.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -552,8 +554,94 @@ class MemoriesController extends GetxController {
 
     // images = resultList;
     if (resultList.isNotEmpty) {
-      uploadImagesToMemories(0, memoryId, memoriesModel);
+      var dss = await resultList[0].requestMetadata();
+      File pat = await getImageFileFromAssets(resultList[0]);
+      // final exif = await Exif.fromPath(pat.path);
+      // final originalDate = await exif.getOriginalDate();
+      // final attributes = await exif.getAttributes();
+      // final latlng = await exif.getLatLong();
+
+      Uint8List audioByte = await _readFileByte(pat.path);
+
+      Map<String, IfdTag> dataz = await readExifFromBytes(
+        audioByte,
+        details: false,
+        debug: false,
+        strict: true,
+      );
+      final fileBytes = File(pat.path).readAsBytesSync();
+      final data = await readExifFromBytes(fileBytes);
+
+      if (data.isEmpty) {
+        print("No EXIF information found");
+        return;
+      }
+
+      if (data.containsKey('JPEGThumbnail')) {
+        print('File has JPEG thumbnail');
+        data.remove('JPEGThumbnail');
+      }
+      if (data.containsKey('TIFFThumbnail')) {
+        print('File has TIFF thumbnail');
+        data.remove('TIFFThumbnail');
+      }
+
+      for (final entry in data.entries) {
+        print("${entry.key}: ${entry.value}");
+      }
+      getExifFromFile(pat);
+
+      await readExifFromFile(pat,
+              details: false, debug: false, strict: true, truncateTags: false)
+          .then(((value) {
+        // print('data....${dataz['EXIF ExifImageWidth']}');
+        print('data....${value}');
+      }));
+      // final data = readExifFromFile(pat, details: true);
+      // print(data);
+      // try {
+      //   Uint8List audioByte;
+
+      //   _readFileByte(pat.path).then((bytesData) {
+      //     audioByte = bytesData;
+      //     // final data =   readExifFromBytes(audioByte, details: true);
+      //   });
+      // } catch (e) {
+      //   print(e);
+      // }
+
+      // uploadImagesToMemories(0, memoryId, memoriesModel);
     }
+  }
+
+  Future<String> getExifFromFile(File psh) async {
+    if (psh == null) {
+      return "";
+    }
+
+    var bytes = await psh.readAsBytes();
+    var tags = await readExifFromFile(psh);
+    var sb = StringBuffer();
+
+    tags.forEach((k, v) {
+      sb.write("$k: $v \n");
+    });
+
+    return sb.toString();
+  }
+
+  Future<Uint8List> _readFileByte(String filePath) async {
+    Uri myUri = Uri.parse(filePath);
+    File audioFile = new File.fromUri(myUri);
+    Uint8List? bytess;
+    await audioFile.readAsBytes().then((value) {
+      bytess = Uint8List.fromList(value);
+      print('reading of bytes is completed');
+    }).catchError((onError) {
+      print('Exception Error while reading audio from path:' +
+          onError.toString());
+    });
+    return bytess!;
   }
 
   checkIfLinkExpire(MemoriesModel memoriesModel, String shareText, bool copy) {

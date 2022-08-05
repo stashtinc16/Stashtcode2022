@@ -7,7 +7,7 @@ import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 
 class AddCaption extends GetView<MemoriesController> {
-  int?  imageIndex;
+  int? imageIndex;
   MemoriesModel? memoriesModel;
   TextEditingController captionController = TextEditingController();
   @override
@@ -43,7 +43,7 @@ class AddCaption extends GetView<MemoriesController> {
                   'Done',
                   style: TextStyle(
                       fontFamily: robotoBold,
-                      fontSize: 14,
+                      fontSize: 16,
                       color: AppColors.darkColor),
                 ),
                 SizedBox(
@@ -75,6 +75,7 @@ class AddCaption extends GetView<MemoriesController> {
             textInputAction: TextInputAction.done,
             maxLength: 350,
             decoration: const InputDecoration(
+                counterText: '',
                 hintText: 'Add Caption to this post..',
                 hintStyle: TextStyle(fontSize: 14, color: AppColors.textColor),
                 contentPadding:
@@ -89,8 +90,7 @@ class AddCaption extends GetView<MemoriesController> {
                       ),
                     ),
                 fit: BoxFit.cover,
-                imageUrl: memoriesModel!
-                    .imagesCaption![imageIndex!].image!),
+                imageUrl: memoriesModel!.imagesCaption![imageIndex!].image!),
           )
         ],
       ),

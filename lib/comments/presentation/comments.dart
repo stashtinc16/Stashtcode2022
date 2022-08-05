@@ -70,6 +70,10 @@ class Comments extends GetView<CommentsController> {
                                           margin: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Container(
                                                 height: 35,
@@ -107,41 +111,48 @@ class Comments extends GetView<CommentsController> {
                                                 ),
                                               ),
                                               Expanded(
-                                                  child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  Text(
-                                                    controller
-                                                        .commentsList[index]
-                                                        .userModel
-                                                        .displayName,
-                                                    style: const TextStyle(
-                                                        fontSize: 13.0,
-                                                        color: Colors.white,
-                                                        fontFamily: robotoBold),
-                                                  ),
-                                                  Text(
-                                                    controller
-                                                        .commentsList[index]
-                                                        .comment,
-                                                    style: const TextStyle(
-                                                        fontSize: 12.0,
-                                                        color: Colors.white),
-                                                  )
-                                                ],
+                                                  child: Container(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    Text(
+                                                      controller
+                                                          .commentsList[index]
+                                                          .userModel
+                                                          .displayName,
+                                                      style: const TextStyle(
+                                                          fontSize: 14.0,
+                                                          color: Colors.white,
+                                                          fontFamily:
+                                                              robotoBold),
+                                                    ),
+                                                    Text(
+                                                      controller
+                                                          .commentsList[index]
+                                                          .comment,
+                                                      style: const TextStyle(
+                                                          fontSize: 13.0,
+                                                          color: Colors.white),
+                                                    )
+                                                  ],
+                                                ),
                                               )),
-                                              Text(
-                                                DateFormat("MMM dd/yy")
-                                                    .format(controller
-                                                        .commentsList[index]
-                                                        .createdAt!
-                                                        .toDate())
-                                                    .toString(),
-                                                style: const TextStyle(
-                                                    fontSize: 11.0,
-                                                    color: Colors.white),
+                                              Container(
+                                                child: Text(
+                                                  DateFormat("MMM dd/yy")
+                                                      .format(controller
+                                                          .commentsList[index]
+                                                          .createdAt!
+                                                          .toDate())
+                                                      .toString(),
+                                                  style: const TextStyle(
+                                                      fontSize: 11.0,
+                                                      color: Colors.white),
+                                                ),
                                               )
                                             ],
                                           ),
