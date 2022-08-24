@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:io' as io;
@@ -19,15 +21,19 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
+import 'package:stasht/imagePicker/selected_assets_list_view.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/notifications/domain/notification_model.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/splash/domain/share_links_model.dart';
+import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/constants.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class MemoriesController extends GetxController {
   RxBool showNext = false.obs;
+  RxBool showPermission = false.obs;
   var mediaPages = List.empty(growable: true).obs;
   var memoriesList = [].obs;
   var noData = true.obs;
@@ -60,11 +66,15 @@ class MemoriesController extends GetxController {
   String URI_PREFIX_FIREBASE = "https://stasht2.page.link";
   String DEFAULT_FALLBACK_URL_ANDROID = "https://stasht2.page.link";
   List<Asset> resultList = List<Asset>.empty(growable: true);
+  List<AssetEntity> resultgetList = List<AssetEntity>.empty(growable: true);
   Rx<Uri> shareLink = Uri().obs;
+  List<AssetEntity> assets = List<AssetEntity>.empty(growable: true);
+  int get maxAssetsCount => 10;
+
   @override
   void onInit() {
     super.onInit();
-    promptPermissionSetting();
+    // promptPermissionSetting();
     sharedMemoriesExpand.value = fromShare;
     getMyMemories();
     getSharedMemories();
@@ -533,27 +543,50 @@ class MemoriesController extends GetxController {
   }
 
   // Pick Images from gallery
-  Future<void> pickImages(String memoryId, MemoriesModel? memoriesModel) async {
-    resultList.clear();
+  Future<void> pickImages(
+      String memoryId, context, MemoriesModel? memoriesModel) async {
+    // try {
+    //   resultList = await MultiImagePicker.pickImages(
+    //     maxImages: 10,
+    //     enableCamera: false,
+    //     selectedAssets: images,
+    //   );
+    // } on Exception catch (e) {
+    // print('Exception $e ');
+    // print('PermissionStatus ${permissionStatus.value}');
+    // if (permissionStatus.value == PermissionStatus.granted ||
+    //     permissionStatus.value == PermissionStatus.limited) {
+    //   showPermissions.value = false;
+    // } else {
+    //   showPermissions.value = true;
+    // }
+    // }
     try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 10,
-        enableCamera: false,
-        selectedAssets: images,
-      );
-    } on Exception catch (e) {
+      resultgetList = (await AssetPicker.pickAssets(
+        context,
+        pickerConfig: AssetPickerConfig(
+          maxAssets: maxAssetsCount,
+          selectedAssets: assets,
+        ),
+      ))!
+          .cast<AssetEntity>();
+      print("-----------${resultgetList.length}");
+      print("-----------${resultgetList[0].title}");
+    } catch (e) {
       print('Exception $e ');
       print('PermissionStatus ${permissionStatus.value}');
       if (permissionStatus.value == PermissionStatus.granted ||
           permissionStatus.value == PermissionStatus.limited) {
-        showPermissions.value = false;
-      } else {
         showPermissions.value = true;
+      } else {
+        showPermissions.value = false;
       }
     }
 
     // images = resultList;
-    if (resultList.isNotEmpty) {
+    if (resultgetList.isNotEmpty) {
+      uploadImagesToMemories(0, memoryId, memoriesModel);
+
       // var dss = await resultList[0].requestMetadata();
       // File pat = await getImageFileFromAssets(resultList[0]);
       // // final exif = await Exif.fromPath(pat.path);
@@ -610,9 +643,27 @@ class MemoriesController extends GetxController {
       // //   print(e);
       // // }
 
-      uploadImagesToMemories(0, memoryId, memoriesModel);
     }
   }
+
+  // Future<void> pickedMultipleImages(context) async {
+  //   AssetPicker.pickAssets(
+  //     context,
+  //     pickerConfig: AssetPickerConfig(
+  //       maxAssets: maxAssetsCount,
+  //       selectedAssets: assets,
+  //     ),
+
+  //   );
+  //   if (assets.isNotEmpty) {
+  //     SelectedAssetsListView(
+  //       assets: assets,
+  //       isDisplayingDetail: isDisplayingDetail,
+  //       onResult: onResult,
+  //       onRemoveAsset: removeAsset,
+  //     );
+  //   }
+  // }
 
   Future<String> getExifFromFile(File psh) async {
     if (psh == null) {
@@ -1098,7 +1149,7 @@ class MemoriesController extends GetxController {
 
   Future<void> uploadImagesToMemories(
       int imageIndex, String memoryId, MemoriesModel? memoriesModel) async {
-    if (resultList.isNotEmpty) {
+    if (resultgetList.isNotEmpty) {
       if (imageIndex == 0) {
         EasyLoading.show(status: 'Uploading...');
         allowBackPress.value = false;
@@ -1106,62 +1157,105 @@ class MemoriesController extends GetxController {
       }
       //selectedIndexList = index of selected items from main photos list
       final dir = await path_provider.getTemporaryDirectory();
-      final File file = await getImageFileFromAssets(resultList[imageIndex]);
+      final File? file = await resultgetList[imageIndex].file;
+      var getDate = await resultgetList[imageIndex].createDateTime;
+      print("getDate==>> $getDate");
+      // await getImageFileFromAssetsEntity(resultgetList[imageIndex]);
       String fileName = "/temp${DateTime.now().millisecond}.jpg";
       final targetPath = dir.absolute.path + fileName;
-      final File? newFile = await testCompressAndGetFile(file, targetPath);
+      final File? newFile = await testCompressAndGetFile(file!, targetPath);
       // final data = await readExifFromFile(newFile!);
 
       // print('ExifInterface_data $data');
-      final UploadTask? uploadTask =
-          await uploadFile(newFile!, fileName, memoryId, memoriesModel);
+      final UploadTask? uploadTask = await uploadNewFile(
+          newFile!, fileName, memoryId, memoriesModel, getDate);
     } else {
       Get.snackbar('Error', "Please select images");
     }
   }
 
-  Future<File> getImageFileFromAssets(Asset asset) async {
-    final byteData = await asset.getByteData();
+  Future<File> getImageFileFromAssetsEntity(AssetEntity assetEntity) async {
+    // final byteData = await assetEntity.;
     final tempFile =
-        File("${(await getTemporaryDirectory()).path}/${asset.name}");
-    final file = await tempFile.writeAsBytes(
-      byteData.buffer
-          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
-    );
+        File("${(await getTemporaryDirectory()).path}/${assetEntity.title}");
+    // final file = await tempFile.writeAsBytes(
+    // byteData.buffer
+    //     .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
+    // );
 
-    return file;
+    return tempFile;
   }
 
-  Future<void> uploadImagesToMemoriesOld(
-      int imageIndex, String memoryId, MemoriesModel memoriesModel) async {
-    if (selectedIndexList.isNotEmpty) {
-      if (imageIndex == 0) {
-        EasyLoading.show(status: 'Uploading...');
-        imageCaptionUrls.clear();
-      }
-      //selectedIndexList = index of selected items from main photos list
-      final dir = await path_provider.getTemporaryDirectory();
+  //  Future<void> uploadImagesToMemories(
+  //     int imageIndex, String memoryId, MemoriesModel? memoriesModel) async {
+  //   if (resultList.isNotEmpty) {
+  //     if (imageIndex == 0) {
+  //       EasyLoading.show(status: 'Uploading...');
+  //       allowBackPress.value = false;
+  //       imageCaptionUrls.clear();
+  //     }
+  //     //selectedIndexList = index of selected items from main photos list
+  //     final dir = await path_provider.getTemporaryDirectory();
+  //     // final File file = await getImageFileFromAssetsEntity(resultList[imageIndex]);
+  //     String fileName = "/temp${DateTime.now().millisecond}.jpg";
+  //     final targetPath = dir.absolute.path + fileName;
+  //     final File? newFile = await testCompressAndGetFile(file, targetPath);
+  //     // final data = await readExifFromFile(newFile!);
 
-      final File file =
-          await mediaPages[selectedIndexList[imageIndex]].getFile();
-      final targetPath =
-          dir.absolute.path + "/temp${DateTime.now().millisecond}.jpg";
+  //     // print('ExifInterface_data $data');
+  //     final UploadTask? uploadTask =
+  //         await uploadFile(newFile!, fileName, memoryId, memoriesModel);
+  //   } else {
+  //     Get.snackbar('Error', "Please select images");
+  //   }
+  // }
 
-      final File? newFile = await testCompressAndGetFile(file, targetPath);
-      await uploadFile(
-          newFile!,
-          mediaPages[selectedIndexList[imageIndex]].filename,
-          memoryId,
-          memoriesModel);
-    } else {
-      Get.snackbar('Error', "Please select images");
-    }
-  }
+  // Future<File> getImageFileFromAssets(Asset asset) async {
+  //   final byteData = await asset.getByteData();
+  //   final tempFile =
+  //       File("${(await getTemporaryDirectory()).path}/${asset.name}");
+  //   final file = await tempFile.writeAsBytes(
+  //     byteData.buffer
+  //         .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
+  //   );
+
+  //   return file;
+  // }
+
+  // Future<void> uploadImagesToMemoriesOld(
+  //     int imageIndex, String memoryId, MemoriesModel memoriesModel) async {
+  //   if (selectedIndexList.isNotEmpty) {
+  //     if (imageIndex == 0) {
+  //       EasyLoading.show(status: 'Uploading...');
+  //       imageCaptionUrls.clear();
+  //     }
+  //     //selectedIndexList = index of selected items from main photos list
+  //     final dir = await path_provider.getTemporaryDirectory();
+
+  //     final File file =
+  //         await mediaPages[selectedIndexList[imageIndex]].getFile();
+  //     final targetPath =
+  //         dir.absolute.path + "/temp${DateTime.now().millisecond}.jpg";
+
+  //     final File? newFile = await testCompressAndGetFile(file, targetPath);
+  //     await uploadFile(
+  //       newFile!,
+  //       mediaPages[selectedIndexList[imageIndex]].filename,
+  //       memoryId,
+  //       memoriesModel,
+  //     );
+  //   } else {
+  //     Get.snackbar('Error', "Please select images");
+  //   }
+  // }
 
   /// The user selects a file, and the task is added to the list.
-  Future<UploadTask?> uploadFile(File file, String fileName, String memoryId,
-      MemoriesModel? memoriesModel) async {
+  Future<UploadTask?> uploadNewFile(File file, String fileName, String memoryId,
+      MemoriesModel? memoriesModel, DateTime getDate) async {
     UploadTask uploadTask;
+    // String covertedDateTime =
+    //     "${getDate.month.toString().padLeft(2, '0')} ${getDate.day.toString().padLeft(2, '0')}/${getDate.year.toString()} ${getDate.hour.toString().padLeft(2, '0')}-${getDate.minute.toString().padLeft(2, '0')}";
+    // print("covertedDateTime==>> $covertedDateTime");
     // Create a Reference to the file
     Reference ref =
         FirebaseStorage.instance.ref().child('memories').child('/$fileName');
@@ -1170,6 +1264,9 @@ class MemoriesController extends GetxController {
       contentType: 'image/jpeg',
       customMetadata: {
         'picked-file-path': file.path,
+        // 'imageDate': covertedDateTime,
+
+        // create date and send
       },
     );
 
@@ -1180,11 +1277,11 @@ class MemoriesController extends GetxController {
                     caption: "",
                     image: value,
                     commentCount: 0,
-                    createdAt: Timestamp.now(),
+                    createdAt: getDate,
                     userId: userId,
                     imageId:
                         Timestamp.now().millisecondsSinceEpoch.toString())),
-                if (imageCaptionUrls.length < resultList.length)
+                if (imageCaptionUrls.length < resultgetList.length)
                   {
                     uploadCount += 1,
                     uploadImagesToMemories(
@@ -1210,6 +1307,61 @@ class MemoriesController extends GetxController {
 
     return Future.value(uploadTask);
   }
+
+  ///
+  // Future<UploadTask?> uploadFile(File file, String fileName, String memoryId,
+  //     MemoriesModel? memoriesModel) async {
+  //   UploadTask uploadTask;
+  //   // Create a Reference to the file
+  //   Reference ref =
+  //       FirebaseStorage.instance.ref().child('memories').child('/$fileName');
+
+  //   final metadata = SettableMetadata(
+  //     contentType: 'image/jpeg',
+  //     customMetadata: {
+  //       'picked-file-path': file.path,
+
+  //       // create date and send
+  //     },
+  //   );
+
+  //   uploadTask = ref.putFile(io.File(file.path), metadata);
+  //   uploadTask.whenComplete(() => {
+  //         uploadTask.snapshot.ref.getDownloadURL().then((value) => {
+  //               imageCaptionUrls.add(ImagesCaption(
+  //                   caption: "",
+  //                   image: value,
+  //                   commentCount: 0,
+  //                   createdAt: Timestamp.now(),
+  //                   userId: userId,
+  //                   imageId:
+  //                       Timestamp.now().millisecondsSinceEpoch.toString())),
+  //               if (imageCaptionUrls.length < resultList.length)
+  //                 {
+  //                   uploadCount += 1,
+  //                   uploadImagesToMemories(
+  //                       uploadCount, memoryId, memoriesModel),
+  //                 }
+  //               else
+  //                 {
+  //                   EasyLoading.dismiss(),
+  //                   if (memoriesModel == null)
+  //                     {createMemories()}
+  //                   else
+  //                     {
+  //                       updateMemory(memoryId, memoriesModel),
+  //                       if (memoriesModel.createdBy != userId)
+  //                         {
+  //                           print("Photo add"),
+  //                           addNewPhotoNotification(memoriesModel)
+  //                         }
+  //                     }
+  //                 }
+  //             })
+  //       });
+
+  //   return Future.value(uploadTask);
+  // }
 
 // Update or Add images to existing memory
   void updateMemory(String memoryId, MemoriesModel? memoriesModel) {
@@ -1241,12 +1393,26 @@ class MemoriesController extends GetxController {
     final result = await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       targetPath,
+      keepExif: true,
       quality: 50,
       minWidth: 700,
       minHeight: 700,
     );
+
+    print("--===+++ $result");
     return result;
   }
+
+  // Future<File?> testCompressAndGetFile(File file, String targetPath) async {
+  //   final result = await FlutterImageCompress.compressAndGetFile(
+  //     file.absolute.path,
+  //     targetPath,
+  //     quality: 50,
+  //     minWidth: 700,
+  //     minHeight: 700,
+  //   );
+  //   return result;
+  // }
 
   // Create memories to Firebase
   void createMemories() {

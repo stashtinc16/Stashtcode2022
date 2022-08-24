@@ -61,6 +61,11 @@
 	<string>App needs camera access to upload images for memories</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App needs photo gallery access to upload images to memories</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

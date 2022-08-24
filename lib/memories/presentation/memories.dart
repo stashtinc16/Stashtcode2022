@@ -105,7 +105,7 @@ class Memories extends GetView<MemoriesController> {
                               ),
                               Obx(
                                 () => Text(
-                                  "Private (${controller.memoriesList.length}) ",
+                                  "Creator (${controller.memoriesList.length}) ",
                                   style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 15,
@@ -160,7 +160,7 @@ class Memories extends GetView<MemoriesController> {
                                 builder: (BuildContext context, value,
                                     Widget? child) {
                                   return Text(
-                                    "Shared (${sharedMemoryCount.value}) ",
+                                    "Collaborator (${sharedMemoryCount.value}) ",
                                     style: const TextStyle(
                                         color: Colors.black,
                                         fontSize: 15,

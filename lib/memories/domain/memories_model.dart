@@ -90,7 +90,7 @@ class ImagesCaption {
   dynamic commentCount;
   dynamic imageId;
   dynamic userId;
-  Timestamp? createdAt;
+  dynamic createdAt;
   Timestamp? updatedAt;
   UserModel? userModel;
 

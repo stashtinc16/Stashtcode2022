@@ -53,6 +53,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                           onPressed: () {
                             controller.pickImages(
                                 controller.detailMemoryModel!.memoryId!,
+                                context,
                                 controller.detailMemoryModel!);
                           },
                           // child: SvgPicture.asset(addPhotos),
@@ -310,7 +311,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                           .circle,
                                                                       border: Border.all(width: 0.5, color: Colors.grey),
                                                                       image: const DecorationImage(image: AssetImage(profileIcon)),
-                                                                      boxShadow: [
+                                                                      boxShadow: const [
                                                                         BoxShadow(
                                                                             color: Colors
                                                                                 .white60,
