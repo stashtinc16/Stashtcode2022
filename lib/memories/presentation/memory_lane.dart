@@ -153,7 +153,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                   if (userId ==
                                                           controller
                                                               .detailMemoryModel!
-                                                              .createdBy &&
+                                                              .updatedAt &&
                                                       !controller
                                                           .detailMemoryModel!
                                                           .published!)
@@ -566,7 +566,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                               children: <
                                                                   TextSpan>[
                                                                 TextSpan(
-                                                                    text: controller.detailMemoryModel!.imagesCaption![index].createdAt !=
+                                                                    text: controller.detailMemoryModel!.imagesCaption![index] !=
                                                                             null
                                                                         ? DateFormat("MMM dd/yy hh:mm a")
                                                                             .format(controller.detailMemoryModel!.imagesCaption![index].createdAt!.toDate())

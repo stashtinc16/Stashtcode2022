@@ -14,8 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:stasht/imagePicker/screens.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-
-const Color themeColor = Color(0xff00bc56);
+const Color themeColor = Color(0XFF1B76F2);
 
 const List<String> imagesExtensions = <String>[
   'jpg',
@@ -485,7 +484,7 @@ class FileAssetPickerBuilder
       backgroundColor: theme.appBarTheme.backgroundColor,
       centerTitle: isAppleOS,
       title: pathEntitySelector(context),
-      leading: backButton(context),
+      automaticallyImplyLeading: false,
       actions: !isAppleOS
           ? <Widget>[
               confirmButton(context),
@@ -758,8 +757,7 @@ class FileAssetPickerBuilder
             minWidth: provider.isSelectedNotEmpty ? 48.0 : 20.0,
             height: appBarItemHeight,
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            color:
-                provider.isSelectedNotEmpty ? themeColor : theme.dividerColor,
+            color: provider.isSelectedNotEmpty ? themeColor : themeColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(3.0),
             ),
@@ -775,9 +773,7 @@ class FileAssetPickerBuilder
                       '(${provider.selectedAssets.length}/${provider.maxAssets})'
                   : textDelegate.confirm,
               style: TextStyle(
-                color: provider.isSelectedNotEmpty
-                    ? theme.textTheme.bodyText1?.color
-                    : theme.textTheme.caption?.color,
+                color: Colors.white,
                 fontSize: 17.0,
                 fontWeight: FontWeight.normal,
               ),
@@ -874,7 +870,7 @@ class FileAssetPickerBuilder
           constraints: BoxConstraints(maxWidth: Screens.width * 0.5),
           padding: const EdgeInsetsDirectional.only(start: 12.0, end: 6.0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(3),
             color: theme.dividerColor,
           ),
           child: Row(
@@ -901,24 +897,18 @@ class FileAssetPickerBuilder
               ),
               Padding(
                 padding: const EdgeInsetsDirectional.only(start: 5.0),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: theme.iconTheme.color?.withOpacity(0.5),
-                  ),
-                  child: ValueListenableBuilder<bool>(
-                    valueListenable: isSwitchingPath,
-                    builder: (_, bool isSwitchingPath, Widget? w) {
-                      return Transform.rotate(
-                        angle: isSwitchingPath ? math.pi : 0.0,
-                        child: w,
-                      );
-                    },
-                    child: Icon(
-                      Icons.keyboard_arrow_down,
-                      size: 20.0,
-                      color: theme.colorScheme.primary,
-                    ),
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: isSwitchingPath,
+                  builder: (_, bool isSwitchingPath, Widget? w) {
+                    return Transform.rotate(
+                      angle: isSwitchingPath ? math.pi : 0.0,
+                      child: w,
+                    );
+                  },
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 20.0,
+                    color: theme.colorScheme.primary,
                   ),
                 ),
               ),
@@ -1276,7 +1266,7 @@ class FileAssetPickerViewerBuilderDelegate
                       ChangeNotifierProvider<
                           AssetPickerViewerProvider<File>>.value(
                         value: provider!,
-                        child: confirmButton(context),
+                        // child: confirmButton(context),
                       )
                     else
                       selectButton(context),
@@ -1365,7 +1355,7 @@ class FileAssetPickerViewerBuilderDelegate
         color: themeData.canvasColor.withOpacity(0.85),
         child: Row(
           children: <Widget>[
-            const BackButton(),
+            // const BackButton(),
             if (!isAppleOS)
               StreamBuilder<int>(
                 initialData: currentIndex,

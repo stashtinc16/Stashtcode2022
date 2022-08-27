@@ -119,7 +119,7 @@ class MemoriesController extends GetxController {
                     memoriesModel.imagesCaption = imagesList;
                     try {
                       memoriesModel.imagesCaption!.sort((first, second) {
-                        return second.createdAt!.compareTo(first.createdAt!);
+                        return second.updatedAt!.compareTo(first.updatedAt!);
                       });
                     } catch (e) {
                       print('Exception $e');
@@ -178,8 +178,8 @@ class MemoriesController extends GetxController {
                           memoriesModel.imagesCaption = imagesList;
                           try {
                             memoriesModel.imagesCaption!.sort((first, second) {
-                              return second.createdAt!
-                                  .compareTo(first.createdAt!);
+                              return second.updatedAt!
+                                  .compareTo(first.updatedAt!);
                             });
                           } catch (e) {
                             print('Exception $e');
@@ -311,7 +311,7 @@ class MemoriesController extends GetxController {
 
             if (captionList.length == event.data()!.imagesCaption!.length) {
               captionList.sort(((a, b) {
-                return b.createdAt!.compareTo(a.createdAt!);
+                return b.updatedAt!.compareTo(a.updatedAt!);
               }));
 
               usersRef.doc(event.data()!.createdBy).get().then((userValue) {
@@ -382,8 +382,8 @@ class MemoriesController extends GetxController {
                             try {
                               memoriesModel.imagesCaption!
                                   .sort((first, second) {
-                                return second.createdAt!
-                                    .compareTo(first.createdAt!);
+                                return second.updatedAt!
+                                    .compareTo(first.updatedAt);
                               });
                             } catch (e) {
                               print('Exception $e');
@@ -426,7 +426,7 @@ class MemoriesController extends GetxController {
     if (memoryId == value.docs[value.docs.length - 1].id) {
       memoriesList.sort(
         (a, b) {
-          return b.createdAt!.compareTo(a.createdAt);
+          return b.updatedAt!.compareTo(a.updatedAt);
         },
       );
       if (memoriesList.isEmpty) {
@@ -465,7 +465,7 @@ class MemoriesController extends GetxController {
     if (publishMemoryList.length - 1 == value.docs.length - 1) {
       publishMemoryList.sort(
         (a, b) {
-          return b.publishedCreatedAt!.compareTo(a.publishedCreatedAt);
+          return b.publishedupdatedAt!.compareTo(a.publishedupdatedAt);
         },
       );
       if (publishMemoryList.isEmpty) {
@@ -567,6 +567,14 @@ class MemoriesController extends GetxController {
         pickerConfig: AssetPickerConfig(
           maxAssets: maxAssetsCount,
           selectedAssets: assets,
+          pickerTheme: ThemeData(
+            buttonColor: AppColors.primaryColor,
+            backgroundColor: Colors.white,
+            accentColor: AppColors.primaryColor,
+            textSelectionColor: Colors.black,
+            bottomAppBarColor: Colors.white,
+            primaryColor: Colors.white,
+          ),
         ),
       ))!
           .cast<AssetEntity>();
@@ -1159,7 +1167,7 @@ class MemoriesController extends GetxController {
       final dir = await path_provider.getTemporaryDirectory();
       final File? file = await resultgetList[imageIndex].file;
       var getDate = await resultgetList[imageIndex].createDateTime;
-      print("getDate==>> $getDate");
+      print("getDate==>> $file");
       // await getImageFileFromAssetsEntity(resultgetList[imageIndex]);
       String fileName = "/temp${DateTime.now().millisecond}.jpg";
       final targetPath = dir.absolute.path + fileName;
@@ -1253,9 +1261,9 @@ class MemoriesController extends GetxController {
   Future<UploadTask?> uploadNewFile(File file, String fileName, String memoryId,
       MemoriesModel? memoriesModel, DateTime getDate) async {
     UploadTask uploadTask;
-    // String covertedDateTime =
-    //     "${getDate.month.toString().padLeft(2, '0')} ${getDate.day.toString().padLeft(2, '0')}/${getDate.year.toString()} ${getDate.hour.toString().padLeft(2, '0')}-${getDate.minute.toString().padLeft(2, '0')}";
+    // String covertedDateTime = "$getDate";
     // print("covertedDateTime==>> $covertedDateTime");
+    // print("getDare==>> $getDate");
     // Create a Reference to the file
     Reference ref =
         FirebaseStorage.instance.ref().child('memories').child('/$fileName');
@@ -1277,7 +1285,8 @@ class MemoriesController extends GetxController {
                     caption: "",
                     image: value,
                     commentCount: 0,
-                    createdAt: getDate,
+                    updatedAt: Timestamp.now(),
+                    createdAt: Timestamp.fromDate(getDate),
                     userId: userId,
                     imageId:
                         Timestamp.now().millisecondsSinceEpoch.toString())),
@@ -1369,7 +1378,7 @@ class MemoriesController extends GetxController {
     memoriesModels.imagesCaption!.addAll(imageCaptionUrls);
     try {
       memoriesModels.imagesCaption!.sort((a, b) {
-        return b.createdAt!.compareTo(a.createdAt!);
+        return b.updatedAt!.compareTo(a.updatedAt!);
       });
     } catch (ex) {
       print('upload images exception $ex');

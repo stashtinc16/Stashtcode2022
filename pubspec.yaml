@@ -50,7 +50,7 @@ dependencies:
   transparent_image: ^2.0.0
   path_provider: ^2.0.10
   flutter_image_compress: ^1.1.0
-  flutter_login_facebook: ^1.6.0
+  flutter_login_facebook: ^1.4.1
   cached_network_image: ^3.2.1
   connectivity: ^3.0.6
   app_settings: ^4.1.6

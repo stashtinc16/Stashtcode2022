@@ -91,7 +91,7 @@ class ImagesCaption {
   dynamic imageId;
   dynamic userId;
   dynamic createdAt;
-  Timestamp? updatedAt;
+  dynamic updatedAt;
   UserModel? userModel;
 
   ImagesCaption(
