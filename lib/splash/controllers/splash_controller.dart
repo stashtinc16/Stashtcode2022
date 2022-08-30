@@ -179,17 +179,23 @@ class SplashController extends GetxController {
     //       print('onError $onError');
     //     });
   }
+  bool? get isLogged => _isLogged;
 
   Future<void> initDynamicLinks() async {
     dynamicLinks.onLink.listen((dynamicLinkData) {
-      fromShare = true;
-      print('fromShare splash $fromShare');
-      print('dynamicLinkData $dynamicLinkData');
-      var link = dynamicLinkData.link.toString().split("memory_id=");
-      var memory = link[1].split("&");
-      var timeStamp = dynamicLinkData.link.toString().split("timestamp=");
-      EasyLoading.show(status: 'Please wait.. we are fetching memory');
-      checkValidLink(dynamicLinkData.link, memory[0]);
+      if (firebaseAuth != null || _isLogged!) {
+        fromShare = true;
+
+        print('fromShare splash $fromShare');
+        print('dynamicLinkData $dynamicLinkData');
+        var link = dynamicLinkData.link.toString().split("memory_id=");
+        var memory = link[1].split("&");
+        var timeStamp = dynamicLinkData.link.toString().split("timestamp=");
+        EasyLoading.show(status: 'Please wait.. we are fetching memory');
+        checkValidLink(dynamicLinkData.link, memory[0]);
+      } else {
+        handleNavigation(false);
+      }
     }).onError((error) {
       print('onErro $error');
     });

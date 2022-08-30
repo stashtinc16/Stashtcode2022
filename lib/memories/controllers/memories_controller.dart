@@ -76,9 +76,20 @@ class MemoriesController extends GetxController {
     super.onInit();
     // promptPermissionSetting();
     sharedMemoriesExpand.value = fromShare;
+    getUsers();
     getMyMemories();
     getSharedMemories();
     getPublishedMemories();
+  }
+
+  void getUsers() {
+    usersRef.snapshots().listen((event) {
+      if (event.docChanges.isNotEmpty) {
+        getMyMemories();
+        getSharedMemories();
+        getPublishedMemories();
+      }
+    });
   }
 
   // get Published memories list
@@ -153,6 +164,55 @@ class MemoriesController extends GetxController {
               print(
                   'aaaa ${value.docs.length} =>  ${value.docChanges.length} =>> ${sharedMemoriesList.length}'),
               value.docs.forEach((element) {
+                // usersRef
+                //     .doc(element.data().createdBy)
+                //     .snapshots()
+                //     .listen((userValue) {
+                //   List<ImagesCaption> imagesList = List.empty(growable: true);
+                //   MemoriesModel memoriesModel = element.data();
+                //   memoriesModel.memoryId = element.id;
+                //   memoriesModel.userModel = userValue.data()!;
+                //   element.data().sharedWith!.forEach((elementShare) {
+                //     if (elementShare.status == 1) {
+                //       memoriesModel.sharedWithCount =
+                //           memoriesModel.sharedWithCount! + 1;
+                //     }
+                //   });
+                //   element.data().imagesCaption!.forEach((innerElement) async {
+                //     await usersRef
+                //         .doc(innerElement.userId)
+                //         .get()
+                //         .then((imageUser) {
+                //       ImagesCaption imagesCaption = innerElement;
+                //       if (imageUser.data() != null) {
+                //         imagesCaption.userModel = imageUser.data()!;
+                //         imagesList.add(imagesCaption);
+                //         if (imagesList.length ==
+                //             element.data().imagesCaption!.length) {
+                //           memoriesModel.imagesCaption = imagesList;
+                //           try {
+                //             memoriesModel.imagesCaption!.sort((first, second) {
+                //               return second.updatedAt!
+                //                   .compareTo(first.updatedAt!);
+                //             });
+                //           } catch (e) {
+                //             print('Exception $e');
+                //           }
+                //           if (sharedMemoriesList.length < value.docs.length) {
+                //             sharedMemoriesList.add(memoriesModel);
+                //           }
+
+                //           print(
+                //               'SharedMemList ${sharedMemoriesList.length} => ${value.docs.length}');
+                //           if (sharedMemoriesList.length == value.docs.length) {
+                //             sharedMemoryCount.value = sharedMemoriesList.length;
+                //             update();
+                //           }
+                //         }
+                //       }
+                //     });
+                //   });
+                // });
                 usersRef.doc(element.data().createdBy!).get().then((userValue) {
                   List<ImagesCaption> imagesList = List.empty(growable: true);
                   MemoriesModel memoriesModel = element.data();
@@ -465,7 +525,7 @@ class MemoriesController extends GetxController {
     if (publishMemoryList.length - 1 == value.docs.length - 1) {
       publishMemoryList.sort(
         (a, b) {
-          return b.publishedupdatedAt!.compareTo(a.publishedupdatedAt);
+          return b.publishedCreatedAt!.compareTo(a.publishedCreatedAt);
         },
       );
       if (publishMemoryList.isEmpty) {
@@ -565,6 +625,7 @@ class MemoriesController extends GetxController {
       resultgetList = (await AssetPicker.pickAssets(
         context,
         pickerConfig: AssetPickerConfig(
+          requestType: RequestType.image,
           maxAssets: maxAssetsCount,
           selectedAssets: assets,
           pickerTheme: ThemeData(
