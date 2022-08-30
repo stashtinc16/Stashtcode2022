@@ -1536,6 +1536,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                             color: AppColors.hintTextColor),
                       ),
                     )),
+                     
                     const SizedBox(
                       width: 20,
                     ),
