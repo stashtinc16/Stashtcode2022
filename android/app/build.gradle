@@ -72,6 +72,10 @@ signingConfigs {
         storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
         storePassword keystoreProperties['storePassword']
     }
+// storePassword= stashtapp
+// keyPassword = stashtapp
+// keyAlias = appstasht
+
 }
     buildTypes {
         release {

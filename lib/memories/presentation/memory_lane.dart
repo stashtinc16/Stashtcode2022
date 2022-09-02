@@ -655,28 +655,27 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                   width: 12,
                                                                   height: 12,
                                                                 ),
+                                                                SizedBox(
+                                                                    width: 10),
                                                                 if (controller
                                                                         .detailMemoryModel!
                                                                         .createdBy ==
                                                                     userId)
-                                                                  SizedBox(
-                                                                      width:
-                                                                          10),
-                                                                Container(
-                                                                  width: 30,
-                                                                  child: moreButton(
-                                                                      context,
-                                                                      controller
-                                                                          .detailMemoryModel!
-                                                                          .memoryId!,
-                                                                      index,
-                                                                      controller,
-                                                                      controller
-                                                                          .detailMemoryModel!,
-                                                                      controller
-                                                                          .detailMemoryModel!
-                                                                          .imagesCaption![index]),
-                                                                ),
+                                                                  Container(
+                                                                    width: 30,
+                                                                    child: moreButton(
+                                                                        context,
+                                                                        controller
+                                                                            .detailMemoryModel!
+                                                                            .memoryId!,
+                                                                        index,
+                                                                        controller,
+                                                                        controller
+                                                                            .detailMemoryModel!,
+                                                                        controller
+                                                                            .detailMemoryModel!
+                                                                            .imagesCaption![index]),
+                                                                  ),
                                                               ],
                                                             ),
                                                           ),
@@ -1536,7 +1535,6 @@ class Memory_Lane extends GetView<MemoriesController> {
                             color: AppColors.hintTextColor),
                       ),
                     )),
-                     
                     const SizedBox(
                       width: 20,
                     ),

@@ -6,6 +6,7 @@ import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
+import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/constants.dart';
 
@@ -30,6 +31,14 @@ class ProfileController extends GetxController {
       ? Get.find<MemoriesController>()
       : Get.put(MemoriesController());
 
+  final memoriesRef = FirebaseFirestore.instance
+      .collection(memoriesCollection)
+      .withConverter<MemoriesModel>(
+        fromFirestore: (snapshots, _) =>
+            MemoriesModel.fromJson(snapshots.data()!),
+        toFirestore: (memories, _) => memories.toJson(),
+      );
+
   FacebookLogin facebookAuth = FacebookLogin();
   @override
   void onInit() {
@@ -49,7 +58,7 @@ class ProfileController extends GetxController {
     usersRef.doc(userId).update({"profile_image": profileUrl}).then((value) => {
           print('Profile updated'),
           userImage.value = profileUrl,
-          memoriesController.onInit()
+          memoriesController.onInit(),
         });
   }
 
