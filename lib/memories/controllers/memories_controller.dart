@@ -87,15 +87,17 @@ class MemoriesController extends GetxController {
     bool shouldCall = false;
     print('ShouldCall $shouldCall');
     usersRef.snapshots().listen((event) {
+      shouldCall = false;
       print('MemoryChanged ==1==> ${event.docChanges.length}');
     }).onData((data) {
       print('OInData ==');
       // shouldCall = true;
       memoriesRef.snapshots().listen((event) {}).onData((data) {
         print('onData ');
+        shouldCall = false;
       });
       if (!shouldCall) {
-        print('shouldCall $shouldCall ');
+        print('shouldCall ===>  $shouldCall ');
         getMyMemories();
         getSharedMemories();
         getPublishedMemories();
