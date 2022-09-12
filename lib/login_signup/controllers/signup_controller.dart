@@ -10,10 +10,13 @@ import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/constants.dart';
 
+bool? isFacebookLogin;
+
 class SignupController extends GetxController {
   // var facebookLogin = FacebookLogin();
   final RxBool isObscure = true.obs;
   final RxBool isObscureCP = true.obs;
+  bool? _isLogged;
 
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   GlobalKey<FormState> formkeySignin = GlobalKey<FormState>();
@@ -30,11 +33,9 @@ class SignupController extends GetxController {
   String? _email;
   String? _imageUrl;
   final plugin = FacebookLogin(debug: true);
-  bool? _isLogged;
   bool _fetching = false;
 
   bool get fetching => _fetching;
-  bool? get isLogged => _isLogged;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   Map<String, dynamic>? _userData;
   Map<String, dynamic>? get userData => _userData;
@@ -232,6 +233,7 @@ class SignupController extends GetxController {
     }
     print('email $email $_isLogged');
     if (_isLogged! && email != null) {
+      isFacebookLogin = true;
       _fetching = false;
       usersRef.where("email", isEqualTo: email).get().then((value) => {
             value.docs.length,

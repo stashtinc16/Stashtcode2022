@@ -4,10 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
+import 'package:stasht/login_signup/controllers/signup_controller.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
 import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/routes/app_routes.dart';
+import 'package:stasht/splash/controllers/splash_controller.dart';
 import 'package:stasht/utils/constants.dart';
 
 class ProfileController extends GetxController {
@@ -24,7 +26,7 @@ class ProfileController extends GetxController {
   RxBool changeUserName = false.obs;
   RxBool allowBackPress = true.obs;
   RxBool allowBackPressOnPw = true.obs;
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  FirebaseAuth firebaseAuthInfo = FirebaseAuth.instance;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   GlobalKey<FormState> formkeyPassword = GlobalKey<FormState>();
   MemoriesController memoriesController = Get.isRegistered()
@@ -108,7 +110,9 @@ class ProfileController extends GetxController {
   logoutUser() {
     usersRef.doc(userId).update({"device_token": ""}).then((value) {
       print('Token Removed');
-      firebaseAuth.signOut();
+      firebaseAuthInfo.signOut();
+      firebaseAuth = null;
+      isFacebookLogin = false;
       facebookAuth.logOut();
       userEmail = "";
       userId = "";

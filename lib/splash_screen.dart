@@ -23,7 +23,7 @@ class SplashScreen extends GetView<SplashController> {
               logo,
               color: Color.fromRGBO(108, 96, 255, 1),
               height: 40,
-              width: 40,
+            width: 40,
             )));
   }
 

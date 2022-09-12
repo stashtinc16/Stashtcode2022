@@ -253,7 +253,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                           .circle,
                                                                       border: Border.all(
                                                                           width:
-                                                                              2,
+                                                                              1,
                                                                           color:
                                                                               Colors.white),
                                                                       image:
@@ -263,11 +263,6 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                         fit: BoxFit
                                                                             .cover,
                                                                       ),
-                                                                      //   boxShadow: [
-                                                                      // const BoxShadow(
-                                                                      //     color: Colors.white60,
-                                                                      //     spreadRadius: 2,
-                                                                      //     blurRadius: 2)]
                                                                     ),
                                                                   ),
                                                                   placeholder: (context,
@@ -295,7 +290,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                           .circle,
                                                                       border: Border.all(
                                                                           width:
-                                                                              1,
+                                                                              0.5,
                                                                           color:
                                                                               Colors.black),
                                                                     ),
@@ -447,7 +442,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                           border: Border.all(
                                                               color:
                                                                   Colors.white,
-                                                              width: 2)),
+                                                              width: 0.5)),
                                                       child: controller
                                                                   .detailMemoryModel!
                                                                   .imagesCaption![
@@ -658,9 +653,15 @@ class Memory_Lane extends GetView<MemoriesController> {
                                                                 SizedBox(
                                                                     width: 10),
                                                                 if (controller
-                                                                        .detailMemoryModel!
-                                                                        .createdBy ==
-                                                                    userId)
+                                                                            .detailMemoryModel!
+                                                                            .imagesCaption![
+                                                                                index]
+                                                                            .userId ==
+                                                                        userId ||
+                                                                    controller
+                                                                            .detailMemoryModel!
+                                                                            .createdBy ==
+                                                                        userId)
                                                                   Container(
                                                                     width: 30,
                                                                     child: moreButton(
@@ -1041,18 +1042,13 @@ class Memory_Lane extends GetView<MemoriesController> {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(width: 2, color: Colors.white),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.white60,
-                                spreadRadius: 1,
-                                blurRadius: 1)
-                          ]),
+                        shape: BoxShape.circle,
+                        border: Border.all(width: 1, color: Colors.white),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                     placeholder: (context, url) => Container(
                       width: 60,
@@ -1067,7 +1063,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                       height: 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(width: 2, color: Colors.black),
+                        border: Border.all(width: 0.5, color: Colors.black),
                       ),
                       child: const Icon(
                         Icons.error,
@@ -1081,12 +1077,12 @@ class Memory_Lane extends GetView<MemoriesController> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white,
-                      border: Border.all(width: 0.5, color: Colors.grey),
+                      border: Border.all(width: 1, color: Colors.grey),
                       image: const DecorationImage(image: AssetImage(userIcon)),
                     )),
             // i%2==0?
             Padding(
-                padding: EdgeInsets.only(left: 60),
+                padding: const EdgeInsets.only(left: 60),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -1112,7 +1108,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                         decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                                width: 2, color: Colors.white),
+                                                width: 1, color: Colors.white),
                                             image: DecorationImage(
                                               image: imageProvider,
                                               fit: BoxFit.cover,
@@ -1135,7 +1131,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                              width: 2, color: Colors.black),
+                                              width: 0.5, color: Colors.black),
                                         ),
                                         child: const Icon(
                                           Icons.error,
@@ -1149,7 +1145,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                            width: 2, color: Colors.grey),
+                                            width: 1, color: Colors.grey),
                                         image: const DecorationImage(
                                             image: AssetImage(userIcon)),
                                       ),
@@ -1166,7 +1162,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                                width: 2, color: Colors.white),
+                                                width: 1, color: Colors.white),
                                           ),
                                           child: CachedNetworkImage(
                                             imageUrl: leftWith[i]
@@ -1180,7 +1176,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
-                                                    width: 2,
+                                                    width: 1,
                                                     color: Colors.white),
                                                 image: DecorationImage(
                                                   image: imageProvider,
@@ -1207,7 +1203,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
-                                                    width: 2,
+                                                    width: 1,
                                                     color: Colors.black),
                                               ),
                                               child: const Icon(
@@ -1222,7 +1218,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           height: 30,
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                                width: 2, color: Colors.grey),
+                                                width: 1, color: Colors.grey),
                                             image: const DecorationImage(
                                                 image: AssetImage(userIcon)),
                                           ),
@@ -1235,7 +1231,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                             child: Container(
                               decoration: BoxDecoration(
                                   border:
-                                      Border.all(width: 2, color: Colors.white),
+                                      Border.all(width: 1, color: Colors.white),
                                   borderRadius: BorderRadius.circular(40),
                                   color: Colors.black),
                               padding: const EdgeInsets.all(5),
@@ -1277,7 +1273,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  width: 0.5,
+                                                  width: 1,
                                                   color: Colors.white),
                                               image: DecorationImage(
                                                 image: imageProvider,
@@ -1333,7 +1329,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  width: 0.5,
+                                                  width: 1,
                                                   color: Colors.white),
                                             ),
                                             child: CachedNetworkImage(
@@ -1391,19 +1387,19 @@ class Memory_Lane extends GetView<MemoriesController> {
                                             width: 30,
                                             height: 30,
                                             decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                    width: 1,
-                                                    color: Colors.grey),
-                                                image: const DecorationImage(
-                                                  image: AssetImage(userIcon),
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      color: Colors.white60,
-                                                      spreadRadius: 2,
-                                                      blurRadius: 2)
-                                                ]),
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  width: 1, color: Colors.grey),
+                                              image: const DecorationImage(
+                                                image: AssetImage(userIcon),
+                                              ),
+                                              // boxShadow: [
+                                              //   BoxShadow(
+                                              //       color: Colors.white60,
+                                              //       spreadRadius: 2,
+                                              //       blurRadius: 2)
+                                              // ]
+                                            ),
                                           ),
                                   ),
                           // if (restValue > 0)
@@ -1437,7 +1433,7 @@ class Memory_Lane extends GetView<MemoriesController> {
         width: 35,
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(30)),
-            border: Border.all(color: Colors.white, width: 2)),
+            border: Border.all(color: Colors.white, width: 0.5)),
         child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(30)),
             child: CachedNetworkImage(

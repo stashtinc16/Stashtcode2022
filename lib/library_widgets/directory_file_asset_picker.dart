@@ -1358,7 +1358,7 @@ class FileAssetPickerViewerBuilderDelegate
         color: themeData.canvasColor.withOpacity(0.85),
         child: Row(
           children: <Widget>[
-            // const BackButton(),
+            const BackButton(),
             if (!isAppleOS)
               StreamBuilder<int>(
                 initialData: currentIndex,

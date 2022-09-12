@@ -80,7 +80,7 @@ class MemoriesController extends GetxController {
     getMyMemories();
     getSharedMemories();
     getPublishedMemories();
-    getUsers();
+    // getUsers();
   }
 
   void getUsers() {
@@ -98,9 +98,9 @@ class MemoriesController extends GetxController {
       });
       if (!shouldCall) {
         print('shouldCall ===>  $shouldCall ');
-        getMyMemories();
-        getSharedMemories();
-        getPublishedMemories();
+        // getMyMemories();
+        // getSharedMemories();
+        // getPublishedMemories();
         shouldCall = true;
       }
     });
@@ -175,10 +175,7 @@ class MemoriesController extends GetxController {
         .snapshots()
         .listen((value) => {
               sharedMemoriesList.clear(),
-              print(
-                  'aaaa ${value.docs.length} =>  ${value.docChanges.length} =>> ${sharedMemoriesList.length}'),
               value.docs.forEach((element) {
-                print('SharedId ${element.id} => ${element.data().title}');
                 usersRef.doc(element.data().createdBy!).get().then((userValue) {
                   List<ImagesCaption> imagesList = List.empty(growable: true);
                   MemoriesModel memoriesModel = element.data();
@@ -190,6 +187,7 @@ class MemoriesController extends GetxController {
                           memoriesModel.sharedWithCount! + 1;
                     }
                   });
+
                   element.data().imagesCaption!.forEach((innerElement) async {
                     await usersRef
                         .doc(innerElement.userId)

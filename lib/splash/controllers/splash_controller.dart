@@ -15,6 +15,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
+import 'package:stasht/login_signup/controllers/signup_controller.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
 import 'package:stasht/memories/domain/memories_model.dart';
@@ -26,10 +27,12 @@ import 'package:stasht/utils/constants.dart';
 
 import '../../main.dart';
 
+User? firebaseAuth = FirebaseAuth.instance.currentUser;
+
 class SplashController extends GetxController {
-  User? firebaseAuth = FirebaseAuth.instance.currentUser;
+  // User? firebaseAuth = FirebaseAuth.instance.currentUser;
   final facebookAuth = FacebookLogin();
-  bool? _isLogged;
+  // bool? _isLogged;
 
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
   final Connectivity _connectivity = Connectivity();
@@ -179,11 +182,10 @@ class SplashController extends GetxController {
     //       print('onError $onError');
     //     });
   }
-  bool? get isLogged => _isLogged;
 
   Future<void> initDynamicLinks() async {
     dynamicLinks.onLink.listen((dynamicLinkData) {
-      if (firebaseAuth != null || _isLogged!) {
+      if (firebaseAuth != null || isFacebookLogin!) {
         fromShare = true;
 
         print('fromShare splash $fromShare');
@@ -370,9 +372,9 @@ class SplashController extends GetxController {
   handleNavigation(bool fromDeepLink) async {
     firebaseAuth = FirebaseAuth.instance.currentUser;
     Future.delayed(const Duration(milliseconds: 2500), () async {
-      _isLogged = await facebookAuth.accessToken != null;
+      isFacebookLogin = await facebookAuth.accessToken != null;
 
-      if (firebaseAuth != null || _isLogged!) {
+      if (firebaseAuth != null || isFacebookLogin!) {
         print('Inside ');
         String email = "";
         if (firebaseAuth != null) {

@@ -1,3 +1,4 @@
+
 // Copyright 2019 The FlutterCandies author. All rights reserved.
 // Use of this source code is governed by an Apache license that can be found
 // in the LICENSE file.
@@ -908,6 +909,7 @@ class FileAssetPickerBuilder
                   },
                   child: Icon(
                     Icons.keyboard_arrow_down,
+                    
                     size: 20.0,
                     color: Colors.white,
                   ),
@@ -1356,7 +1358,7 @@ class FileAssetPickerViewerBuilderDelegate
         color: themeData.canvasColor.withOpacity(0.85),
         child: Row(
           children: <Widget>[
-            // const BackButton(),
+            const BackButton(),
             if (!isAppleOS)
               StreamBuilder<int>(
                 initialData: currentIndex,
@@ -1559,3 +1561,4 @@ class FileAssetPickerViewerBuilderDelegate
     );
   }
 }
+
