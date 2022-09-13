@@ -166,21 +166,29 @@ class MemoriesController extends GetxController {
   void getSharedMemories() {
     sharedMemoriesList.clear();
 
-    memoriesRef
+    FirebaseFirestore.instance
+        .collection(memoriesCollection)
+        .withConverter<MemoriesModel>(
+          fromFirestore: (snapshots, _) =>
+              MemoriesModel.fromJson(snapshots.data()!),
+          toFirestore: (memories, _) => memories.toJson(),
+        )
         .where('shared_with', arrayContainsAny: [
           {'user_id': userId, 'status': 0},
           {'user_id': userId, 'status': 1}
         ])
         .orderBy('shared_created_at', descending: true)
         .snapshots()
-        .listen((value) => {
+        .listen((sharedValue) => {
+              print('SharedValue ${sharedValue.docs.length}'),
               sharedMemoriesList.clear(),
-              value.docs.forEach((element) {
+              sharedValue.docs.forEach((element) {
                 usersRef.doc(element.data().createdBy!).get().then((userValue) {
                   List<ImagesCaption> imagesList = List.empty(growable: true);
                   MemoriesModel memoriesModel = element.data();
                   memoriesModel.memoryId = element.id;
                   memoriesModel.userModel = userValue.data()!;
+
                   element.data().sharedWith!.forEach((elementShare) {
                     if (elementShare.status == 1) {
                       memoriesModel.sharedWithCount =
@@ -209,35 +217,53 @@ class MemoriesController extends GetxController {
                             print('Exception $e');
                           }
                           print(
-                              'sharedMemoriesList Length ${sharedMemoriesList.length}');
-                          if (sharedMemoriesList.length < value.docs.length) {
+                              'sharedMemoriesListLength ${sharedMemoriesList.length} ${sharedValue.docs.length}');
+                          if (sharedMemoriesList.length <
+                              sharedValue.docs.length) {
                             sharedMemoriesList.add(memoriesModel);
+                            sharedMemoryCount.value = sharedMemoriesList.length;
                             print(
-                                'sharedMemoriesList => ${element.data().title}');
+                                'sharedMemoriesList =>   ${element.id} => ${element.data().title}');
+                            update();
                           }
 
                           print(
-                              'SharedMemList ${sharedMemoriesList.length} => ${value.docs.length}');
-                          if (sharedMemoriesList.length == value.docs.length) {
-                            sharedMemoryCount.value = sharedMemoriesList.length;
+                              'SharedMemList ${sharedMemoriesList.length} => ${sharedValue.docs.length}');
+                          if (sharedMemoriesList.length ==
+                              sharedValue.docs.length) {
+                            if (!myMemoriesExpand.value) {
+                              expandShareMemory = true;
+                              sharedMemoriesExpand.value = true;
+                            }
                             print(
                                 'sharedMemoriesList ==> ${element.data().title}');
 
                             update();
                           }
                         }
+                      } else {
+                        print('isNull');
                       }
                     });
                   });
                 });
               }),
-              if (value.docs.isEmpty)
+              if (sharedMemoriesList.isEmpty)
+                {
+                  sharedMemoryCount.value = 0,
+                  sharedMemoriesExpand.value = false,
+                  expandShareMemory = false
+                },
+              if (sharedValue.docs.isEmpty)
                 {
                   sharedMemoriesList.clear(),
                   sharedMemoryCount.value = 0,
                   sharedMemoriesExpand.value = false,
+                  expandShareMemory = false,
                   update()
                 },
+              print(
+                  'sharedMemoriesExpand  $expandShareMemory <==> ${sharedMemoriesExpand.value}')
             })
         .onError((error, stackTrace) => {print('onError $error')});
   }
@@ -254,6 +280,7 @@ class MemoriesController extends GetxController {
           update(),
           if (memoriesModels.imagesCaption!.isEmpty)
             {
+              deleteMemory(memoriesModel),
               Get.back(),
             }
         });
@@ -261,10 +288,10 @@ class MemoriesController extends GetxController {
 
   // delete a memory
   void deleteMemory(MemoriesModel memoriesModel) {
-    memoriesRef
-        .doc(memoriesModel.memoryId)
-        .delete()
-        .then((value) => memoriesList.remove(memoriesModel));
+    memoriesRef.doc(memoriesModel.memoryId).delete().then((value) => {
+          memoriesList.remove(memoriesModel),
+          if (memoriesList.isEmpty) {myMemoriesExpand.value = false}
+        });
   }
 
   // update memory invite status
@@ -316,6 +343,7 @@ class MemoriesController extends GetxController {
   void getMyMemoryData(memoryId) {
     print("memoryId......${memoryId}");
     memoriesRef.doc(memoryId).snapshots().listen((event) {
+      print('DocLength ${event.data()}');
       List<SharedWith> shareWithList = List.empty(growable: true);
       if (event.data() != null && event.data()!.sharedWith != null) {
         for (var element in event.data()!.sharedWith!) {
@@ -333,6 +361,9 @@ class MemoriesController extends GetxController {
 
       List<ImagesCaption> captionList = List.empty(growable: true);
       if (event.data() != null) {
+        if (event.data()!.imagesCaption!.isEmpty) {
+          Get.back();
+        }
         for (var element in event.data()!.imagesCaption!) {
           usersRef.doc(element.userId).get().then((userValue) {
             ImagesCaption imagesCaption = element;
@@ -465,7 +496,7 @@ class MemoriesController extends GetxController {
       } else {
         myMemoriesExpand.value = true;
       }
-
+      print('memoriesList ${memoriesList.length}');
       update();
     }
   }

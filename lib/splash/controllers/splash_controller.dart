@@ -257,10 +257,11 @@ class SplashController extends GetxController {
                   else
                     {
                       expandShareMemory = true,
-                      // sharedMemoryCount.value = sharedMemoryCount.value + 1,
+                      fromShare = true,
                       memoryController.updateJoinStatus(
                           1, mainIndex, shareIndex, memoriesModel),
                       memoryController.acceptInviteNotification(memoriesModel),
+                      print('sharedMemoriesExpand ==> $expandShareMemory ')
                     },
                   linkRef.doc(value.docs.first.id).update(
                       {"link_used": true, "used_by": userId}).then((value) {
