@@ -92,44 +92,46 @@ class CommentsController extends GetxController {
       for (var element in event.docs) {
         print(
             'elementId ${element.id} => ${event.docs[event.docs.length - 1].id}');
-        await usersRef.doc(element.data().userId).get().then((userValue) {
-          CommentsModel commentsModel = CommentsModel();
-          commentsModel = element.data();
-          commentsModel.commentId = element.id;
-          commentsModel.userModel = userValue.data()!;
+        if (element.data().userId!.isNotEmpty) {
+          await usersRef.doc(element.data().userId).get().then((userValue) {
+            CommentsModel commentsModel = CommentsModel();
+            commentsModel = element.data();
+            commentsModel.commentId = element.id;
+            commentsModel.userModel = userValue.data()!;
 
-          _commentList.add(commentsModel);
-          print(
-              'element.id ${element.id} => ${event.docs[event.docs.length - 1].id}');
-          // streamController.sink.add(commentsModel);
-          if (element.id == event.docs[event.docs.length - 1].id) {
-            commentsList.clear();
-            commentsList.value = _commentList;
-            commentsList.sort((first, second) {
-              return first.createdAt!.compareTo(second.createdAt!);
-            });
-            print('CommentList ${commentsList.length}');
-            memoryRef.doc(commentsModel.memoryId).get().then((value) {
-              MemoriesModel memoriesModel = value.data()!;
+            _commentList.add(commentsModel);
+            print(
+                'element.id ${element.id} => ${event.docs[event.docs.length - 1].id}');
+            // streamController.sink.add(commentsModel);
+            if (element.id == event.docs[event.docs.length - 1].id) {
+              commentsList.clear();
+              commentsList.value = _commentList;
+              commentsList.sort((first, second) {
+                return first.createdAt!.compareTo(second.createdAt!);
+              });
+              print('CommentList ${commentsList.length}');
+              memoryRef.doc(commentsModel.memoryId).get().then((value) {
+                MemoriesModel memoriesModel = value.data()!;
 
-              outerLoop:
-              for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
-                if (memoriesModel.imagesCaption![i].imageId == imageId) {
-                  memoriesModel.imagesCaption![i].commentCount =
-                      commentsList.length;
+                outerLoop:
+                for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
+                  if (memoriesModel.imagesCaption![i].imageId == imageId) {
+                    memoriesModel.imagesCaption![i].commentCount =
+                        commentsList.length;
 
-                  memoryRef
-                      .doc(commentsModel.memoryId)
-                      .set(memoriesModel)
-                      .then((value) =>
-                          {print('Comment Count updated  '), update()})
-                      .onError((error, stackTrace) => {});
-                  break outerLoop;
+                    memoryRef
+                        .doc(commentsModel.memoryId)
+                        .set(memoriesModel)
+                        .then((value) =>
+                            {print('Comment Count updated  '), update()})
+                        .onError((error, stackTrace) => {});
+                    break outerLoop;
+                  }
                 }
-              }
-            });
-          }
-        });
+              });
+            }
+          });
+        }
       }
     });
   }
@@ -155,26 +157,28 @@ class CommentsController extends GetxController {
       // here count is a field name in firestore database
 
       for (var element in event.docChanges) {
-        usersRef.doc(element.doc.data()!.userId!).get().then((userValue) {
-          CommentsModel commentsModel = CommentsModel();
-          commentsModel = element.doc.data()!;
-          commentsModel.commentId = element.doc.id;
-          commentsModel.userModel = userValue.data()!;
+        if (element.doc.data()!.userId!.isNotEmpty) {
+          usersRef.doc(element.doc.data()!.userId!).get().then((userValue) {
+            CommentsModel commentsModel = CommentsModel();
+            commentsModel = element.doc.data()!;
+            commentsModel.commentId = element.doc.id;
+            commentsModel.userModel = userValue.data()!;
 
-          commentsList.value.add(commentsModel);
-          print(
-              'commentsList.length ${commentsList.length} => ${event.docs.length}');
-          if (commentsList.length == event.docs.length) {
-            commentsList.sort((first, second) {
-              return first.createdAt!.compareTo(second.createdAt!);
-            });
-            update();
-            Future.delayed(Duration(seconds: 1), (() {
-              scrollDown();
-              setCommentCount();
-            }));
-          }
-        });
+            commentsList.value.add(commentsModel);
+            print(
+                'commentsList.length ${commentsList.length} => ${event.docs.length}');
+            if (commentsList.length == event.docs.length) {
+              commentsList.sort((first, second) {
+                return first.createdAt!.compareTo(second.createdAt!);
+              });
+              update();
+              Future.delayed(Duration(seconds: 1), (() {
+                scrollDown();
+                setCommentCount();
+              }));
+            }
+          });
+        }
       }
     }).onDone(() {
       print('onDone ');
@@ -342,13 +346,15 @@ class CommentsController extends GetxController {
     notificationsRef
         .add(notificationsModel)
         .then((value) => print('SaveNotification $value'));
-    usersRef.doc(receivedId).get().then((value) => {
-          usersRef.doc(receivedId).update({
-            "notification_count": value.data()!.notificationCount != null
-                ? value.data()!.notificationCount! + 1
-                : 1
-          })
-        });
+    if (receivedId.isNotEmpty) {
+      usersRef.doc(receivedId).get().then((value) => {
+            usersRef.doc(receivedId).update({
+              "notification_count": value.data()!.notificationCount != null
+                  ? value.data()!.notificationCount! + 1
+                  : 1
+            })
+          });
+    }
   }
 
   void addCommentCountToMemories(String memoryId, MemoriesModel memoriesModel) {

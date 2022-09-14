@@ -42,6 +42,7 @@ class Memories extends GetView<MemoriesController> {
                   },
                 ),
                 body: SingleChildScrollView(
+                  
                   child: Column(
                     children: [
                       Obx(
@@ -842,6 +843,7 @@ class Memories extends GetView<MemoriesController> {
       itemCount: memoriesList.length,
       shrinkWrap: true,
       primary: false,
+      addAutomaticKeepAlives: true,
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
         return InkWell(
