@@ -641,7 +641,7 @@ class MemoriesController extends GetxController {
             buttonColor: AppColors.primaryColor,
             backgroundColor: Colors.white,
             accentColor: AppColors.primaryColor,
-            textSelectionColor: Colors.black,
+            // textSelectionColor: Colors.black,
             bottomAppBarColor: Colors.white,
             primaryColor: Colors.white,
           ),

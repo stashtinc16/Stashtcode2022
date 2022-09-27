@@ -185,6 +185,7 @@ class MemoriesController extends GetxController {
               print('SharedValue ${sharedValue.docs.length}'),
               // sharedMemoriesList.clear(),
               sharedValue.docChanges.forEach((element) {
+                sharedMemoryCount.value = 0;
                 print(
                     'ShareMemoryTitleAndId ${element.doc.data()!.title} => ${element.doc.id}');
                 usersRef
@@ -239,17 +240,47 @@ class MemoriesController extends GetxController {
                             if (notificationValue.isNotEmpty) {
                               var checkDoc = await memoriesRef
                                   .doc(memoriesModel.memoryId)
-                                  .get();
-                              if (checkDoc.exists) {
-                                sharedMemoriesList[index] = memoriesModel;
-                              } else {
-                                sharedMemoriesList.removeAt(index);
-                              }
+                                  .get()
+                                  .then((valueShare) {
+                                if (valueShare.exists) {
+                                  bool hasValue = false;
+
+                                  for (int j = 0;
+                                      j < valueShare.data()!.sharedWith!.length;
+                                      j++) {
+                                    if (valueShare
+                                            .data()!
+                                            .sharedWith![j]
+                                            .userId ==
+                                        userId) {
+                                      hasValue = true;
+                                      print('hasValue $hasValue');
+                                      break;
+                                    }
+                                  }
+                                  print('sharedObj $hasValue');
+                                  if (hasValue) {
+                                    sharedMemoriesList[index] = memoriesModel;
+                                  } else {
+                                    sharedMemoriesList.removeAt(index);
+                                  }
+
+                                  print('Shared ${memoriesModel.sharedWith} ');
+                                } else {
+                                  print(
+                                      'Shared Removed${memoriesModel.sharedWith} ');
+                                  sharedMemoriesList.removeAt(index);
+                                }
+                              });
                             } else {
+                              print('Shared Added ${memoriesModel.title} ');
                               sharedMemoriesList.value.add(memoriesModel);
                             }
 
                             sharedMemoryCount.value = sharedMemoriesList.length;
+                            // Get.snackbar("title",
+                            //     "${memoriesModel.title} ${sharedMemoriesList.length} => ${sharedMemoryCount.value}");
+
                             print(
                                 'sharedMemoriesList =>   ${element.doc.id} => ${element.doc.data()!.title}');
                             update();
@@ -261,7 +292,6 @@ class MemoriesController extends GetxController {
                           }
                           print(
                               'sharedMemoriesList ==> ${element.doc.data()!.title}');
-
                           update();
                         }
                       } else {
@@ -674,7 +704,7 @@ class MemoriesController extends GetxController {
             buttonColor: AppColors.primaryColor,
             backgroundColor: Colors.white,
             accentColor: AppColors.primaryColor,
-            textSelectionColor: Colors.black,
+            // textSelectionColor: Colors.black,
             bottomAppBarColor: Colors.white,
             primaryColor: Colors.white,
           ),
@@ -970,24 +1000,17 @@ class MemoriesController extends GetxController {
   }
 
   // add New photo Notification
-  Future<void> addNewPhotoNotification(MemoriesModel memoriesModel) async {
-    var receiverToken = "";
-    var db = await FirebaseFirestore.instance
-        .collection(userCollection)
-        .withConverter<UserModel>(
-          fromFirestore: (snapshots, _) =>
-              UserModel.fromJson(snapshots.data()!),
-          toFirestore: (users, _) => users.toJson(),
-        )
-        .doc(memoriesModel.createdBy)
-        .get();
-    receiverToken = db.data()!.deviceToken!;
+  Future<void> addNewPhotoNotification(
+      MemoriesModel memoriesModel, var receiverTokens, List userIds) async {
+    String receiverToken = receiverTokens[0];
+
+    print('receiverToken $receiverTokens');
     String title = "Photo Added";
     String description =
         "$userName  has added a new photo to ${memoriesModel.title}";
     // String receiverToken = globalNotificationToken;
     var dataPayload = jsonEncode({
-      'to': receiverToken,
+      'registration_ids': receiverTokens,
       'data': {
         "type": "photo-add",
         "priority": "high",
@@ -1005,7 +1028,9 @@ class MemoriesController extends GetxController {
       },
     });
     sendPushMessage(receiverToken, dataPayload);
-    saveAddPhotoNotificationData(memoriesModel.createdBy!, memoriesModel);
+    for (int i = 0; i < userIds.length; i++) {
+      saveAddPhotoNotificationData(userIds[i], memoriesModel);
+    }
   }
 
   // Save Add Photo Notification data in DB
@@ -1395,6 +1420,8 @@ class MemoriesController extends GetxController {
                     userId: userId,
                     imageId:
                         Timestamp.now().millisecondsSinceEpoch.toString())),
+                print(
+                    'imageCaptionUrls ${imageCaptionUrls.length} => ${resultgetList.length}'),
                 if (imageCaptionUrls.length < resultgetList.length)
                   {
                     uploadCount += 1,
@@ -1409,11 +1436,10 @@ class MemoriesController extends GetxController {
                     else
                       {
                         updateMemory(memoryId, memoriesModel),
-                        if (memoriesModel.createdBy != userId)
-                          {
-                            print("Photo add"),
-                            addNewPhotoNotification(memoriesModel)
-                          }
+                        print(
+                            'memoriesModel.createdBy ${memoriesModel.createdBy} => $userId'),
+                        print("Photo add"),
+                        fetchUserTokenForAddPhotos(memoriesModel)
                       }
                   }
               })
@@ -1421,61 +1447,6 @@ class MemoriesController extends GetxController {
 
     return Future.value(uploadTask);
   }
-
-  ///
-  // Future<UploadTask?> uploadFile(File file, String fileName, String memoryId,
-  //     MemoriesModel? memoriesModel) async {
-  //   UploadTask uploadTask;
-  //   // Create a Reference to the file
-  //   Reference ref =
-  //       FirebaseStorage.instance.ref().child('memories').child('/$fileName');
-
-  //   final metadata = SettableMetadata(
-  //     contentType: 'image/jpeg',
-  //     customMetadata: {
-  //       'picked-file-path': file.path,
-
-  //       // create date and send
-  //     },
-  //   );
-
-  //   uploadTask = ref.putFile(io.File(file.path), metadata);
-  //   uploadTask.whenComplete(() => {
-  //         uploadTask.snapshot.ref.getDownloadURL().then((value) => {
-  //               imageCaptionUrls.add(ImagesCaption(
-  //                   caption: "",
-  //                   image: value,
-  //                   commentCount: 0,
-  //                   createdAt: Timestamp.now(),
-  //                   userId: userId,
-  //                   imageId:
-  //                       Timestamp.now().millisecondsSinceEpoch.toString())),
-  //               if (imageCaptionUrls.length < resultList.length)
-  //                 {
-  //                   uploadCount += 1,
-  //                   uploadImagesToMemories(
-  //                       uploadCount, memoryId, memoriesModel),
-  //                 }
-  //               else
-  //                 {
-  //                   EasyLoading.dismiss(),
-  //                   if (memoriesModel == null)
-  //                     {createMemories()}
-  //                   else
-  //                     {
-  //                       updateMemory(memoryId, memoriesModel),
-  //                       if (memoriesModel.createdBy != userId)
-  //                         {
-  //                           print("Photo add"),
-  //                           addNewPhotoNotification(memoriesModel)
-  //                         }
-  //                     }
-  //                 }
-  //             })
-  //       });
-
-  //   return Future.value(uploadTask);
-  // }
 
 // Update or Add images to existing memory
   void updateMemory(String memoryId, MemoriesModel? memoriesModel) {
@@ -1490,21 +1461,18 @@ class MemoriesController extends GetxController {
       } catch (ex) {
         print('upload images exception $ex');
       }
-      memoriesRef
-          .doc(memoryId)
-          .update(model.toJson())
-          .then((value) => {
-                scrollController.animateTo(
-                  0.0,
-                  curve: Curves.easeOut,
-                  duration: const Duration(milliseconds: 300),
-                ),
-                update(),
-                if (model.imagesCaption!.isEmpty)
-                  {
-                    Get.back(),
-                  }
-              });
+      memoriesRef.doc(memoryId).update(model.toJson()).then((value) => {
+            scrollController.animateTo(
+              0.0,
+              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 300),
+            ),
+            update(),
+            if (model.imagesCaption!.isEmpty)
+              {
+                Get.back(),
+              }
+          });
     });
   }
 
@@ -1563,7 +1531,7 @@ class MemoriesController extends GetxController {
     MemoriesModel memoriesModel = MemoriesModel();
     memoriesModel = model;
 
-    memoriesModel.imagesCaption![captionIndex].updatedAt = Timestamp.now();
+    // memoriesModel.imagesCaption![captionIndex].updatedAt = Timestamp.now();
     memoriesModel.imagesCaption![captionIndex].caption = caption;
     EasyLoading.show(status: 'Processing');
     memoriesRef
@@ -1590,5 +1558,81 @@ class MemoriesController extends GetxController {
               // sharedMemoriesList.removeAt(mainIndex),
               update()
             });
+  }
+
+  fetchUserTokenForAddPhotos(MemoriesModel memoriesModel) async {
+    if (memoriesModel.createdBy == userId) {
+      var receiverTokens = [];
+      var userIds = [];
+      //send to shared
+
+      var sharedUser =
+          memoriesModel.sharedWith!.lastWhere((element) => element.status == 1);
+      for (int i = 0; i < memoriesModel.sharedWith!.length; i++) {
+        if (memoriesModel.sharedWith![i].status == 1) {
+          var db = await FirebaseFirestore.instance
+              .collection(userCollection)
+              .withConverter<UserModel>(
+                fromFirestore: (snapshots, _) =>
+                    UserModel.fromJson(snapshots.data()!),
+                toFirestore: (users, _) => users.toJson(),
+              )
+              .doc(memoriesModel.sharedWith![i].userId)
+              .get();
+          receiverTokens.add(db.data()!.deviceToken!);
+          userIds.add(db.id);
+          if (sharedUser.userId == memoriesModel.sharedWith![i].userId) {
+            addNewPhotoNotification(memoriesModel, receiverTokens, userIds);
+          }
+        }
+      }
+    } else {
+      var receiverTokens = [];
+      var userIds = [];
+      // fetch shared usrs and exclude the user uploading pic
+      //and add created by user id
+      var db = await FirebaseFirestore.instance
+          .collection(userCollection)
+          .withConverter<UserModel>(
+            fromFirestore: (snapshots, _) =>
+                UserModel.fromJson(snapshots.data()!),
+            toFirestore: (users, _) => users.toJson(),
+          )
+          .doc(memoriesModel.createdBy)
+          .get();
+      receiverTokens.add(db.data()!.deviceToken);
+      userIds.add(db.id);
+      addNewPhotoNotification(memoriesModel, receiverTokens, userIds);
+
+      var sharedUser =
+          memoriesModel.sharedWith!.lastWhere((element) => element.status == 1);
+
+      ///2
+      //1
+      //3
+      //2
+      for (int i = 0; i < memoriesModel.sharedWith!.length; i++) {
+        if (memoriesModel.sharedWith![i].userId != userId) {
+          if (memoriesModel.sharedWith![i].status == 1) {
+            var db = await FirebaseFirestore.instance
+                .collection(userCollection)
+                .withConverter<UserModel>(
+                  fromFirestore: (snapshots, _) =>
+                      UserModel.fromJson(snapshots.data()!),
+                  toFirestore: (users, _) => users.toJson(),
+                )
+                .doc(memoriesModel.sharedWith![i].userId)
+                .get()
+                .then((value) {
+              receiverTokens.add(value.data()!.deviceToken!);
+              userIds.add(value.id);
+            });
+            print('InsideLoop $i');
+          }
+        }
+      }
+      print('OutsideLoop');
+      addNewPhotoNotification(memoriesModel, receiverTokens, userIds);
+    }
   }
 }

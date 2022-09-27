@@ -226,11 +226,13 @@ class SplashController extends GetxController {
         if (!value.docs.first.data().linkUsed!) {
           print('DeepLink=> Link is saved but not used');
           checkMemoryForUser(memoryId);
+         
         } else {
           // Link is used by other user
           print('DeepLink=> Link is used');
           EasyLoading.dismiss();
           Get.snackbar("Error", "Link has expired", colorText: Colors.red);
+         
           handleNavigation(false);
         }
       }
