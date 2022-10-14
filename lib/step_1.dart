@@ -9,6 +9,7 @@ import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
+import 'package:stasht/utils/constants.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
@@ -156,8 +157,7 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                             InkWell(
                                               onTap: () {
                                                 if (argument == "yes") {
-                                                  Get.offNamed(
-                                                      AppRoutes.memories);
+                                                 goToMemories(false);
                                                 } else {
                                                   Get.back();
                                                   // controller.titleController.clear();
@@ -242,7 +242,7 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                   if (argument == "yes")
                                     InkWell(
                                       onTap: () {
-                                        Get.offNamed(AppRoutes.memories);
+                                        goToMemories(false);
                                       },
                                       child: const Padding(
                                         padding: EdgeInsets.all(8.0),
@@ -264,78 +264,72 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                   )
                                 ],
                               )
-                            :  Container(
-                                    padding: const EdgeInsets.all(25),
-                                    height: MediaQuery.of(context).size.height,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          controller.permissionStatus.value ==
-                                                      PermissionStatus
-                                                          .permanentlyDenied ||
-                                                  controller.permissionStatus
-                                                          .value ==
-                                                      PermissionStatus.limited
-                                              ? 'Please grant Photos permission from settings to create memory'
-                                              : 'Please grant Photos permission to create memory',
-                                          style: const TextStyle(
-                                              fontSize: 21,
-                                              color: Colors.black,
-                                              fontFamily: gibsonSemiBold),
-                                        ),
-                                        const SizedBox(
-                                          height: 40,
-                                        ),
-                                        InkWell(
-                                          onTap: () async {
-                                            print(
-                                                'controller.permissionStatus.value  ${controller.permissionStatus.value}');
-                                            if (controller.permissionStatus
-                                                        .value ==
-                                                    PermissionStatus.granted &&
-                                                controller.permissionStatus
-                                                        .value ==
-                                                    PermissionStatus.limited) {
-                                              print(" PermissionStatusGranted");
+                            : Container(
+                                padding: const EdgeInsets.all(25),
+                                height: MediaQuery.of(context).size.height,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      controller.permissionStatus.value ==
+                                                  PermissionStatus
+                                                      .permanentlyDenied ||
                                               controller
-                                                  .promptPermissionSetting();
-                                            } else {
-                                              print(" PermissionStatusDenied");
-                                              // var object = await AppSettings.openAppSettings();
-                                              AppSettings.openAppSettings();
-                                              controller
-                                                  .promptPermissionSetting();
-                                            }
-                                          },
-                                          child: Container(
-                                            height: 42,
-                                            width: 200,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                                color: AppColors.primaryColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(22)),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: const [
-                                                Text(
-                                                  "Allow permission",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontFamily:
-                                                          gibsonSemiBold),
-                                                ),
-                                              ],
+                                                      .permissionStatus.value ==
+                                                  PermissionStatus.limited
+                                          ? 'Please grant Photos permission from settings to create memory'
+                                          : 'Please grant Photos permission to create memory',
+                                      style: const TextStyle(
+                                          fontSize: 21,
+                                          color: Colors.black,
+                                          fontFamily: gibsonSemiBold),
+                                    ),
+                                    const SizedBox(
+                                      height: 40,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        print(
+                                            'controller.permissionStatus.value  ${controller.permissionStatus.value}');
+                                        if (controller.permissionStatus.value ==
+                                                PermissionStatus.granted &&
+                                            controller.permissionStatus.value ==
+                                                PermissionStatus.limited) {
+                                          print(" PermissionStatusGranted");
+                                          controller.promptPermissionSetting();
+                                        } else {
+                                          print(" PermissionStatusDenied");
+                                          // var object = await AppSettings.openAppSettings();
+                                          AppSettings.openAppSettings();
+                                          controller.promptPermissionSetting();
+                                        }
+                                      },
+                                      child: Container(
+                                        height: 42,
+                                        width: 200,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            color: AppColors.primaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(22)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Text(
+                                              "Allow permission",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontFamily: gibsonSemiBold),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      ],
-                                    ))),
+                                      ),
+                                    ),
+                                  ],
+                                ))),
                   ),
                 ],
               ),

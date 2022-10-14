@@ -6,18 +6,26 @@ import 'package:stasht/app_bar.dart';
 import 'package:stasht/memories/controllers/memories_controller.dart';
 import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/routes/app_routes.dart';
+import 'package:stasht/splash/controllers/splash_controller.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:stasht/utils/constants.dart';
 
 class Memories extends GetView<MemoriesController> {
   bool isCheck = false;
+  var splashController = Get.isRegistered<SplashController>()
+      ? Get.find<SplashController>()
+      : Get.put(SplashController());
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     // Future.delayed(Duration.zero, () {
     print('FutureDelay $fromShare');
+    print('Memory ${Get.arguments["fromSignupAndShare"]}');
+    if (Get.arguments['fromSignupAndShare']) {
+      splashController.checkValidLink(memoryLink!, memoryId);
+    }
 
     return GetBuilder(
         builder: (MemoriesController controller) => Container(
@@ -42,7 +50,6 @@ class Memories extends GetView<MemoriesController> {
                   },
                 ),
                 body: SingleChildScrollView(
-                  
                   child: Column(
                     children: [
                       Obx(

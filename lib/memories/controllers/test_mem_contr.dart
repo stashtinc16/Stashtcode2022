@@ -1516,7 +1516,7 @@ class MemoriesController extends GetxController {
         .then((value) => {
               EasyLoading.dismiss(),
               Get.snackbar('Success', 'Memory folder created'),
-              Get.offAllNamed(AppRoutes.memories)
+             goToMemoriesAndClearAll()
             })
         .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }

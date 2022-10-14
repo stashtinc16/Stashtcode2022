@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:stasht/comments/controller/comment_controller.dart';
 import 'package:stasht/utils/assets_images.dart';
 import 'package:intl/intl.dart';
+import 'package:stasht/utils/constants.dart';
 
 import '../../routes/app_routes.dart';
 
@@ -26,7 +27,7 @@ class Comments extends GetView<CommentsController> {
               onPressed: () {
                 if (Get.arguments != null && Get.arguments["fromNot"]) {
                   print("asfsdfdsfdsf");
-                  Get.offNamed(AppRoutes.memories);
+                   goToMemories(false);
                   // Get.back();
                 } else {
                   print("asfdsf");
@@ -234,7 +235,7 @@ class Comments extends GetView<CommentsController> {
     if (Platform.isAndroid) {
       if (Get.arguments != null && Get.arguments["fromNot"]) {
         print("asfsdfdsfdsf");
-        Get.offNamed(AppRoutes.memories);
+         goToMemories(false);
         // Get.back();
       } else {
         print("asfdsf");

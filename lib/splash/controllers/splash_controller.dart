@@ -185,18 +185,23 @@ class SplashController extends GetxController {
 
   Future<void> initDynamicLinks() async {
     dynamicLinks.onLink.listen((dynamicLinkData) {
+      var link = dynamicLinkData.link.toString().split("memory_id=");
+      var memory = link[1].split("&");
+      var timeStamp = dynamicLinkData.link.toString().split("timestamp=");
+      memoryLink = dynamicLinkData.link;
+      memoryId = memory[0];
+
       if (firebaseAuth != null || isFacebookLogin!) {
         fromShare = true;
 
         print('fromShare splash $fromShare');
         print('dynamicLinkData $dynamicLinkData');
-        var link = dynamicLinkData.link.toString().split("memory_id=");
-        var memory = link[1].split("&");
-        var timeStamp = dynamicLinkData.link.toString().split("timestamp=");
         EasyLoading.show(status: 'Please wait.. we are fetching memory');
         checkValidLink(dynamicLinkData.link, memory[0]);
       } else {
-        handleNavigation(false);
+        fromShare = true;
+        print('checkValidLink ');
+        handleNavigation(true);
       }
     }).onError((error) {
       print('onErro $error');
@@ -226,13 +231,12 @@ class SplashController extends GetxController {
         if (!value.docs.first.data().linkUsed!) {
           print('DeepLink=> Link is saved but not used');
           checkMemoryForUser(memoryId);
-         
         } else {
           // Link is used by other user
           print('DeepLink=> Link is used');
           EasyLoading.dismiss();
           Get.snackbar("Error", "Link has expired", colorText: Colors.red);
-         
+
           handleNavigation(false);
         }
       }
@@ -373,6 +377,7 @@ class SplashController extends GetxController {
   }
 
   handleNavigation(bool fromDeepLink) async {
+    print('FromShare $fromDeepLink');
     firebaseAuth = FirebaseAuth.instance.currentUser;
     Future.delayed(const Duration(milliseconds: 2500), () async {
       isFacebookLogin = await facebookAuth.accessToken != null;
@@ -383,12 +388,13 @@ class SplashController extends GetxController {
         if (firebaseAuth != null) {
           email = firebaseAuth!.email!;
           isSocailUser = false;
-          goToMemories(email, fromDeepLink);
+          goToMemoriesFunc(email, fromDeepLink);
         } else {
           isSocailUser = true;
           facebookAuth
               .getUserProfile()
               .then((value) => print('UserProfile $value'));
+
           facebookAuth.getUserEmail().then((value) => {
                 if (value == null)
                   {
@@ -400,12 +406,13 @@ class SplashController extends GetxController {
                   {
                     email = value,
                     print('Inside_3'),
-                    goToMemories(email, fromDeepLink)
+                    goToMemoriesFunc(email, fromDeepLink)
                   }
               });
         }
       } else {
-        print('InSide_1 ');
+        EasyLoading.dismiss();
+        print('GoToSignup $fromDeepLink');
         Get.offNamed(AppRoutes.signup);
       }
       // Navigator.pushReplacement(
@@ -414,7 +421,7 @@ class SplashController extends GetxController {
   }
 
   // redirect user into app , if already logged in
-  void goToMemories(String email, bool fromDeepLink) {
+  void goToMemoriesFunc(String email, bool fromDeepLink) {
     print('Inside_5 $email');
     usersRef
         .where("email", isEqualTo: email)
@@ -423,7 +430,6 @@ class SplashController extends GetxController {
               if (value.docs.isNotEmpty)
                 {
                   value.docs.forEach((element) => {
-                        print('Inside_6 ${element.data().userName}'),
                         saveSession(
                             element.id,
                             element.data().displayName!,
@@ -432,8 +438,6 @@ class SplashController extends GetxController {
                             element.data().notificationCount != null
                                 ? element.data().notificationCount!
                                 : 0),
-                        print(
-                            'fromDeepLink $fromDeepLink $globalShareMemoryModel'),
                         EasyLoading.dismiss(),
                         if (fromDeepLink)
                           {
@@ -443,8 +447,9 @@ class SplashController extends GetxController {
                           }
                         else
                           {
-                            Get.offNamed(AppRoutes.memories,
-                                arguments: {"fromDeepLink": fromDeepLink})
+                            goToMemories(fromDeepLink),
+                            // Get.offNamed(AppRoutes.memories,
+                            //     arguments: {"fromDeepLink": fromDeepLink})
                           }
                       })
                 }
@@ -455,13 +460,13 @@ class SplashController extends GetxController {
   }
 
   void showInviteJoinPopUp(MemoriesModel memoriesModel) {
-    print('ShowJoinPopUp');
     int shareIndex = 0;
     for (int i = 0; i < memoriesModel.sharedWith!.length; i++) {
       if (memoriesModel.sharedWith![i].userId == userId) {
         shareIndex = i;
       }
     }
+
     showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: false,

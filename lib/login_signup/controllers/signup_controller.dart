@@ -46,6 +46,7 @@ class SignupController extends GetxController {
         fromFirestore: (snapshots, _) => UserModel.fromJson(snapshots.data()!),
         toFirestore: (movie, _) => movie.toJson(),
       );
+
   @override
   void onInit() {
     super.onInit();
@@ -53,7 +54,7 @@ class SignupController extends GetxController {
   }
 
   void checkEmailExists() {
-    print('checkEmailExists');
+    print('checkEmailExists $fromShare');
     usersRef
         .where("email", isEqualTo: emailController.value.text.toString().trim())
         .get()
@@ -124,6 +125,7 @@ class SignupController extends GetxController {
                         usersRef
                             .doc(value.docs[0].id)
                             .update({"device_token": globalNotificationToken}),
+                            
                         // },
                         saveSession(
                             value.docs[0].id,
@@ -133,7 +135,7 @@ class SignupController extends GetxController {
                             value.docs[0].data().notificationCount != null
                                 ? value.docs[0].data().notificationCount!
                                 : 0),
-                        Get.offNamed(AppRoutes.memories)
+                        goToMemories(fromShare)
                       }
                     else
                       {
@@ -190,7 +192,10 @@ class SignupController extends GetxController {
           clearTexts(),
           Get.snackbar('Success', "User registered",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
-          Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
+          if (fromShare)
+            {goToMemories(true)}
+          else
+            {Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")}
         });
   }
 
@@ -259,7 +264,7 @@ class SignupController extends GetxController {
                 Get.snackbar('Success', "User logged-in!",
                     snackPosition: SnackPosition.BOTTOM,
                     colorText: Colors.white),
-                Get.offNamed(AppRoutes.memories)
+                goToMemories(fromShare)
               }
           });
     } else {
@@ -286,6 +291,7 @@ class SignupController extends GetxController {
           saveSession(value.id, name, email!, profileImage!, 0),
           Get.snackbar('Success', "User logged-in!",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
+          print('This Is login'),
           Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
         });
   }

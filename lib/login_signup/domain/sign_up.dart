@@ -32,7 +32,7 @@ class Signup extends GetView<SignupController> {
           ],
         )),
         child: Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25,top: 25),
+            padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
             child: Form(
                 key: controller.formkey,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -48,7 +48,6 @@ class Signup extends GetView<SignupController> {
                         ),
                         flex: 1,
                       ),
-
                       Expanded(
                         flex: 3,
                         child: SingleChildScrollView(
@@ -64,7 +63,6 @@ class Signup extends GetView<SignupController> {
                                   ),
                                 ),
                               ),
-
                               const SizedBox(height: 15),
                               MaterialButton(
                                 onPressed: () {
@@ -103,8 +101,7 @@ class Signup extends GetView<SignupController> {
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              Row(
-                                  children: const <Widget>[
+                              Row(children: const <Widget>[
                                 Expanded(
                                     child: Divider(
                                   height: 1,
@@ -176,7 +173,8 @@ class Signup extends GetView<SignupController> {
                                 // padding: const EdgeInsets.only(bottom: 10),
                                 child: Obx(
                                   () => TextFormField(
-                                    controller: controller.emailController.value,
+                                    controller:
+                                        controller.emailController.value,
                                     textInputAction: TextInputAction.next,
                                     keyboardType: TextInputType.emailAddress,
                                     decoration: const InputDecoration(
@@ -213,9 +211,9 @@ class Signup extends GetView<SignupController> {
                               Container(
                                   decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.only(
-                                        // bottomLeft: Radius.circular(11.0),
-                                        // bottomRight: Radius.circular(11.0),
-                                      ),
+                                          // bottomLeft: Radius.circular(11.0),
+                                          // bottomRight: Radius.circular(11.0),
+                                          ),
                                       color: Colors.black.withOpacity(0.18)),
                                   // padding: const EdgeInsets.only(bottom: 10),
                                   child: Obx(
@@ -365,7 +363,7 @@ class Signup extends GetView<SignupController> {
                               InkWell(
                                 onTap: () async {
                                   var result =
-                                      await Get.toNamed(AppRoutes.signIn);
+                                      await Get.toNamed(AppRoutes.signIn,arguments: {"fromLink":fromShare});
                                   if (result != null) {
                                     controller.emailController.value.text =
                                         result["email"];

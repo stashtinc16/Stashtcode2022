@@ -21,7 +21,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
-import 'package:stasht/imagePicker/selected_assets_list_view.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/memories/domain/memories_model.dart';
 import 'package:stasht/notifications/domain/notification_model.dart';
@@ -429,7 +428,7 @@ class MemoriesController extends GetxController {
 
             if (captionList.length == event.data()!.imagesCaption!.length) {
               captionList.sort(((a, b) {
-                return b.updatedAt!.compareTo(a.updatedAt!);
+                return b.createdAt!.compareTo(a.createdAt!);
               }));
 
               usersRef.doc(event.data()!.createdBy).get().then((userValue) {
@@ -1522,7 +1521,7 @@ class MemoriesController extends GetxController {
         .then((value) => {
               EasyLoading.dismiss(),
               Get.snackbar('Success', 'Memory folder created'),
-              Get.offAllNamed(AppRoutes.memories)
+              goToMemoriesAndClearAll()
             })
         .onError((error, stackTrace) => {EasyLoading.dismiss()});
   }

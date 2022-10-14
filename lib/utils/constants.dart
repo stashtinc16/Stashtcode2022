@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:stasht/memories/domain/memories_model.dart';
+import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 
 String userId = "";
 String userName = "";
 String memoryName = "";
+String memoryId = "";
+Uri? memoryLink;
 var userImage = ValueNotifier<String>("");
 var notificationCount = ValueNotifier<int>(0);
 String userEmail = "";
@@ -78,4 +81,13 @@ getOutlineBorder() {
 
 getNormalTextStyle() {
   return const TextStyle(fontSize: 12.0, color: AppColors.greyColor);
+}
+
+goToMemories(bool fromShareLink) {
+  Get.offNamed(AppRoutes.memories,
+      arguments: {"fromSignupAndShare": fromShareLink});
+}
+
+goToMemoriesAndClearAll() {
+  Get.offAllNamed(AppRoutes.memories, arguments: {"fromSignupAndShare": false});
 }
