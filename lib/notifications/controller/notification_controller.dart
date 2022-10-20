@@ -22,7 +22,7 @@ class NotificationController extends GetxController {
       );
   RxList notificationList = List.empty(growable: true).obs;
   RxBool hasNotification = true.obs;
-  ScrollController scrollController=ScrollController();
+  ScrollController scrollController = ScrollController();
   @override
   void onInit() {
     super.onInit();
@@ -36,13 +36,10 @@ class NotificationController extends GetxController {
         .orderBy("created_at", descending: true)
         .snapshots()
         .listen((event) {
-      print(
-          'listenEvent ${event.docs.length} ${event.docChanges.length} $userId');
-      hasNotification.value = event.docChanges.isNotEmpty;
+     hasNotification.value = event.docChanges.isNotEmpty;
       if (event.docChanges.isNotEmpty) {
         for (var element in event.docChanges) {
           NotificationsModel notificationsModel = element.doc.data()!;
-          print('Type ${element.doc.data()!.type}');
           notificationsModel.id = element.doc.id;
           usersRef.doc(element.doc.data()!.userId).get().then((userValue) {
             notificationsModel.userModel = userValue.data();
@@ -55,7 +52,7 @@ class NotificationController extends GetxController {
             if (notificationValue.isNotEmpty) {
               notificationList[index] = notificationsModel;
             } else {
-              notificationList.value.add(notificationsModel);
+              notificationList.add(notificationsModel);
             }
 
             if (notificationList.length == event.docChanges.length) {
@@ -64,13 +61,11 @@ class NotificationController extends GetxController {
                   return second.createdAt!.compareTo(first.createdAt!);
                 });
               } catch (e) {
-                print('Exception $e');
+                e.toString();
               }
-              // hasNotification.value = false;
               update();
             }
           });
-          // notificationList.value.add(element.data());
         }
       } else {
         hasNotification.value = true;
@@ -83,7 +78,7 @@ class NotificationController extends GetxController {
   void updateReadStatus(NotificationsModel notificationList) {
     notificationsRef
         .doc(notificationList.id)
-        .update({"is_read": true}).then((value) => print('updateReadStatus '));
+        .update({"is_read": true}).then((value) {});
     notificationCount.value = notificationCount.value - 1;
     if (notificationCount.value >= 0) {
       usersRef

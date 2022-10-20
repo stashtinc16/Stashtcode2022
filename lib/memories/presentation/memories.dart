@@ -20,13 +20,12 @@ class Memories extends GetView<MemoriesController> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-    // Future.delayed(Duration.zero, () {
-    print('FutureDelay $fromShare');
-    print('Memory ${Get.arguments["fromSignupAndShare"]}');
-    if (Get.arguments['fromSignupAndShare']) {
-      splashController.checkValidLink(memoryLink!, memoryId);
+    if (Get.arguments != null) {
+      if ((Get.arguments['fromSignupAndShare'] ?? false) &&
+          firebaseAuth != null) {
+        splashController.checkValidLink(memoryLink!, memoryId);
+      }
     }
-
     return GetBuilder(
         builder: (MemoriesController controller) => Container(
               color: Colors.white,
@@ -38,7 +37,6 @@ class Memories extends GetView<MemoriesController> {
                   memoriesTitle,
                   pageSelected:
                       (isMemory, isPhotos, isNotification, isSettings) => {
-                    print('isSettings $isSettings $userId'),
                     if (isSettings)
                       {Get.toNamed(AppRoutes.profile)}
                     else if (isNotification)
@@ -471,8 +469,6 @@ class Memories extends GetView<MemoriesController> {
                             controller.publishMemoriesExpand.value =
                                 !controller.publishMemoriesExpand.value;
                           }
-                          print(
-                              'publishsss ${controller.publishMemoriesExpand.value}');
                           controller.update();
                         },
                         child: Container(
@@ -659,7 +655,6 @@ class Memories extends GetView<MemoriesController> {
                       Expanded(
                           child: InkWell(
                         onTap: () {
-                          print("expireSharedLink.. 1");
                           controller.expireSharedLink(
                               memoriesModel, 1, mainIndex, shareIndex);
                           Get.back();
@@ -686,7 +681,6 @@ class Memories extends GetView<MemoriesController> {
                       Expanded(
                           child: InkWell(
                         onTap: () {
-                          print("expireSharedLink.. 2");
                           controller.expireSharedLink(
                               memoriesModel, 2, mainIndex, shareIndex);
 

@@ -41,11 +41,9 @@ bool checkValidEmail(String email) {
 
 Future<void> sendPushMessage(var receiverFBToken, String payload) async {
   if (receiverFBToken == null || receiverFBToken == "") {
-    print('Unable to send FCM message, no token exists.');
+    debugPrint('Unable to send FCM message, no token exists.');
     return;
   }
-
-  print("firebase token> $receiverFBToken =>  payload $payload");
 
   try {
     final response = await http.post(
@@ -58,18 +56,16 @@ Future<void> sendPushMessage(var receiverFBToken, String payload) async {
               "key=AAAASUsV4Fk:APA91bHKYQ2XsHzBAhTmIvQU24DYB5K9GGY6457CkPIm0_-vkHTPCgfLpLBWrOL1Zgvb-4cnc0AXRgzFFzGmQXo32q3MeptLclkIhuwihgcDrnpP-DtCEQVly6F0MDg5JLj7V3FERL4p",
         },
         body: payload);
-    print("reason phrase....${response.reasonPhrase}");
-    print("response=> ${response.request} ${response.statusCode}");
 
     if (response.statusCode == 200) {
-      print('FCM request for device sent!');
+      debugPrint('FCM request for device sent!');
       // If server returns an OK response, parse the JSON
     } else {
       // If that response was not OK, throw an error.
       throw Exception('Failed to load post');
     }
   } catch (e) {
-    print(e);
+    e.toString();
   }
 }
 

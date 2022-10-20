@@ -28,7 +28,6 @@ class Memory_Lane extends GetView<MemoriesController> {
     } else {}
     return GetBuilder(
       initState: (state) {
-        print('InitState');
         controller.getMyMemoryData(memoryId);
       },
       builder: (MemoriesController controller) {
@@ -358,7 +357,6 @@ class Memory_Lane extends GetView<MemoriesController> {
                                     controller.detailMemoryModel!.published!)
                                   InkWell(
                                     onTap: () {
-                                      print("copy link");
                                       controller.sharePublishMemory(
                                           controller.detailMemoryModel!.title!,
                                           controller
@@ -370,12 +368,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                                       child: Row(children: [
                                         InkWell(
                                           onTap: () {
-                                            // print("copy link1");
-                                            // controller.copyPublishLink(
-                                            //     controller.detailMemoryModel!.title!,
-                                            //     controller
-                                            //         .detailMemoryModel!.publishLink!);
-                                          },
+                                           },
                                           child: Image.asset(
                                             copyIcon,
                                             width: 20,
@@ -942,7 +935,7 @@ class Memory_Lane extends GetView<MemoriesController> {
                           child: InkWell(
                         onTap: () {
                           controller.publishMemory(
-                              controller.detailMemoryModel!.title!,
+                              controller.detailMemoryModel!,
                               controller.detailMemoryModel!.memoryId!);
                         },
                         child: Container(
@@ -1011,8 +1004,6 @@ class Memory_Lane extends GetView<MemoriesController> {
         }
       }
 
-      print("leftWith${leftWith.length}");
-      print("rightWith${rightWith.length}");
     } else {
       for (int i = 0;
           i < controller.detailMemoryModel!.sharedWith!.length;
@@ -1024,10 +1015,7 @@ class Memory_Lane extends GetView<MemoriesController> {
         }
       }
 
-      print("leftWith${leftWith.length}");
-      print("rightWith${rightWith.length}");
     }
-    print('listSize ${listSize}');
     return Container(
         width: MediaQuery.of(context).size.width,
         child: Stack(
@@ -1453,7 +1441,6 @@ class Memory_Lane extends GetView<MemoriesController> {
       MemoriesController controller,
       MemoriesModel memoriesModel,
       ImagesCaption imagesCaption) {
-    print('Data ${imagesCaption.caption} => ${imagesCaption.image}');
 
     showModalBottomSheet(
         context: context,

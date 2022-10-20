@@ -16,8 +16,6 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 class Step_2 extends GetView<MemoriesController> {
   @override
   Widget build(BuildContext context) {
-    print(
-        'ScreenDimensions ${MediaQuery.of(context).size.width} => ${MediaQuery.of(context).size.height}');
     var data = Get.arguments;
 
     return GetBuilder(
@@ -114,8 +112,6 @@ class Step_2 extends GetView<MemoriesController> {
                                       var getItemWidth = _screenWidth / 3;
                                       var getItemHeight =
                                           getItemWidth / _minHeightScale;
-                                      print(
-                                          '_minScale $_minScale $getItemWidth $getItemHeight');
                                       return Obx(() => GestureDetector(
                                           onTap: () {
                                             if (!controller
@@ -204,14 +200,12 @@ class Step_2 extends GetView<MemoriesController> {
                             ),
                             InkWell(
                               onTap: () {
-                                print("asfdsf");
                                 if (controller.permissionStatus.value !=
                                         PermissionStatus.permanentlyDenied &&
                                     controller.permissionStatus.value !=
                                         PermissionStatus.limited) {
                                   controller.promptPermissionSetting();
                                 } else {
-                                  print("asfdsdfsdfdsfsf");
                                   AppSettings.openAppSettings();
                                 }
                               },

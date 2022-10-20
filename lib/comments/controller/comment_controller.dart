@@ -65,6 +65,38 @@ class CommentsController extends GetxController {
     super.onInit();
     // getCommentsAtOnce();
     startStreamAndGetList();
+  //  refreshMemoryChanges();
+  }
+
+  void refreshMemoryChanges() {
+    FirebaseFirestore.instance
+        .collection(memoriesCollection)
+        .doc(memoryId)
+        .withConverter<MemoriesModel>(
+          fromFirestore: (snapshots, _) =>
+              MemoriesModel.fromJson(snapshots.data()!),
+          toFirestore: (comments, _) => comments.toJson(),
+        )
+        .snapshots()
+        .listen((event) async {
+      bool imageExists = false;
+
+      if (event.data() == null) {
+        Get.back();
+        return;
+      }
+      print('DataChanges $imageId => ${event.data()!.toJson()}');
+      var checkImage = await event.data()!.imagesCaption!.where((element) {
+        print('ImageID $imageId ==>  ${element.imageId}');
+        return element.imageId == imageId;
+      });
+      if (checkImage.isNotEmpty) {
+        imageExists = true;
+      }
+      if (!imageExists) {
+        Get.back();
+      }
+    });
   }
 
   void getCommentsAtOnce() {
@@ -83,15 +115,9 @@ class CommentsController extends GetxController {
       // here count is a field name in firestore database
 
       List<CommentsModel> _commentList = List.empty(growable: true);
-      print('EventDocs ${event.docs.length}');
-      print('EventDocsChanged ${event.docChanges.length}');
-      for (var element in event.docChanges) {
-        print('DocChangesId ${element.doc.id}');
-      }
+      for (var element in event.docChanges) {}
 
       for (var element in event.docs) {
-        print(
-            'elementId ${element.id} => ${event.docs[event.docs.length - 1].id}');
         if (element.data().userId!.isNotEmpty) {
           await usersRef.doc(element.data().userId).get().then((userValue) {
             CommentsModel commentsModel = CommentsModel();
@@ -100,8 +126,6 @@ class CommentsController extends GetxController {
             commentsModel.userModel = userValue.data()!;
 
             _commentList.add(commentsModel);
-            print(
-                'element.id ${element.id} => ${event.docs[event.docs.length - 1].id}');
             // streamController.sink.add(commentsModel);
             if (element.id == event.docs[event.docs.length - 1].id) {
               commentsList.clear();
@@ -109,7 +133,6 @@ class CommentsController extends GetxController {
               commentsList.sort((first, second) {
                 return first.createdAt!.compareTo(second.createdAt!);
               });
-              print('CommentList ${commentsList.length}');
               memoryRef.doc(commentsModel.memoryId).get().then((value) {
                 MemoriesModel memoriesModel = value.data()!;
 
@@ -122,8 +145,7 @@ class CommentsController extends GetxController {
                     memoryRef
                         .doc(commentsModel.memoryId)
                         .set(memoriesModel)
-                        .then((value) =>
-                            {print('Comment Count updated  '), update()})
+                        .then((value) => {update()})
                         .onError((error, stackTrace) => {});
                     break outerLoop;
                   }
@@ -165,8 +187,6 @@ class CommentsController extends GetxController {
             commentsModel.userModel = userValue.data()!;
 
             commentsList.value.add(commentsModel);
-            print(
-                'commentsList.length ${commentsList.length} => ${event.docs.length}');
             if (commentsList.length == event.docs.length) {
               commentsList.sort((first, second) {
                 return first.createdAt!.compareTo(second.createdAt!);
@@ -180,9 +200,7 @@ class CommentsController extends GetxController {
           });
         }
       }
-    }).onDone(() {
-      print('onDone ');
-    });
+    }).onDone(() {});
   }
 
   void setCommentCount() {
@@ -197,7 +215,7 @@ class CommentsController extends GetxController {
             memoryRef
                 .doc(memoryId)
                 .set(memoriesModel)
-                .then((value) => {print('Comment Count updated  '), update()})
+                .then((value) => {update()})
                 .onError((error, stackTrace) => {});
 
             break outerLoop;
@@ -246,8 +264,6 @@ class CommentsController extends GetxController {
         .get()
         .then((event) {
       var sendToOwner = false;
-      print(
-          'GetUsers ${event.docs.length} => ${memoriesModel.memoryId} => ${memoriesModel.sharedWith!.length}');
       if (event.docs.isNotEmpty) {
         outerLoop:
         for (int j = 0; j < memoriesModel.sharedWith!.length; j++) {
@@ -343,9 +359,7 @@ class CommentsController extends GetxController {
         receivedId: receivedId,
         // receiverIds: receivedId,
         userId: userId);
-    notificationsRef
-        .add(notificationsModel)
-        .then((value) => print('SaveNotification $value'));
+    notificationsRef.add(notificationsModel).then((value) {});
     if (receivedId.isNotEmpty) {
       usersRef.doc(receivedId).get().then((value) => {
             usersRef.doc(receivedId).update({
@@ -364,9 +378,7 @@ class CommentsController extends GetxController {
     memoryRef
         .doc(memoryId)
         .set(memoriesModel)
-        .then((value) => {
-              print('UpdateCaption '),
-            })
+        .then((value) => {})
         .onError((error, stackTrace) => {});
   }
 

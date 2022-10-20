@@ -27,7 +27,7 @@ class Profile extends GetView<ProfileController> {
       _image = File(image.path);
       uploadImageToDB(_image);
     } else {
-      print('No image selected.');
+      debugPrint('No image selected.');
     }
   }
 
@@ -51,7 +51,6 @@ class Profile extends GetView<ProfileController> {
     uploadTask = ref.putFile(io.File(image.path), metadata);
     uploadTask.whenComplete(() => {
           uploadTask.snapshot.ref.getDownloadURL().then((value) => {
-                print('URl $value'),
                 userImage.value = value,
                 controller.updateProfileImage(value),
                 controller.allowBackPress.value = true,

@@ -289,16 +289,12 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
                                     ),
                                     InkWell(
                                       onTap: () async {
-                                        print(
-                                            'controller.permissionStatus.value  ${controller.permissionStatus.value}');
                                         if (controller.permissionStatus.value ==
                                                 PermissionStatus.granted &&
                                             controller.permissionStatus.value ==
                                                 PermissionStatus.limited) {
-                                          print(" PermissionStatusGranted");
                                           controller.promptPermissionSetting();
                                         } else {
-                                          print(" PermissionStatusDenied");
                                           // var object = await AppSettings.openAppSettings();
                                           AppSettings.openAppSettings();
                                           controller.promptPermissionSetting();
@@ -344,7 +340,6 @@ class Step1 extends GetView<MemoriesController> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
-    print('Resume ${state}');
     if (state == AppLifecycleState.resumed) {
       controller.promptPermissionSettings();
     }

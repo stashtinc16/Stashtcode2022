@@ -111,7 +111,7 @@ class _All_Photos extends State<All_Photos> {
                           } else {
                             count--;
                           }
-                          print("Counts $count");
+                         
                         });
                       },
                       child: Stack(

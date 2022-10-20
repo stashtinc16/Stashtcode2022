@@ -8,6 +8,7 @@ import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/routes/app_routes.dart';
+import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/constants.dart';
 
 bool? isFacebookLogin;
@@ -54,7 +55,6 @@ class SignupController extends GetxController {
   }
 
   void checkEmailExists() {
-    print('checkEmailExists $fromShare');
     usersRef
         .where("email", isEqualTo: emailController.value.text.toString().trim())
         .get()
@@ -82,7 +82,6 @@ class SignupController extends GetxController {
           password: passwordController.text,
         )
             .then((value) {
-          print("FirebaseAuthExceptionValue $value");
           saveUserToDB(value.user, userNameController.text.toString().trim());
         }).onError((error, stackTrace) {
           if (error.toString().contains("email-already-in-use")) {
@@ -91,13 +90,11 @@ class SignupController extends GetxController {
                 snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           }
           EasyLoading.dismiss();
-          print("FirebaseAuthExceptionError ${error.toString()}");
           Get.snackbar("Email exits", "Enter a valid email",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
         });
       } on FirebaseAuthException catch (e) {
         EasyLoading.dismiss();
-        print("FirebaseAuthException $e");
         return;
       }
     }
@@ -125,7 +122,7 @@ class SignupController extends GetxController {
                         usersRef
                             .doc(value.docs[0].id)
                             .update({"device_token": globalNotificationToken}),
-                            
+
                         // },
                         saveSession(
                             value.docs[0].id,
@@ -147,21 +144,17 @@ class SignupController extends GetxController {
       } on FirebaseAuthException catch (e) {
         EasyLoading.dismiss();
         if (e.code == 'user-not-found') {
-          print("User not found");
           Get.back(result: {"email": email1Controller.text.toString()});
           Get.snackbar("Error", "User not found, Please signup new user",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           return Future.error(
               "User Not Found", StackTrace.fromString("User Not Found"));
         } else if (e.code == 'wrong-password') {
-          print("Incorrect password");
           Get.snackbar("Error", "Password is incorrect",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           return Future.error("Incorrect password",
               StackTrace.fromString("Incorrect password"));
         } else {
-          print("Login Failed ${e.message}");
-
           Get.snackbar("Error", "Login Failed! Please try again in some time",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white);
           return Future.error(
@@ -191,7 +184,9 @@ class SignupController extends GetxController {
           saveSession(value.id, username, user.email!, "", 0),
           clearTexts(),
           Get.snackbar('Success', "User registered",
-              snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
+              snackPosition: SnackPosition.BOTTOM,
+              colorText: Colors.white,
+              backgroundColor: Colors.green),
           if (fromShare)
             {goToMemories(true)}
           else
@@ -207,7 +202,6 @@ class SignupController extends GetxController {
 //Signin to facebook
   Future<bool> facebookLogin() async {
     EasyLoading.show(status: 'Processing');
-    print('LoginToFacebook');
     await plugin.logIn(permissions: [
       FacebookPermission.publicProfile,
       FacebookPermission.email,
@@ -220,7 +214,6 @@ class SignupController extends GetxController {
 
   Future<void> _updateLoginInfo() async {
     final token = await plugin.accessToken;
-    print('token $token');
     FacebookUserProfile? profile;
     String? email;
     String? imageUrl;
@@ -236,7 +229,6 @@ class SignupController extends GetxController {
       }
       imageUrl = await plugin.getProfileImageUrl(width: 100);
     }
-    print('email $email $_isLogged');
     if (_isLogged! && email != null) {
       isFacebookLogin = true;
       _fetching = false;
@@ -263,7 +255,8 @@ class SignupController extends GetxController {
                 passwordController.text = "",
                 Get.snackbar('Success', "User logged-in!",
                     snackPosition: SnackPosition.BOTTOM,
-                    colorText: Colors.white),
+                    colorText: Colors.white,
+                    backgroundColor: Colors.green),
                 goToMemories(fromShare)
               }
           });
@@ -291,7 +284,6 @@ class SignupController extends GetxController {
           saveSession(value.id, name, email!, profileImage!, 0),
           Get.snackbar('Success', "User logged-in!",
               snackPosition: SnackPosition.BOTTOM, colorText: Colors.white),
-          print('This Is login'),
           Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")
         });
   }

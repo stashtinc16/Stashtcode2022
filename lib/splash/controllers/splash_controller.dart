@@ -75,7 +75,6 @@ class SplashController extends GetxController {
       } else {
         appBadgeSupported = 'Not supported';
       }
-      print(' String appBadgeSupported $appBadgeSupported');
     } on PlatformException {
       appBadgeSupported = 'Failed to get badge support.';
     }
@@ -101,16 +100,16 @@ class SplashController extends GetxController {
       if (message != null) {}
     });
 
-    FirebaseMessaging.instance.getToken().then((value) =>
-        {globalNotificationToken = value!, print('GetToken $value')});
+    FirebaseMessaging.instance
+        .getToken()
+        .then((value) => {globalNotificationToken = value!});
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('onFirebaseMessaging ${message.data}');
       notificationCount.value = notificationCount.value + 1;
       FlutterAppBadger.updateBadgeCount(notificationCount.value);
 
       RemoteNotification? notification = message.notification;
-      saveNotificationCount();
+
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null && !kIsWeb) {
         flutterLocalNotificationsPlugin.show(
@@ -121,8 +120,6 @@ class SplashController extends GetxController {
               android: AndroidNotificationDetails(
                 channel.id,
                 channel.name,
-                // TODO add a proper drawable resource to android, for now using
-                //      one that already exists in example app.
                 icon: '@mipmap/ic_launcher',
               ),
             ),
@@ -139,9 +136,6 @@ class SplashController extends GetxController {
         onSelectNotification: onSelectNotification);
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // String memoryId = message.data["memoryID"];
-      // Get.toNamed(AppRoutes.memoryList, {});
-      print('A new onMessageOpenedApp event was published! ${message.data}');
       var data = message.data;
       notificationClick(data);
     });
@@ -165,49 +159,30 @@ class SplashController extends GetxController {
   }
 
   Future onSelectNotification(String? payload) async {
-    print('payload $payload');
     if (payload != null) {
       var data = jsonDecode(payload);
       notificationClick(data);
     }
   }
 
-// Update notification Count for a user
-  saveNotificationCount() {
-    // usersRef
-    //     .doc(userId)
-    //     .update({"notification_count": notificationCount.value})
-    //     .then((value) => print('NotificationCount Updated'))
-    //     .catchError((onError) {
-    //       print('onError $onError');
-    //     });
-  }
-
   Future<void> initDynamicLinks() async {
     dynamicLinks.onLink.listen((dynamicLinkData) {
       var link = dynamicLinkData.link.toString().split("memory_id=");
-      var memory = link[1].split("&");
-      var timeStamp = dynamicLinkData.link.toString().split("timestamp=");
       memoryLink = dynamicLinkData.link;
-      memoryId = memory[0];
+      memoryId = link[1];
 
       if (firebaseAuth != null || isFacebookLogin!) {
         fromShare = true;
 
-        print('fromShare splash $fromShare');
-        print('dynamicLinkData $dynamicLinkData');
         EasyLoading.show(status: 'Please wait.. we are fetching memory');
-        checkValidLink(dynamicLinkData.link, memory[0]);
+
+        checkValidLink(dynamicLinkData.link, memoryId);
       } else {
         fromShare = true;
-        print('checkValidLink ');
         handleNavigation(true);
       }
-    }).onError((error) {
-      print('onErro $error');
-    });
+    }).onError((error) {});
     if (!dynamicLinks.isBlank!) {
-      print('HandleNavigation ');
       handleNavigation(false);
     }
   }
@@ -215,8 +190,8 @@ class SplashController extends GetxController {
 // check if link exists
   void checkValidLink(Uri link, String memoryId) {
     linkRef.where("share_link", isEqualTo: link.toString()).get().then((value) {
+      value.docs.forEach((element) {});
       if (value.docs.isEmpty) {
-        print('DeepLink=> NotUsed  and and not saved');
         // Link doesnot exists in shared links
         ShareLinkModel linkModel = ShareLinkModel(
             shareLink: link.toString(),
@@ -224,16 +199,16 @@ class SplashController extends GetxController {
             memoryId: memoryId,
             createdAt: Timestamp.now(),
             usedBy: userId);
-        linkRef.add(linkModel).then((value) => print('ShareLinkSaved $value'));
+        linkRef.add(linkModel).then((value) {});
         checkMemoryForUser(memoryId);
       } else {
-        // Link is in shared link but it is not used yet
-        if (!value.docs.first.data().linkUsed!) {
-          print('DeepLink=> Link is saved but not used');
+        var result = value.docs.where((element) {
+          return element.data().linkUsed == false;
+        });
+        if (result.isNotEmpty) {
           checkMemoryForUser(memoryId);
         } else {
           // Link is used by other user
-          print('DeepLink=> Link is used');
           EasyLoading.dismiss();
           Get.snackbar("Error", "Link has expired", colorText: Colors.red);
 
@@ -251,7 +226,7 @@ class SplashController extends GetxController {
         .where("link_used", isEqualTo: false)
         .get()
         .then((value) => {
-              print('ExpireLink ${value.docs.length}'),
+             
               if (value.docs.isNotEmpty)
                 {
                   memoryController.sharedMemoriesExpand.value = true,
@@ -267,12 +242,9 @@ class SplashController extends GetxController {
                       memoryController.updateJoinStatus(
                           1, mainIndex, shareIndex, memoriesModel),
                       memoryController.acceptInviteNotification(memoriesModel),
-                      print('sharedMemoriesExpand ==> $expandShareMemory ')
                     },
                   linkRef.doc(value.docs.first.id).update(
-                      {"link_used": true, "used_by": userId}).then((value) {
-                    print('Link is used');
-                  })
+                      {"link_used": true, "used_by": userId}).then((value) {})
                 }
               else
                 {
@@ -294,7 +266,6 @@ class SplashController extends GetxController {
         );
     MemoriesModel memoriesModel = MemoriesModel();
     List<SharedWith> shareList = List.empty(growable: true);
-    print('DeepLink=> memoryId $memoryId');
     memoriesRef.doc(memoryId).get().then((value) {
       if (value.exists) {
         memoriesModel = value.data()!;
@@ -313,15 +284,12 @@ class SplashController extends GetxController {
             value.data()!.sharedWith!.forEach((element) {
               outerLoop:
               if (element.userId == userId) {
-                print('DeepLink=> User Exist');
                 userExists = true;
                 break outerLoop;
               }
             });
           }
-          print('DeepLink=> ShareWith $userId');
           if (!userExists) {
-            print('DeepLink=> userExists $userExists $userId');
             shareList.add(SharedWith(userId: userId, status: 0));
             memoriesModel.sharedCreatedAt = Timestamp.now();
             memoriesModel.sharedWith = shareList;
@@ -330,7 +298,6 @@ class SplashController extends GetxController {
                 .doc(memoryId)
                 .set(memoriesModel)
                 .then((value) => {
-                      print('DeepLink=> globalShareMemoryModel '),
                       globalShareMemoryModel = MemoriesModel(),
                       globalShareMemoryModel = memoriesModel,
 
@@ -352,7 +319,6 @@ class SplashController extends GetxController {
         EasyLoading.dismiss();
         Get.snackbar("Error", "This memory doesn't exist.",
             colorText: Colors.red, snackPosition: SnackPosition.BOTTOM);
-        print('Memory Not Exist');
       }
     });
   }
@@ -360,12 +326,8 @@ class SplashController extends GetxController {
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     switch (result) {
       case ConnectivityResult.wifi:
-        print("wifi");
-
         break;
       case ConnectivityResult.mobile:
-        print("mobile");
-
         break;
       case ConnectivityResult.none:
         Get.snackbar('Internet Not Connected', "Please connect to internet");
@@ -377,13 +339,11 @@ class SplashController extends GetxController {
   }
 
   handleNavigation(bool fromDeepLink) async {
-    print('FromShare $fromDeepLink');
     firebaseAuth = FirebaseAuth.instance.currentUser;
     Future.delayed(const Duration(milliseconds: 2500), () async {
       isFacebookLogin = await facebookAuth.accessToken != null;
 
       if (firebaseAuth != null || isFacebookLogin!) {
-        print('Inside ');
         String email = "";
         if (firebaseAuth != null) {
           email = firebaseAuth!.email!;
@@ -391,28 +351,17 @@ class SplashController extends GetxController {
           goToMemoriesFunc(email, fromDeepLink);
         } else {
           isSocailUser = true;
-          facebookAuth
-              .getUserProfile()
-              .then((value) => print('UserProfile $value'));
+          facebookAuth.getUserProfile().then((value) {});
 
           facebookAuth.getUserEmail().then((value) => {
                 if (value == null)
-                  {
-                    facebookAuth.logOut(),
-                    print('Inside_2'),
-                    Get.offNamed(AppRoutes.signup)
-                  }
+                  {facebookAuth.logOut(), Get.offNamed(AppRoutes.signup)}
                 else
-                  {
-                    email = value,
-                    print('Inside_3'),
-                    goToMemoriesFunc(email, fromDeepLink)
-                  }
+                  {email = value, goToMemoriesFunc(email, fromDeepLink)}
               });
         }
       } else {
         EasyLoading.dismiss();
-        print('GoToSignup $fromDeepLink');
         Get.offNamed(AppRoutes.signup);
       }
       // Navigator.pushReplacement(
@@ -422,7 +371,6 @@ class SplashController extends GetxController {
 
   // redirect user into app , if already logged in
   void goToMemoriesFunc(String email, bool fromDeepLink) {
-    print('Inside_5 $email');
     usersRef
         .where("email", isEqualTo: email)
         .get()
@@ -441,7 +389,8 @@ class SplashController extends GetxController {
                         EasyLoading.dismiss(),
                         if (fromDeepLink)
                           {
-                            showInviteJoinPopUp(globalShareMemoryModel!)
+                            if (!Get.isBottomSheetOpen!)
+                              {showInviteJoinPopUp(globalShareMemoryModel!)}
                             // Get.off(() => Memories(),
                             //     binding: MemoriesBinding())
                           }
@@ -467,148 +416,277 @@ class SplashController extends GetxController {
       }
     }
 
-    showModalBottomSheet(
-        context: Get.context!,
-        isScrollControlled: false,
-        shape: const RoundedRectangleBorder(
+    Get.bottomSheet(Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+      child: Container(
+        decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
-                topRight: Radius.circular(15), topLeft: Radius.circular(15))),
-        builder: (context) {
-          return Container(
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    topLeft: Radius.circular(15)),
-                color: Colors.white),
-            height: 220,
-            child: Column(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    children: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25.0, right: 25.0, top: 25.0, bottom: 7),
-                          child: RichText(
-                              text: TextSpan(
-                                  text: memoriesModel.userModel!.displayName!,
-                                  style: const TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.black,
-                                      fontFamily: robotoBold),
-                                  children: const [
-                                TextSpan(
-                                  text: " invited you to join a memory:",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppColors.darkColor,
-                                      fontFamily: robotoRegular,
-                                      fontStyle: FontStyle.italic),
-                                ),
-                              ])),
-                        ),
-                      ),
-                      // Positioned(
-                      //   top: 0,
-                      //   bottom: 0,
-                      //   right: 10,
-                      //   child: IconButton(
-                      //     onPressed: () {
-                      //       fromShare = false;
-                      //       Get.back();
-                      //     },
-                      //     icon: const Icon(
-                      //       Icons.close,
-                      //       color: AppColors.darkColor,
-                      //       size: 20,
-                      //     ),
-                      //   ),
-                      // )
-                    ],
+                topRight: Radius.circular(15), topLeft: Radius.circular(15)),
+            color: Colors.white),
+        height: 220,
+        child: Column(
+          children: [
+            SizedBox(
+              width: MediaQuery.of(Get.context!).size.width,
+              child: Stack(
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 25.0, right: 25.0, top: 25.0, bottom: 7),
+                      child: RichText(
+                          text: TextSpan(
+                              text: memoriesModel.userModel!.displayName!,
+                              style: const TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.black,
+                                  fontFamily: robotoBold),
+                              children: const [
+                            TextSpan(
+                              text: " invited you to join a memory:",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.darkColor,
+                                  fontFamily: robotoRegular,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                          ])),
+                    ),
                   ),
-                ),
-                Text(
-                  memoriesModel.title!,
-                  style: const TextStyle(
-                      fontSize: 18,
-                      color: AppColors.darkColor,
-                      fontFamily: robotoBold),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                        child: InkWell(
-                      onTap: () {
-                        expireSharedLink(
-                            globalShareMemoryModel!, 1, 0, shareIndex);
-                        Get.back();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(40),
-                        child: const Text(
-                          'Yes',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: AppColors.primaryColor,
-                              fontFamily: robotoBold),
-                          textAlign: TextAlign.center,
-                        ),
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: AppColors.hintTextColor),
-                      ),
-                    )),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                        child: InkWell(
-                      onTap: () {
-                        // controller.deleteInvite(
-                        //     memoriesModel, shareIndex, mainIndex);
-                        expireSharedLink(
-                            globalShareMemoryModel!, 2, 0, shareIndex);
-                        fromShare = false;
-                        Get.back();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(40),
-                        child: const Text(
-                          'No',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: AppColors.primaryColor,
-                              fontFamily: robotoBold),
-                          textAlign: TextAlign.center,
-                        ),
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: AppColors.hintTextColor),
-                      ),
-                    )),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                )
-              ],
+                  // Positioned(
+                  //   top: 0,
+                  //   bottom: 0,
+                  //   right: 10,
+                  //   child: IconButton(
+                  //     onPressed: () {
+                  //       fromShare = false;
+                  //       Get.back();
+                  //     },
+                  //     icon: const Icon(
+                  //       Icons.close,
+                  //       color: AppColors.darkColor,
+                  //       size: 20,
+                  //     ),
+                  //   ),
+                  // )
+                ],
+              ),
             ),
-          );
-        });
+            Text(
+              memoriesModel.title!,
+              style: const TextStyle(
+                  fontSize: 18,
+                  color: AppColors.darkColor,
+                  fontFamily: robotoBold),
+            ),
+            const SizedBox(
+              height: 25,
+            ),
+            Row(
+              children: [
+                const SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                    child: InkWell(
+                  onTap: () {
+                    expireSharedLink(globalShareMemoryModel!, 1, 0, shareIndex);
+                    Get.back();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(40),
+                    child: const Text(
+                      'Yes',
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.primaryColor,
+                          fontFamily: robotoBold),
+                      textAlign: TextAlign.center,
+                    ),
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        color: AppColors.hintTextColor),
+                  ),
+                )),
+                const SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                    child: InkWell(
+                  onTap: () {
+                    // controller.deleteInvite(
+                    //     memoriesModel, shareIndex, mainIndex);
+                    expireSharedLink(globalShareMemoryModel!, 2, 0, shareIndex);
+                    fromShare = false;
+                    Get.back();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(40),
+                    child: const Text(
+                      'No',
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.primaryColor,
+                          fontFamily: robotoBold),
+                      textAlign: TextAlign.center,
+                    ),
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        color: AppColors.hintTextColor),
+                  ),
+                )),
+                const SizedBox(
+                  width: 20,
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    ));
+    // showModalBottomSheet(
+    //     context: Get.context!,
+    //     isScrollControlled: false,
+    //     shape: const RoundedRectangleBorder(
+    //         borderRadius: BorderRadius.only(
+    //             topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+    //     builder: (context) {
+    //       return Container(
+    //         decoration: const BoxDecoration(
+    //             borderRadius: BorderRadius.only(
+    //                 topRight: Radius.circular(15),
+    //                 topLeft: Radius.circular(15)),
+    //             color: Colors.white),
+    //         height: 220,
+    //         child: Column(
+    //           children: [
+    //             SizedBox(
+    //               width: MediaQuery.of(context).size.width,
+    //               child: Stack(
+    //                 children: [
+    //                   Center(
+    //                     child: Padding(
+    //                       padding: const EdgeInsets.only(
+    //                           left: 25.0, right: 25.0, top: 25.0, bottom: 7),
+    //                       child: RichText(
+    //                           text: TextSpan(
+    //                               text: memoriesModel.userModel!.displayName!,
+    //                               style: const TextStyle(
+    //                                   fontSize: 18.0,
+    //                                   color: Colors.black,
+    //                                   fontFamily: robotoBold),
+    //                               children: const [
+    //                             TextSpan(
+    //                               text: " invited you to join a memory:",
+    //                               style: TextStyle(
+    //                                   fontSize: 16,
+    //                                   color: AppColors.darkColor,
+    //                                   fontFamily: robotoRegular,
+    //                                   fontStyle: FontStyle.italic),
+    //                             ),
+    //                           ])),
+    //                     ),
+    //                   ),
+    //                   // Positioned(
+    //                   //   top: 0,
+    //                   //   bottom: 0,
+    //                   //   right: 10,
+    //                   //   child: IconButton(
+    //                   //     onPressed: () {
+    //                   //       fromShare = false;
+    //                   //       Get.back();
+    //                   //     },
+    //                   //     icon: const Icon(
+    //                   //       Icons.close,
+    //                   //       color: AppColors.darkColor,
+    //                   //       size: 20,
+    //                   //     ),
+    //                   //   ),
+    //                   // )
+    //                 ],
+    //               ),
+    //             ),
+    //             Text(
+    //               memoriesModel.title!,
+    //               style: const TextStyle(
+    //                   fontSize: 18,
+    //                   color: AppColors.darkColor,
+    //                   fontFamily: robotoBold),
+    //             ),
+    //             const SizedBox(
+    //               height: 25,
+    //             ),
+    //             Row(
+    //               children: [
+    //                 const SizedBox(
+    //                   width: 20,
+    //                 ),
+    //                 Expanded(
+    //                     child: InkWell(
+    //                   onTap: () {
+    //                     expireSharedLink(
+    //                         globalShareMemoryModel!, 1, 0, shareIndex);
+    //                     Get.back();
+    //                   },
+    //                   child: Container(
+    //                     padding: const EdgeInsets.all(40),
+    //                     child: const Text(
+    //                       'Yes',
+    //                       style: TextStyle(
+    //                           fontSize: 18,
+    //                           color: AppColors.primaryColor,
+    //                           fontFamily: robotoBold),
+    //                       textAlign: TextAlign.center,
+    //                     ),
+    //                     decoration: const BoxDecoration(
+    //                         borderRadius: BorderRadius.all(Radius.circular(15)),
+    //                         color: AppColors.hintTextColor),
+    //                   ),
+    //                 )),
+    //                 const SizedBox(
+    //                   width: 20,
+    //                 ),
+    //                 Expanded(
+    //                     child: InkWell(
+    //                   onTap: () {
+    //                     // controller.deleteInvite(
+    //                     //     memoriesModel, shareIndex, mainIndex);
+    //                     expireSharedLink(
+    //                         globalShareMemoryModel!, 2, 0, shareIndex);
+    //                     fromShare = false;
+    //                     Get.back();
+    //                   },
+    //                   child: Container(
+    //                     padding: const EdgeInsets.all(40),
+    //                     child: const Text(
+    //                       'No',
+    //                       style: TextStyle(
+    //                           fontSize: 18,
+    //                           color: AppColors.primaryColor,
+    //                           fontFamily: robotoBold),
+    //                       textAlign: TextAlign.center,
+    //                     ),
+    //                     decoration: const BoxDecoration(
+    //                         borderRadius: BorderRadius.all(Radius.circular(15)),
+    //                         color: AppColors.hintTextColor),
+    //                   ),
+    //                 )),
+    //                 const SizedBox(
+    //                   width: 20,
+    //                 ),
+    //               ],
+    //             )
+    //           ],
+    //         ),
+    //       );
+    //     });
   }
 
 // Save User Session
   void saveSession(String _userId, String _userName, String _userEmail,
       String _userImage, int _notificationCount) {
-    print('saveSession userId $_userId => $_userImage');
     userId = _userId;
     userEmail = _userEmail;
     userName = _userName;

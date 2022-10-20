@@ -34,8 +34,6 @@ class Notifications extends GetView<NotificationController> {
                     shrinkWrap: true,
                     controller: controller.scrollController,
                     itemBuilder: (context, index) {
-                      print(
-                          'MemoryId ${controller.notificationList[index].memoryId}');
                       return Column(
                         children: [
                           InkWell(
@@ -49,8 +47,6 @@ class Notifications extends GetView<NotificationController> {
                                       controller.notificationList[index]);
                                   controller.update();
                                 }
-                                print(
-                                    'ontroller.notificationList[index].type ${controller.notificationList[index].type}');
                                 if (controller.notificationList[index].type ==
                                     "comment") {
                                   Get.toNamed(AppRoutes.comments, arguments: {

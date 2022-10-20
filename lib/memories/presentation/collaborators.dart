@@ -79,17 +79,10 @@ class Collaborators extends GetView<MemoriesController> {
                             top: 0,
                             child: IconButton(
                               onPressed: () => {
-                                print(
-                                    'controller.shareLink.value.toString() ${controller.shareLink.value.toString()}'),
                                 controller.checkIfLinkExpire(
                                     controller.detailMemoryModel!,
                                     controller.shareLink.value.toString(),
                                     false)
-                                // controller.createDynamicLink(
-                                //     controller.detailMemoryModel!.memoryId!,
-                                //     true,
-                                //     true,
-                                //     controller.detailMemoryModel!)
                               },
                               icon: const Icon(
                                 Icons.share,
@@ -161,8 +154,6 @@ class Collaborators extends GetView<MemoriesController> {
                 shrinkWrap: true,
                 primary: true,
                 itemBuilder: (BuildContext context, int index) {
-                  print(
-                      'ShareWith ${controller.getSharedUsers(memoriesModel!).length}');
                   return FutureBuilder(
                     future: controller.getUserData(controller
                         .getSharedUsers(memoriesModel!)[index]
@@ -236,11 +227,8 @@ class Collaborators extends GetView<MemoriesController> {
                             onDismissed: (DismissDirection dismissDirection) {
                               if (dismissDirection ==
                                   DismissDirection.endToStart) {
-                                print('DismissDirection ');
                                 deleteCollaborator(index, "1");
                               }
-                              print(
-                                  'DismissDirection onDismissed $dismissDirection ');
                             },
                           ),
                           Container(

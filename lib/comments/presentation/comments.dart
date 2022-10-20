@@ -26,11 +26,9 @@ class Comments extends GetView<CommentsController> {
             leading: IconButton(
               onPressed: () {
                 if (Get.arguments != null && Get.arguments["fromNot"]) {
-                  print("asfsdfdsfdsf");
                    goToMemories(false);
                   // Get.back();
                 } else {
-                  print("asfdsf");
                   Get.back();
                 }
               },
@@ -234,11 +232,9 @@ class Comments extends GetView<CommentsController> {
     // then
     if (Platform.isAndroid) {
       if (Get.arguments != null && Get.arguments["fromNot"]) {
-        print("asfsdfdsfdsf");
          goToMemories(false);
         // Get.back();
       } else {
-        print("asfdsf");
         Get.back();
       }
       return true;
