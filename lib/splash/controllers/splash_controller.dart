@@ -27,7 +27,7 @@ import 'package:stasht/utils/constants.dart';
 
 import '../../main.dart';
 
-User? firebaseAuth = FirebaseAuth.instance.currentUser;
+User? firebaseAuthSplash = FirebaseAuth.instance.currentUser;
 
 class SplashController extends GetxController {
   // User? firebaseAuth = FirebaseAuth.instance.currentUser;
@@ -81,6 +81,7 @@ class SplashController extends GetxController {
 //Here you can remove the badge you created when it's launched
     FlutterAppBadger.removeBadge();
     initializeFirebaseNotification();
+
     initDynamicLinks();
   }
 
@@ -171,7 +172,7 @@ class SplashController extends GetxController {
       memoryLink = dynamicLinkData.link;
       memoryId = link[1];
 
-      if (firebaseAuth != null || isFacebookLogin!) {
+      if (firebaseAuthSplash != null || isFacebookLogin!) {
         fromShare = true;
 
         EasyLoading.show(status: 'Please wait.. we are fetching memory');
@@ -190,8 +191,8 @@ class SplashController extends GetxController {
 // check if link exists
   void checkValidLink(Uri link, String memoryId) {
     linkRef.where("share_link", isEqualTo: link.toString()).get().then((value) {
-      value.docs.forEach((element) {});
       if (value.docs.isEmpty) {
+        print('DocsLength ${value.docs.length}');
         // Link doesnot exists in shared links
         ShareLinkModel linkModel = ShareLinkModel(
             shareLink: link.toString(),
@@ -226,7 +227,6 @@ class SplashController extends GetxController {
         .where("link_used", isEqualTo: false)
         .get()
         .then((value) => {
-             
               if (value.docs.isNotEmpty)
                 {
                   memoryController.sharedMemoriesExpand.value = true,
@@ -310,7 +310,6 @@ class SplashController extends GetxController {
             Get.snackbar("Error", "This memory already exist.",
                 colorText: Colors.red);
             EasyLoading.dismiss();
-            //  https://stasht2.page.link/Y72F   Jgxm
           }
         } else {
           EasyLoading.dismiss();
@@ -323,30 +322,15 @@ class SplashController extends GetxController {
     });
   }
 
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    switch (result) {
-      case ConnectivityResult.wifi:
-        break;
-      case ConnectivityResult.mobile:
-        break;
-      case ConnectivityResult.none:
-        Get.snackbar('Internet Not Connected', "Please connect to internet");
-
-        break;
-      default:
-        break;
-    }
-  }
-
   handleNavigation(bool fromDeepLink) async {
-    firebaseAuth = FirebaseAuth.instance.currentUser;
+    firebaseAuthSplash = FirebaseAuth.instance.currentUser;
     Future.delayed(const Duration(milliseconds: 2500), () async {
       isFacebookLogin = await facebookAuth.accessToken != null;
 
-      if (firebaseAuth != null || isFacebookLogin!) {
+      if (firebaseAuthSplash != null || isFacebookLogin!) {
         String email = "";
-        if (firebaseAuth != null) {
-          email = firebaseAuth!.email!;
+        if (firebaseAuthSplash != null) {
+          email = firebaseAuthSplash!.email!;
           isSocailUser = false;
           goToMemoriesFunc(email, fromDeepLink);
         } else {
@@ -417,7 +401,7 @@ class SplashController extends GetxController {
     }
 
     Get.bottomSheet(Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
               topRight: Radius.circular(15), topLeft: Radius.circular(15))),
       child: Container(

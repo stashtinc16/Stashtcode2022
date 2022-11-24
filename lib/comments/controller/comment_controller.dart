@@ -65,9 +65,10 @@ class CommentsController extends GetxController {
     super.onInit();
     // getCommentsAtOnce();
     startStreamAndGetList();
-  //  refreshMemoryChanges();
+    // refreshMemoryChanges();
   }
 
+  int? imagesLength;
   void refreshMemoryChanges() {
     FirebaseFirestore.instance
         .collection(memoriesCollection)
@@ -85,17 +86,20 @@ class CommentsController extends GetxController {
         Get.back();
         return;
       }
-      print('DataChanges $imageId => ${event.data()!.toJson()}');
+
       var checkImage = await event.data()!.imagesCaption!.where((element) {
-        print('ImageID $imageId ==>  ${element.imageId}');
         return element.imageId == imageId;
       });
+
+      print('checkImage $checkImage');
       if (checkImage.isNotEmpty) {
         imageExists = true;
       }
       if (!imageExists) {
         Get.back();
       }
+
+      imagesLength = event.data()!.imagesCaption!.length;
     });
   }
 

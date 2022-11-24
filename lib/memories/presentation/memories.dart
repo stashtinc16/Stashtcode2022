@@ -20,9 +20,10 @@ class Memories extends GetView<MemoriesController> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    print('Get.arguments ${Get.arguments} $firebaseAuthSplash');
     if (Get.arguments != null) {
       if ((Get.arguments['fromSignupAndShare'] ?? false) &&
-          firebaseAuth != null) {
+          firebaseAuthSplash != null) {
         splashController.checkValidLink(memoryLink!, memoryId);
       }
     }

@@ -8,6 +8,7 @@ import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 import 'package:stasht/routes/app_routes.dart';
+import 'package:stasht/splash/controllers/splash_controller.dart';
 import 'package:stasht/utils/app_colors.dart';
 import 'package:stasht/utils/constants.dart';
 
@@ -132,6 +133,7 @@ class SignupController extends GetxController {
                             value.docs[0].data().notificationCount != null
                                 ? value.docs[0].data().notificationCount!
                                 : 0),
+                        firebaseAuthSplash = FirebaseAuth.instance.currentUser,
                         goToMemories(fromShare)
                       }
                     else
@@ -188,7 +190,10 @@ class SignupController extends GetxController {
               colorText: Colors.white,
               backgroundColor: Colors.green),
           if (fromShare)
-            {goToMemories(true)}
+            {
+              firebaseAuthSplash = FirebaseAuth.instance.currentUser,
+              goToMemories(true)
+            }
           else
             {Get.offNamed(AppRoutes.memoriesStep1, arguments: "yes")}
         });
@@ -257,6 +262,7 @@ class SignupController extends GetxController {
                     snackPosition: SnackPosition.BOTTOM,
                     colorText: Colors.white,
                     backgroundColor: Colors.green),
+                firebaseAuthSplash = FirebaseAuth.instance.currentUser,
                 goToMemories(fromShare)
               }
           });

@@ -141,6 +141,10 @@ class MemoriesController extends GetxController {
         .orderBy("published_created_at", descending: true)
         .snapshots()
         .listen((publishElement) {
+      if (publishElement.docs.isEmpty) {
+        publishMemoryList.clear();
+      }
+
       publishElement.docChanges.forEach((element) {
         if (userId.isNotEmpty) {
           usersRef.doc(userId).get().then(
@@ -204,102 +208,124 @@ class MemoriesController extends GetxController {
         .snapshots()
         .listen((sharedValue) => {
               // sharedMemoriesList.clear(),
+              print('sharedValue $sharedValue'),
               sharedValue.docChanges.forEach((element) {
+                print('element ${element.doc.id}');
                 sharedMemoryCount.value = 0;
                 usersRef
                     .doc(element.doc.data()!.createdBy!)
                     .get()
-                    .then((userValue) {
-                  List<ImagesCaption> imagesList = List.empty(growable: true);
-                  MemoriesModel memoriesModel = element.doc.data()!;
-                  memoriesModel.memoryId = element.doc.id;
-                  memoriesModel.userModel = userValue.data()!;
-
-                  element.doc.data()!.sharedWith!.forEach((elementShare) {
-                    if (elementShare.status == 1) {
-                      memoriesModel.sharedWithCount =
-                          memoriesModel.sharedWithCount! + 1;
+                    .then((userValue) async {
+                  if (userValue.data() != null) {
+                    List<ImagesCaption> imagesList = List.empty(growable: true);
+                    MemoriesModel memoriesModel = element.doc.data()!;
+                    memoriesModel.memoryId = element.doc.id;
+                    memoriesModel.userModel = userValue.data()!;
+                    element.doc.data()!.sharedWith!.forEach((elementShare) {
+                      if (elementShare.status == 1) {
+                        memoriesModel.sharedWithCount =
+                            memoriesModel.sharedWithCount! + 1;
+                      }
+                    });
+                    if (element.doc.data()!.imagesCaption!.isEmpty) {
+                      var notificationValue =
+                           sharedMemoriesList.where((p0) {
+                        return p0.memoryId == element.doc.id;
+                      });
+                      print('notificationValue $notificationValue');
+                      if (notificationValue.isNotEmpty) {
+                        sharedMemoriesList.remove(notificationValue.first);
+                        update();
+                      }
                     }
-                  });
-
-                  element.doc
-                      .data()!
-                      .imagesCaption!
-                      .forEach((innerElement) async {
-                    await usersRef
-                        .doc(innerElement.userId)
-                        .get()
-                        .then((imageUser) async {
-                      ImagesCaption imagesCaption = innerElement;
-                      if (imageUser.data() != null) {
-                        imagesCaption.userModel = imageUser.data()!;
-                        imagesList.add(imagesCaption);
-                        if (imagesList.length ==
-                            element.doc.data()!.imagesCaption!.length) {
-                          memoriesModel.imagesCaption = imagesList;
-                          try {
-                            memoriesModel.imagesCaption!.sort((first, second) {
-                              return second.updatedAt!
-                                  .compareTo(first.updatedAt!);
+                    element.doc
+                        .data()!
+                        .imagesCaption!
+                        .forEach((innerElement) async {
+                      print('yess');
+                      await usersRef
+                          .doc(innerElement.userId)
+                          .get()
+                          .then((imageUser) async {
+                        print('yess 2');
+                        ImagesCaption imagesCaption = innerElement;
+                        if (imageUser.data() != null) {
+                          print('yess 3');
+                          imagesCaption.userModel = imageUser.data()!;
+                          imagesList.add(imagesCaption);
+                          if (imagesList.length ==
+                              element.doc.data()!.imagesCaption!.length) {
+                            memoriesModel.imagesCaption = imagesList;
+                            try {
+                              memoriesModel.imagesCaption!
+                                  .sort((first, second) {
+                                return second.updatedAt!
+                                    .compareTo(first.updatedAt!);
+                              });
+                            } catch (e) {}
+                            int index = 0;
+                            var notificationValue =
+                                sharedMemoriesList.where((p0) {
+                              index = sharedMemoriesList.indexOf(p0);
+                              return p0.memoryId == element.doc.id;
                             });
-                          } catch (e) {}
-                          int index = 0;
-                          var notificationValue =
-                              sharedMemoriesList.where((p0) {
-                            index = sharedMemoriesList.indexOf(p0);
-                            return p0.memoryId == element.doc.id;
-                          });
 
-                          if (sharedValue.docs.isNotEmpty) {
-                            if (notificationValue.isNotEmpty) {
-                              var checkDoc = await memoriesRef
-                                  .doc(memoriesModel.memoryId)
-                                  .get()
-                                  .then((valueShare) {
-                                if (valueShare.exists) {
-                                  bool hasValue = false;
+                            if (sharedValue.docs.isNotEmpty) {
+                              if (notificationValue.isNotEmpty) {
+                                var checkDoc = await memoriesRef
+                                    .doc(memoriesModel.memoryId)
+                                    .get()
+                                    .then((valueShare) {
+                                  if (valueShare.exists) {
+                                    bool hasValue = false;
 
-                                  for (int j = 0;
-                                      j < valueShare.data()!.sharedWith!.length;
-                                      j++) {
-                                    if (valueShare
-                                            .data()!
-                                            .sharedWith![j]
-                                            .userId ==
-                                        userId) {
-                                      hasValue = true;
-                                      break;
+                                    for (int j = 0;
+                                        j <
+                                            valueShare
+                                                .data()!
+                                                .sharedWith!
+                                                .length;
+                                        j++) {
+                                      if (valueShare
+                                              .data()!
+                                              .sharedWith![j]
+                                              .userId ==
+                                          userId) {
+                                        hasValue = true;
+                                        break;
+                                      }
                                     }
-                                  }
-                                  if (hasValue) {
-                                    sharedMemoriesList[index] = memoriesModel;
+                                    if (hasValue) {
+                                      sharedMemoriesList[index] = memoriesModel;
+                                    } else {
+                                      sharedMemoriesList.removeAt(index);
+                                    }
                                   } else {
                                     sharedMemoriesList.removeAt(index);
                                   }
-                                } else {
-                                  sharedMemoriesList.removeAt(index);
-                                }
-                              });
-                            } else {
-                              sharedMemoriesList.value.add(memoriesModel);
+                                });
+                              } else {
+                                sharedMemoriesList.value.add(memoriesModel);
+                              }
+
+                              sharedMemoryCount.value =
+                                  sharedMemoriesList.length;
+                              // Get.snackbar("title",
+                              //     "${memoriesModel.title} ${sharedMemoriesList.length} => ${sharedMemoryCount.value}");
+
+                              update();
                             }
 
-                            sharedMemoryCount.value = sharedMemoriesList.length;
-                            // Get.snackbar("title",
-                            //     "${memoriesModel.title} ${sharedMemoriesList.length} => ${sharedMemoryCount.value}");
-
+                            if (!myMemoriesExpand.value) {
+                              expandShareMemory = true;
+                              sharedMemoriesExpand.value = true;
+                            }
                             update();
                           }
-
-                          if (!myMemoriesExpand.value) {
-                            expandShareMemory = true;
-                            sharedMemoriesExpand.value = true;
-                          }
-                          update();
-                        }
-                      } else {}
+                        } else {}
+                      });
                     });
-                  });
+                  }
                 });
               }),
               if (sharedMemoriesList.isEmpty)
@@ -315,7 +341,7 @@ class MemoriesController extends GetxController {
                   sharedMemoriesExpand.value = false,
                   expandShareMemory = false,
                   update()
-                },
+                }
             })
         .onError((error, stackTrace) => {});
   }
@@ -328,7 +354,7 @@ class MemoriesController extends GetxController {
     MemoriesModel memoriesModels = memoriesModel;
     memoriesModels.imagesCaption!.removeAt(removeIndex);
     memoriesRef.doc(memoryId).update(memoriesModels.toJson()).then((value) => {
-          memoriesList.remove(removeIndex),
+          // memoriesList.remove(removeIndex),
           update(),
           if (memoriesModels.imagesCaption!.isEmpty)
             {
@@ -341,7 +367,7 @@ class MemoriesController extends GetxController {
   // delete a memory
   void deleteMemory(MemoriesModel memoriesModel) {
     memoriesRef.doc(memoriesModel.memoryId).delete().then((value) => {
-          memoriesList.remove(memoriesModel),
+          // memoriesList.remove(memoriesModel),
           if (memoriesList.isEmpty) {myMemoriesExpand.value = false}
         });
   }
@@ -446,61 +472,66 @@ class MemoriesController extends GetxController {
         .orderBy('created_at', descending: true)
         .where("published", isEqualTo: false)
         .snapshots()
-        .listen((value) => {
-              noData.value = value.docs.isNotEmpty,
-              value.docChanges.forEach((element) {
-                usersRef.doc(userId).get().then(
-                  (userValue) {
-                    List<ImagesCaption> imagesList = List.empty(growable: true);
-                    MemoriesModel? memoriesModel;
-                    memoriesModel = null;
-                    memoriesModel = element.doc.data();
-                    memoriesModel!.memoryId = element.doc.id;
-                    memoriesModel.userModel = userValue.data()!;
-                    if (element.doc.data()!.sharedWith != null &&
-                        element.doc.data()!.sharedWith!.isNotEmpty) {
-                      // if (element.data().sharedWith != null  {
-                      element.doc.data()!.sharedWith!.forEach((elementShare) {
-                        if (elementShare.status == 1) {
-                          memoriesModel!.sharedWithCount =
-                              memoriesModel.sharedWithCount! + 1;
-                        }
+        .listen((value) {
+      noData.value = value.docs.isNotEmpty;
+      print('DataLength ${value.docs.length} == ${value.docChanges.length}');
+      if (value.docs.isEmpty) {
+        memoriesList.clear();
+        myMemoriesExpand.value = false;
+        update();
+        return;
+      }
+      value.docChanges.forEach((element) {
+        usersRef.doc(userId).get().then(
+          (userValue) {
+            List<ImagesCaption> imagesList = List.empty(growable: true);
+            MemoriesModel? memoriesModel;
+            memoriesModel = null;
+            memoriesModel = element.doc.data();
+            memoriesModel!.memoryId = element.doc.id;
+            print(' element.doc.id ${element.doc.id}');
+            memoriesModel.userModel = userValue.data()!;
+            if (element.doc.data()!.sharedWith != null &&
+                element.doc.data()!.sharedWith!.isNotEmpty) {
+              // if (element.data().sharedWith != null  {
+              element.doc.data()!.sharedWith!.forEach((elementShare) {
+                if (elementShare.status == 1) {
+                  memoriesModel!.sharedWithCount =
+                      memoriesModel.sharedWithCount! + 1;
+                }
+              });
+            }
+            // if(element.data().imagesCaption!.isNotEmpty)
+            element.doc.data()!.imagesCaption!.forEach((innerElement) async {
+              await usersRef.doc(innerElement.userId).get().then((imageUser) {
+                if (imageUser.data() != null) {
+                  ImagesCaption imagesCaption = innerElement;
+                  imagesCaption.userModel = imageUser.data()!;
+                  imagesList.add(imagesCaption);
+                  if (imagesList.length ==
+                      element.doc.data()!.imagesCaption!.length) {
+                    memoriesModel!.imagesCaption = imagesList;
+                    try {
+                      memoriesModel!.imagesCaption!.sort((first, second) {
+                        return second.updatedAt!.compareTo(first.updatedAt);
                       });
-                    }
-                    // if(element.data().imagesCaption!.isNotEmpty)
-                    element.doc
-                        .data()!
-                        .imagesCaption!
-                        .forEach((innerElement) async {
-                      await usersRef
-                          .doc(innerElement.userId)
-                          .get()
-                          .then((imageUser) {
-                        if (imageUser.data() != null) {
-                          ImagesCaption imagesCaption = innerElement;
-                          imagesCaption.userModel = imageUser.data()!;
-                          imagesList.add(imagesCaption);
-                          if (imagesList.length ==
-                              element.doc.data()!.imagesCaption!.length) {
-                            memoriesModel!.imagesCaption = imagesList;
-                            try {
-                              memoriesModel!.imagesCaption!
-                                  .sort((first, second) {
-                                return second.updatedAt!
-                                    .compareTo(first.updatedAt);
-                              });
-                            } catch (e) {}
+                    } catch (e) {}
 
-                            updateMemoriesWithData(
-                                memoriesModel!, element.doc.id, value);
-                          }
-                        }
-                      });
-                    });
-                  },
-                );
-              })
+                    updateMemoriesWithData(
+                        memoriesModel, element.doc.id, value);
+                  }
+                }
+              });
             });
+          },
+        );
+      });
+      print('Docss ${value.docs.isEmpty}');
+      if (value.docs.isEmpty) {
+        memoriesList.clear();
+        update();
+      }
+    });
   }
 
   updateMemoriesWithData(MemoriesModel model, String memoryId,
@@ -514,6 +545,7 @@ class MemoriesController extends GetxController {
     if (value.docChanges.isNotEmpty) {
       if (notificationValue.isNotEmpty) {
         var checkDoc = await memoriesRef.doc(model.memoryId).get();
+        print('checkDoc  ${model.memoryId} == ${checkDoc.id}');
         if (checkDoc.exists) {
           if (checkDoc.data()!.published!) {
             memoriesList.removeAt(index);
@@ -560,6 +592,7 @@ class MemoriesController extends GetxController {
     if (value.docs.isNotEmpty) {
       if (notificationValue.isNotEmpty) {
         var checkDoc = await memoriesRef.doc(model.memoryId).get();
+        print('checkDocPub ${checkDoc}');
         if (checkDoc.exists) {
           publishMemoryList[index] = model;
         } else {
@@ -639,6 +672,7 @@ class MemoriesController extends GetxController {
         inviteLink: shareLink.value.toString(),
         createdAt: Timestamp.now(),
         usedBy: userId);
+
     linkRef.add(linkModel).then((value) {});
     if (copy) {
       // copyShareLink(shareLink.value.toString(), memoriesModel.title!);

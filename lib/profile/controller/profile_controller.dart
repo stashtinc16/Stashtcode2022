@@ -58,7 +58,6 @@ class ProfileController extends GetxController {
 
   void updateProfileImage(String profileUrl) {
     usersRef.doc(userId).update({"profile_image": profileUrl}).then((value) => {
-       
           userImage.value = profileUrl,
           memoriesController.onInit(),
         });
@@ -75,21 +74,18 @@ class ProfileController extends GetxController {
 
       user.reauthenticateWithCredential(cred).then((value) {
         user.updatePassword(newPasswordcontroller.value.text).then((_) {
-        
           EasyLoading.dismiss();
           allowBackPressOnPw.value = true;
           clearPassword();
           Get.back();
           Get.snackbar('Success', 'Password changed.');
         }).catchError((error) {
-         
           Get.snackbar('User not found', '');
           allowBackPressOnPw.value = true;
           clearPassword();
           EasyLoading.dismiss();
         });
       }).catchError((err) {
-       
         EasyLoading.dismiss();
         clearPassword();
         allowBackPressOnPw.value = true;
@@ -107,9 +103,8 @@ class ProfileController extends GetxController {
 
   logoutUser() {
     usersRef.doc(userId).update({"device_token": ""}).then((value) {
-     
       firebaseAuthInfo.signOut();
-      firebaseAuth = null;
+      firebaseAuthSplash = null;
       isFacebookLogin = false;
       facebookAuth.logOut();
       userEmail = "";
@@ -120,10 +115,7 @@ class ProfileController extends GetxController {
       sharedMemoryCount.value = 0;
 
       Get.offAllNamed(AppRoutes.signup);
-     
-    }).onError((error, stackTrace) {
-     
-    });
+    }).onError((error, stackTrace) {});
   }
 
   // update notification count as 0
@@ -136,7 +128,6 @@ class ProfileController extends GetxController {
       usersRef.doc(userId).update({
         "display_name": nameController.value.text.toString().trim()
       }).then((value) => {
-           
             memoriesController.onInit(),
             userName = nameController.value.text.toString()
           });

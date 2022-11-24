@@ -55,7 +55,7 @@ class AppPages {
         binding: ForgotPasswordBindings()),
     GetPage(
         name: AppRoutes.memoryList,
-        page: () => Memory_Lane(),
+        page: () => MemoryDetailPage(),
         binding: MemoriesBinding()),
     GetPage(
         name: AppRoutes.addCaption,
@@ -71,7 +71,7 @@ class AppPages {
         binding: MemoriesBinding()),
     GetPage(
         name: AppRoutes.notifications,
-        page: () =>  Notifications(),
+        page: () => Notifications(),
         binding: NotificationsBinding()),
     GetPage(
         name: AppRoutes.changePassword,
