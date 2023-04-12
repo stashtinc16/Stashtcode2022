@@ -77,6 +77,7 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                 child: Stack(
                   children: [
                     Container(
+                      margin: EdgeInsets.only(right: 10),
                       decoration: title == notifications
                           ? const BoxDecoration(
                               image: DecorationImage(
@@ -93,7 +94,7 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
                       ),
                     ),
                     Positioned(
-                      right: 7,
+                      right: 17,
                       top: 7,
                       child: ValueListenableBuilder(
                         builder: (BuildContext context, value, Widget? child) {
@@ -124,8 +125,8 @@ PreferredSizeWidget commonAppbar(BuildContext context, String title,
             ],
           ),
           const SizedBox(
-            width: 17,
-          ),
+              // width: 17,
+              ),
           InkWell(
             onTap: () {
               pageSelected(false, false, false, true);

@@ -32,9 +32,8 @@ class Notifications extends GetView<NotificationController> {
                     itemCount: controller.notificationList.length,
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
+                    controller: controller.scrollController,
                     itemBuilder: (context, index) {
-                      print(
-                          'MemoryId ${controller.notificationList[index].memoryId}');
                       return Column(
                         children: [
                           InkWell(
@@ -48,8 +47,6 @@ class Notifications extends GetView<NotificationController> {
                                       controller.notificationList[index]);
                                   controller.update();
                                 }
-                                print(
-                                    'ontroller.notificationList[index].type ${controller.notificationList[index].type}');
                                 if (controller.notificationList[index].type ==
                                     "comment") {
                                   Get.toNamed(AppRoutes.comments, arguments: {
@@ -58,12 +55,14 @@ class Notifications extends GetView<NotificationController> {
                                     "memoryImage": controller
                                         .notificationList[index].memoryImage,
                                     "imageId": controller
-                                        .notificationList[index].imageId
+                                        .notificationList[index].imageId,
+                                    "fromNot": false
                                   });
                                 } else {
                                   Get.toNamed(AppRoutes.memoryList, arguments: {
                                     "memoryId": controller
-                                        .notificationList[index].memoryId
+                                        .notificationList[index].memoryId,
+                                    "fromNot": false
                                   });
                                 }
                               },
@@ -71,7 +70,7 @@ class Notifications extends GetView<NotificationController> {
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 11),
+                                        horizontal: 20, vertical: 13),
                                     child: Row(
                                       children: [
                                         ClipRRect(
@@ -100,35 +99,39 @@ class Notifications extends GetView<NotificationController> {
                                         const SizedBox(
                                           width: 8,
                                         ),
-                                        RichText(
-                                          text: TextSpan(
-                                            text: controller
-                                                .notificationList[index]
-                                                .userModel!
-                                                .displayName!,
-                                            style: const TextStyle(
-                                                fontFamily: robotoBold,
-                                                color: Color.fromRGBO(
-                                                    108, 96, 255, 1),
-                                                fontSize: 12),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                  text:
-                                                      " ${controller.notificationList[index].description!} ",
-                                                  style: const TextStyle(
-                                                      fontFamily: robotoRegular,
-                                                      color: Colors.black,
-                                                      fontSize: 12)),
-                                              TextSpan(
-                                                  text: controller
-                                                      .notificationList[index]
-                                                      .memoryTitle!,
-                                                  style: const TextStyle(
-                                                      fontFamily: robotoMedium,
-                                                      color: AppColors
-                                                          .primaryColor,
-                                                      fontSize: 12)),
-                                            ],
+                                        Expanded(
+                                          child: RichText(
+                                            text: TextSpan(
+                                              text: controller
+                                                  .notificationList[index]
+                                                  .userModel!
+                                                  .displayName!,
+                                              style: const TextStyle(
+                                                  fontFamily: robotoBold,
+                                                  color: Color.fromRGBO(
+                                                      108, 96, 255, 1),
+                                                  fontSize: 15),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                    text:
+                                                        " ${controller.notificationList[index].description!} ",
+                                                    style: const TextStyle(
+                                                        fontFamily:
+                                                            robotoRegular,
+                                                        color: Colors.black,
+                                                        fontSize: 15)),
+                                                TextSpan(
+                                                    text: controller
+                                                        .notificationList[index]
+                                                        .memoryTitle!,
+                                                    style: const TextStyle(
+                                                        fontFamily:
+                                                            robotoMedium,
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                        fontSize: 15)),
+                                              ],
+                                            ),
                                           ),
                                         )
                                       ],
@@ -142,13 +145,13 @@ class Notifications extends GetView<NotificationController> {
                                             MediaQuery.of(context).size.width,
                                         color: !controller
                                                 .notificationList[index].isRead!
-                                            ? AppColors.primaryColor.withOpacity(0.09)
+                                            ? AppColors.primaryColor
+                                                .withOpacity(0.09)
                                             : Colors.transparent,
                                       ),
                                     ),
                                 ],
                               )),
-                          
                           Container(
                             width: MediaQuery.of(context).size.width,
                             height: 0.5,
@@ -159,13 +162,13 @@ class Notifications extends GetView<NotificationController> {
                     },
                   )
                 : !controller.hasNotification.value
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(
                         color: Colors.blue,
                       ))
                     : Container(
                         alignment: Alignment.center,
-                        child: Text(
+                        child: const Text(
                           'No Notifications!',
                           style: TextStyle(
                               fontSize: 18,

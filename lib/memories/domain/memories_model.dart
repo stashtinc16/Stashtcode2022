@@ -2,20 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:stasht/login_signup/domain/user_model.dart';
 
 class MemoriesModel {
-  String? memoryId;
-  String? title;
+  dynamic memoryId;
+  dynamic title;
   List<ImagesCaption>? imagesCaption;
   Timestamp? createdAt;
   Timestamp? publishedCreatedAt;
   Timestamp? sharedCreatedAt;
   Timestamp? updatedAt;
-  String? inviteLink;
-  String? publishLink;
+  dynamic inviteLink;
+  dynamic publishLink;
   bool? published;
-  String? createdBy;
-  int? commentCount;
+  dynamic createdBy;
+  dynamic commentCount;
   List<SharedWith>? sharedWith;
-  int? sharedWithCount = 0;
+  dynamic sharedWithCount = 0;
   UserModel? userModel;
   List<UserModel>? collaborators;
 
@@ -85,14 +85,15 @@ class MemoriesModel {
 }
 
 class ImagesCaption {
-  String? caption;
-  String? image;
-  int? commentCount;
-  String? imageId;
-  String? userId;
-  Timestamp? createdAt;
-  Timestamp? updatedAt;
+  dynamic caption;
+  dynamic image;
+  dynamic commentCount;
+  dynamic imageId;
+  dynamic userId;
+  dynamic createdAt;
+  dynamic updatedAt;
   UserModel? userModel;
+  bool? isMemoryReported;
 
   ImagesCaption(
       {this.caption,
@@ -102,7 +103,8 @@ class ImagesCaption {
       this.userId,
       this.createdAt,
       this.updatedAt,
-      this.userModel});
+      this.userModel,
+      this.isMemoryReported});
 
   ImagesCaption.fromJson(Map<String, dynamic> json) {
     caption = json['caption'];
@@ -112,6 +114,7 @@ class ImagesCaption {
     userId = json['user_id'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    isMemoryReported = json['isMemoryReported'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -123,13 +126,14 @@ class ImagesCaption {
     data['user_id'] = userId;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
+    data['isMemoryReported'] = isMemoryReported;
     return data;
   }
 }
 
 class SharedWith {
-  String? userId;
-  int? status;
+  dynamic userId;
+  dynamic status;
   UserModel? sharedUser;
 
   SharedWith({this.userId, this.status, this.sharedUser});

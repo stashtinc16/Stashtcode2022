@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:stasht/memories/domain/memories_model.dart';
+import 'package:stasht/routes/app_routes.dart';
 import 'package:stasht/utils/app_colors.dart';
 
 String userId = "";
 String userName = "";
+String memoryName = "";
+String memoryId = "";
+Uri? memoryLink;
 var userImage = ValueNotifier<String>("");
 var notificationCount = ValueNotifier<int>(0);
 String userEmail = "";
 String globalNotificationToken = "";
 bool isSocailUser = false;
 String changePassword = "Change Password";
+String deleteAccount = "Delete Account";
 
 bool fromShare = false;
- MemoriesModel? globalShareMemoryModel ;
+bool expandShareMemory = false;
+var sharedMemoryCount = ValueNotifier<int>(0);
+MemoriesModel? globalShareMemoryModel;
 //collections
 String memoriesCollection = "memories";
 String userCollection = "users";
@@ -27,7 +34,6 @@ String memoriesTitle = "Memories";
 String settingsTitle = "Settings";
 String notifications = "Notifications";
 
-
 bool checkValidEmail(String email) {
   return RegExp(
           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -36,11 +42,9 @@ bool checkValidEmail(String email) {
 
 Future<void> sendPushMessage(var receiverFBToken, String payload) async {
   if (receiverFBToken == null || receiverFBToken == "") {
-    print('Unable to send FCM message, no token exists.');
+    debugPrint('Unable to send FCM message, no token exists.');
     return;
   }
-
-  print("firebase token> $receiverFBToken =>  payload $payload");
 
   try {
     final response = await http.post(
@@ -50,21 +54,19 @@ Future<void> sendPushMessage(var receiverFBToken, String payload) async {
           "X-Requested-With": "XMLHttpRequest",
           "Content-Type": "application/json",
           "Authorization":
-              "key=AAAA2627rvU:APA91bGisn9zzHeXgs5i0rqS46twn2qFhW0tQCn_s97NmsxsOQW4GfsTbyYgA-zXqt4dw97vInpFIQE9Y2GovMUELIS08ryGuEC6zNpnKEaQTFEHE-rJZ9SL6r4MuVftUP4LFmRhOTWL",
+              "key=AAAASUsV4Fk:APA91bHKYQ2XsHzBAhTmIvQU24DYB5K9GGY6457CkPIm0_-vkHTPCgfLpLBWrOL1Zgvb-4cnc0AXRgzFFzGmQXo32q3MeptLclkIhuwihgcDrnpP-DtCEQVly6F0MDg5JLj7V3FERL4p",
         },
         body: payload);
-    print("reason phrase....${response!.reasonPhrase}");
-    print("response=> ${response.request} ${response.statusCode}");
 
     if (response.statusCode == 200) {
-      print('FCM request for device sent!');
+      debugPrint('FCM request for device sent!');
       // If server returns an OK response, parse the JSON
     } else {
       // If that response was not OK, throw an error.
       throw Exception('Failed to load post');
     }
   } catch (e) {
-    print(e);
+    e.toString();
   }
 }
 
@@ -76,4 +78,14 @@ getOutlineBorder() {
 
 getNormalTextStyle() {
   return const TextStyle(fontSize: 12.0, color: AppColors.greyColor);
+}
+
+goToMemories(bool fromShareLink) {
+
+  Get.offNamed(AppRoutes.memories,
+      arguments: {"fromSignupAndShare": fromShareLink});
+}
+
+goToMemoriesAndClearAll() {
+  Get.offAllNamed(AppRoutes.memories, arguments: {"fromSignupAndShare": false});
 }

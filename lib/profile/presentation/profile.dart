@@ -27,7 +27,7 @@ class Profile extends GetView<ProfileController> {
       _image = File(image.path);
       uploadImageToDB(_image);
     } else {
-      print('No image selected.');
+      debugPrint('No image selected.');
     }
   }
 
@@ -51,7 +51,6 @@ class Profile extends GetView<ProfileController> {
     uploadTask = ref.putFile(io.File(image.path), metadata);
     uploadTask.whenComplete(() => {
           uploadTask.snapshot.ref.getDownloadURL().then((value) => {
-                print('URl $value'),
                 userImage.value = value,
                 controller.updateProfileImage(value),
                 controller.allowBackPress.value = true,
@@ -63,10 +62,9 @@ class Profile extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
-        return Future.value(controller
-            .allowBackPress.value); // if true allow back else block it
-      },
+      onWillPop: Platform.isAndroid
+          ? () async => controller.allowBackPress.value
+          : null,
       child: Scaffold(
           backgroundColor: Colors.white,
           appBar: commonAppbar(
@@ -77,12 +75,13 @@ class Profile extends GetView<ProfileController> {
                 {
                   Get.back()
                   // Get.offNamed(AppRoutes.memories)
-                  }
+                }
               else if (isNotification)
                 {
-                  notificationCount.value=0,
+                  notificationCount.value = 0,
                   controller.updateNotificationCount(),
-                  Get.offNamed(AppRoutes.notifications)}
+                  Get.offNamed(AppRoutes.notifications)
+                }
             },
           ),
           body: SingleChildScrollView(
@@ -95,7 +94,7 @@ class Profile extends GetView<ProfileController> {
                 child: Column(
                   children: [
                     InkWell(
-                      onTap: () => getImage(),
+                      // onTap: () => getImage(),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -104,63 +103,81 @@ class Profile extends GetView<ProfileController> {
                               height: 150,
                               color: AppColors.bgColor,
                               alignment: Alignment.center,
-                              child: ValueListenableBuilder(
-                                builder: (context, value, child) {
-                                  return ClipRRect(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(100)),
-                                    child: Container(
-                                      height: 108,
-                                      width: 108,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: const Color.fromARGB(
-                                              255, 25, 86, 112),
-                                        ),
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(100)),
-                                      ),
-                                      margin: const EdgeInsets.all(1.0),
-                                      child: userImage.value.isNotEmpty
-                                          ? CachedNetworkImage(
-                                              imageUrl: userImage.value,
-                                              fit: BoxFit.cover,
-                                              progressIndicatorBuilder:
-                                                  (context, url,
-                                                          downloadProgress) =>
-                                                      CircularProgressIndicator(
-                                                          value:
-                                                              downloadProgress
-                                                                  .progress))
-                                          : Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 0),
-                                              child: Container(
-                                                height: 108,
-                                                width: 108,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: const Color.fromRGBO(
-                                                      234, 243, 248, 1),
-                                                  border: Border.all(
-                                                    color: const Color.fromRGBO(
-                                                        207, 216, 220, 1),
-                                                  ),
-                                                ),
-                                                child: Image.asset(userIcon),
-                                              ),
-                                            ),
-                                    ),
-                                  );
+                              child: InkWell(
+                                onTap: () {
+                                  getImage();
                                 },
-                                valueListenable: userImage,
+                                child: ValueListenableBuilder(
+                                  builder: (context, value, child) {
+                                    return ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(100)),
+                                      child: Container(
+                                        height: 108,
+                                        width: 108,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: const Color.fromARGB(
+                                                255, 25, 86, 112),
+                                          ),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(100)),
+                                        ),
+                                        margin: const EdgeInsets.all(1.0),
+                                        child: userImage.value.isNotEmpty
+                                            ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        10000.0),
+                                                child: CachedNetworkImage(
+                                                    imageUrl: userImage.value,
+                                                    fit: BoxFit.cover,
+                                                    height: 108,
+                                                    width: 108,
+                                                    progressIndicatorBuilder: (context,
+                                                            url,
+                                                            downloadProgress) =>
+                                                        CircularProgressIndicator(
+                                                            value:
+                                                                downloadProgress
+                                                                    .progress)),
+                                              )
+                                            : Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 0),
+                                                child: Container(
+                                                  height: 108,
+                                                  width: 108,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: const Color.fromRGBO(
+                                                        234, 243, 248, 1),
+                                                    border: Border.all(
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                              207, 216, 220, 1),
+                                                    ),
+                                                  ),
+                                                  child: Image.asset(userIcon),
+                                                ),
+                                              ),
+                                      ),
+                                    );
+                                  },
+                                  valueListenable: userImage,
+                                ),
                               )),
-                          const Padding(
-                            padding: EdgeInsets.only(top: 30),
-                            child: Icon(
-                              Icons.linked_camera_outlined,
-                              color: Colors.white,
-                              size: 30,
+                          InkWell(
+                            onTap: () {
+                              getImage();
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.only(top: 30),
+                              child: Icon(
+                                Icons.linked_camera_outlined,
+                                color: Colors.white,
+                                size: 30,
+                              ),
                             ),
                           )
                         ],
@@ -206,7 +223,6 @@ class Profile extends GetView<ProfileController> {
                                     if (controller.changeUserName.value) {
                                       controller.changeUserNameFunc();
                                     }
-
                                     controller.changeUserName.value =
                                         !controller.changeUserName.value;
                                   },
@@ -296,6 +312,23 @@ class Profile extends GetView<ProfileController> {
                                 textAlign: TextAlign.center,
                               ),
                             ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              controller.deleteAccountAlert(context);
+                            },
+                            child: Text(
+                              deleteAccount,
+                              style: const TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  decoration: TextDecoration.underline),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ],
                       ),
                     )

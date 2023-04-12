@@ -6,10 +6,10 @@ import 'package:stasht/utils/assets_images.dart';
 class SplashScreen extends GetView<SplashController> {
   const SplashScreen({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: Key('key-1'),
         body: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -21,10 +21,9 @@ class SplashScreen extends GetView<SplashController> {
                     ))),
             child: Image.asset(
               logo,
+              color: Color.fromRGBO(108, 96, 255, 1),
               height: 40,
               width: 40,
             )));
   }
-
-  
 }

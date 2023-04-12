@@ -65,6 +65,42 @@ class CommentsController extends GetxController {
     super.onInit();
     // getCommentsAtOnce();
     startStreamAndGetList();
+    // refreshMemoryChanges();
+  }
+
+  int? imagesLength;
+  void refreshMemoryChanges() {
+    FirebaseFirestore.instance
+        .collection(memoriesCollection)
+        .doc(memoryId)
+        .withConverter<MemoriesModel>(
+          fromFirestore: (snapshots, _) =>
+              MemoriesModel.fromJson(snapshots.data()!),
+          toFirestore: (comments, _) => comments.toJson(),
+        )
+        .snapshots()
+        .listen((event) async {
+      bool imageExists = false;
+
+      if (event.data() == null) {
+        Get.back();
+        return;
+      }
+
+      var checkImage = await event.data()!.imagesCaption!.where((element) {
+        return element.imageId == imageId;
+      });
+
+      print('checkImage $checkImage');
+      if (checkImage.isNotEmpty) {
+        imageExists = true;
+      }
+      if (!imageExists) {
+        Get.back();
+      }
+
+      imagesLength = event.data()!.imagesCaption!.length;
+    });
   }
 
   void getCommentsAtOnce() {
@@ -83,53 +119,45 @@ class CommentsController extends GetxController {
       // here count is a field name in firestore database
 
       List<CommentsModel> _commentList = List.empty(growable: true);
-      print('EventDocs ${event.docs.length}');
-      print('EventDocsChanged ${event.docChanges.length}');
-      for (var element in event.docChanges) {
-        print('DocChangesId ${element.doc.id}');
-      }
+      for (var element in event.docChanges) {}
 
       for (var element in event.docs) {
-        print(
-            'elementId ${element.id} => ${event.docs[event.docs.length - 1].id}');
-        await usersRef.doc(element.data().userId).get().then((userValue) {
-          CommentsModel commentsModel = CommentsModel();
-          commentsModel = element.data();
-          commentsModel.commentId = element.id;
-          commentsModel.userModel = userValue.data()!;
+        if (element.data().userId!.isNotEmpty) {
+          await usersRef.doc(element.data().userId).get().then((userValue) {
+            CommentsModel commentsModel = CommentsModel();
+            commentsModel = element.data();
+            commentsModel.commentId = element.id;
+            commentsModel.userModel = userValue.data()!;
 
-          _commentList.add(commentsModel);
-          print(
-              'element.id ${element.id} => ${event.docs[event.docs.length - 1].id}');
-          // streamController.sink.add(commentsModel);
-          if (element.id == event.docs[event.docs.length - 1].id) {
-            commentsList.clear();
-            commentsList.value = _commentList;
-            commentsList.sort((first, second) {
-              return first.createdAt!.compareTo(second.createdAt!);
-            });
-            print('CommentList ${commentsList.length}');
-            memoryRef.doc(commentsModel.memoryId).get().then((value) {
-              MemoriesModel memoriesModel = value.data()!;
+            _commentList.add(commentsModel);
+            // streamController.sink.add(commentsModel);
+            if (element.id == event.docs[event.docs.length - 1].id) {
+              commentsList.clear();
+              commentsList.value = _commentList;
+              commentsList.sort((first, second) {
+                return first.createdAt!.compareTo(second.createdAt!);
+              });
+              memoryRef.doc(commentsModel.memoryId).get().then((value) {
+                MemoriesModel memoriesModel = value.data()!;
 
-              outerLoop:
-              for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
-                if (memoriesModel.imagesCaption![i].imageId == imageId) {
-                  memoriesModel.imagesCaption![i].commentCount =
-                      commentsList.length;
+                outerLoop:
+                for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
+                  if (memoriesModel.imagesCaption![i].imageId == imageId) {
+                    memoriesModel.imagesCaption![i].commentCount =
+                        commentsList.length;
 
-                  memoryRef
-                      .doc(commentsModel.memoryId)
-                      .set(memoriesModel)
-                      .then((value) =>
-                          {print('Comment Count updated  '), update()})
-                      .onError((error, stackTrace) => {});
-                  break outerLoop;
+                    memoryRef
+                        .doc(commentsModel.memoryId)
+                        .set(memoriesModel)
+                        .then((value) => {update()})
+                        .onError((error, stackTrace) => {});
+                    break outerLoop;
+                  }
                 }
-              }
-            });
-          }
-        });
+              });
+            }
+          });
+        }
       }
     });
   }
@@ -155,45 +183,47 @@ class CommentsController extends GetxController {
       // here count is a field name in firestore database
 
       for (var element in event.docChanges) {
-        usersRef.doc(element.doc.data()!.userId!).get().then((userValue) {
-          CommentsModel commentsModel = CommentsModel();
-          commentsModel = element.doc.data()!;
-          commentsModel.commentId = element.doc.id;
-          commentsModel.userModel = userValue.data()!;
+        if (element.doc.data()!.userId!.isNotEmpty) {
+          usersRef.doc(element.doc.data()!.userId!).get().then((userValue) {
+            CommentsModel commentsModel = CommentsModel();
+            commentsModel = element.doc.data()!;
+            commentsModel.commentId = element.doc.id;
+            commentsModel.userModel = userValue.data()!;
 
-          commentsList.value.add(commentsModel);
-          print(
-              'commentsList.length ${commentsList.length} => ${event.docs.length}');
-          if (commentsList.length == event.docs.length) {
-            commentsList.sort((first, second) {
-              return first.createdAt!.compareTo(second.createdAt!);
-            });
-            update();
-            Future.delayed(Duration(seconds: 1), (() {
-              scrollDown();
-              setCommentCount();
-            }));
-          }
-        });
+            commentsList.value.add(commentsModel);
+            if (commentsList.length == event.docs.length) {
+              commentsList.sort((first, second) {
+                return first.createdAt!.compareTo(second.createdAt!);
+              });
+              update();
+              Future.delayed(Duration(seconds: 1), (() {
+                scrollDown();
+                setCommentCount();
+              }));
+            }
+          });
+        }
       }
-    }).onDone(() {
-      print('onDone ');
-    });
+    }).onDone(() {});
   }
 
   void setCommentCount() {
     memoryRef.doc(memoryId).get().then((value) {
-      MemoriesModel memoriesModel = value.data()!;
-      outerLoop:
-      for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
-        if (memoriesModel.imagesCaption![i].imageId == imageId) {
-          memoriesModel.imagesCaption![i].commentCount = commentsList.length;
+      if (value.data() != null) {
+        MemoriesModel memoriesModel = value.data()!;
+        outerLoop:
+        for (int i = 0; i < memoriesModel.imagesCaption!.length; i++) {
+          if (memoriesModel.imagesCaption![i].imageId == imageId) {
+            memoriesModel.imagesCaption![i].commentCount = commentsList.length;
 
-          memoryRef
-              .doc(memoryId)
-              .set(memoriesModel)
-              .then((value) => {print('Comment Count updated  '), update()})
-              .onError((error, stackTrace) => {});
+            memoryRef
+                .doc(memoryId)
+                .set(memoriesModel)
+                .then((value) => {update()})
+                .onError((error, stackTrace) => {});
+
+            break outerLoop;
+          }
         }
       }
     });
@@ -238,8 +268,6 @@ class CommentsController extends GetxController {
         .get()
         .then((event) {
       var sendToOwner = false;
-      print(
-          'GetUsers ${event.docs.length} => ${memoriesModel.memoryId} => ${memoriesModel.sharedWith!.length}');
       if (event.docs.isNotEmpty) {
         outerLoop:
         for (int j = 0; j < memoriesModel.sharedWith!.length; j++) {
@@ -301,7 +329,10 @@ class CommentsController extends GetxController {
   }
 
   void scrollDown() {
-    if (scrollController != null && scrollController.position != null) {
+    if (scrollController != null &&
+        scrollController.positions != null &&
+        scrollController.positions.isNotEmpty &&
+        scrollController.position.maxScrollExtent != null) {
       scrollController.animateTo(
         Platform.isIOS
             ? scrollController.position.maxScrollExtent
@@ -332,16 +363,16 @@ class CommentsController extends GetxController {
         receivedId: receivedId,
         // receiverIds: receivedId,
         userId: userId);
-    notificationsRef
-        .add(notificationsModel)
-        .then((value) => print('SaveNotification $value'));
-    usersRef.doc(receivedId).get().then((value) => {
-          usersRef.doc(receivedId).update({
-            "notification_count": value.data()!.notificationCount != null
-                ? value.data()!.notificationCount! + 1
-                : 1
-          })
-        });
+    notificationsRef.add(notificationsModel).then((value) {});
+    if (receivedId.isNotEmpty) {
+      usersRef.doc(receivedId).get().then((value) => {
+            usersRef.doc(receivedId).update({
+              "notification_count": value.data()!.notificationCount != null
+                  ? value.data()!.notificationCount! + 1
+                  : 1
+            })
+          });
+    }
   }
 
   void addCommentCountToMemories(String memoryId, MemoriesModel memoriesModel) {
@@ -351,9 +382,7 @@ class CommentsController extends GetxController {
     memoryRef
         .doc(memoryId)
         .set(memoriesModel)
-        .then((value) => {
-              print('UpdateCaption '),
-            })
+        .then((value) => {})
         .onError((error, stackTrace) => {});
   }
 

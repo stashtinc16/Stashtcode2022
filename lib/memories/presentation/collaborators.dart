@@ -13,16 +13,24 @@ class Collaborators extends GetView<MemoriesController> {
   String? imagePath = "";
   // int? mainIndex;
   String? type;
-  MemoriesModel? memoriesModel;
+  String? memoryId;
+  // MemoriesModel? memoriesModel;
 
   Collaborators({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (Get.arguments != null) {
+      memoryId = Get.arguments['memoryId'];
+      print("memory Id in collaborators page ${memoryId}");
+    }
     // mainIndex = Get.arguments['mainIndex'];
-    memoriesModel = Get.arguments['list'];
+    // memoriesModel = Get.arguments['list'];
     type = Get.arguments['type'];
     return GetBuilder(
+      initState: (state) {
+        controller.getMyMemoryData(memoryId);
+      },
       builder: (MemoriesController controller) {
         return Scaffold(
           body: Column(
@@ -34,16 +42,20 @@ class Collaborators extends GetView<MemoriesController> {
                     height: 140,
                     padding: const EdgeInsets.only(top: 45),
                     width: MediaQuery.of(context).size.width,
-                    decoration: memoriesModel!.imagesCaption!.isNotEmpty
-                        ? BoxDecoration(
-                            image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                    memoriesModel!.imagesCaption![0].image!),
-                                fit: BoxFit.cover))
-                        : null,
-                    color: memoriesModel!.imagesCaption!.isNotEmpty
-                        ? null
-                        : Colors.grey,
+                    decoration:
+                        controller.detailMemoryModel!.imagesCaption!.isNotEmpty
+                            ? BoxDecoration(
+                                image: DecorationImage(
+                                    image: CachedNetworkImageProvider(controller
+                                        .detailMemoryModel!
+                                        .imagesCaption![0]
+                                        .image!),
+                                    fit: BoxFit.cover))
+                            : null,
+                    color:
+                        controller.detailMemoryModel!.imagesCaption!.isNotEmpty
+                            ? null
+                            : Colors.grey,
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width,
@@ -65,32 +77,29 @@ class Collaborators extends GetView<MemoriesController> {
                           width: MediaQuery.of(context).size.width,
                           alignment: Alignment.center,
                           child: Text(
-                            memoriesModel!.title!,
+                            controller.detailMemoryModel!.title!,
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w900,
                                 fontSize: 18),
                           ),
                         ),
-                        Positioned(
-                          right: 10,
-                          top: 0,
-                          child: IconButton(
-                            onPressed: () => {
-                              print('controller.shareLink.value.toString() ${controller.shareLink.value.toString()}'),
-                              controller.checkIfLinkExpire(
-                                controller.detailMemoryModel!,
-                                controller.shareLink.value.toString(),false
-                              )
-                              // controller.createDynamicLink(
-                              //     controller.detailMemoryModel!.memoryId!,
-                              //     true,
-                              //     true,
-                              //     controller.detailMemoryModel!)
-                            },
-                            icon: const Icon(
-                              Icons.share,
-                              color: Colors.white,
+                        Visibility(
+                          visible: false,
+                          child: Positioned(
+                            right: 10,
+                            top: 0,
+                            child: IconButton(
+                              onPressed: () => {
+                                controller.checkIfLinkExpire(
+                                    controller.detailMemoryModel!,
+                                    controller.shareLink.value.toString(),
+                                    false)
+                              },
+                              icon: const Icon(
+                                Icons.share,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -106,7 +115,7 @@ class Collaborators extends GetView<MemoriesController> {
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(
-                  'Collaborators (${controller.getSharedUsers(memoriesModel!).length})',
+                  'Collaborators (${controller.getSharedUsers(controller.detailMemoryModel!).length})',
                   style: const TextStyle(
                       fontSize: 16,
                       fontFamily: robotoBold,
@@ -115,7 +124,9 @@ class Collaborators extends GetView<MemoriesController> {
               ),
               InkWell(
                 onTap: () {
-                  controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
+                  controller.checkIfLinkExpire(controller.detailMemoryModel!,
+                      controller.shareLink.value.toString(), false);
+                  // controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(15),
@@ -123,8 +134,11 @@ class Collaborators extends GetView<MemoriesController> {
                   child: Row(children: [
                     InkWell(
                       onTap: () {
-
-                        controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
+                        controller.checkIfLinkExpire(
+                            controller.detailMemoryModel!,
+                            controller.shareLink.value.toString(),
+                            false);
+                        // controller.checkIfLinkExpire(memoriesModel!, controller.shareLink.toString(), true);
                       },
                       child: Image.asset(
                         copyIcon,
@@ -148,15 +162,15 @@ class Collaborators extends GetView<MemoriesController> {
               ),
               ListView.builder(
                 padding: EdgeInsets.zero,
-                itemCount: controller.getSharedUsers(memoriesModel!).length,
+                itemCount: controller
+                    .getSharedUsers(controller.detailMemoryModel!)
+                    .length,
                 shrinkWrap: true,
                 primary: true,
                 itemBuilder: (BuildContext context, int index) {
-                  print(
-                      'ShareWith ${controller.getSharedUsers(memoriesModel!).length}');
                   return FutureBuilder(
                     future: controller.getUserData(controller
-                        .getSharedUsers(memoriesModel!)[index]
+                        .getSharedUsers(controller.detailMemoryModel!)[index]
                         .userId!),
                     builder: (BuildContext context,
                         AsyncSnapshot<dynamic> snapshot) {
@@ -196,13 +210,16 @@ class Collaborators extends GetView<MemoriesController> {
                                         ),
                                 ),
                               ),
-                              Text(
-                                userModel.displayName!,
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: gibsonSemiBold,
-                                    color: Colors.black),
-                              )
+                              Expanded(
+                                child: Text(
+                                  userModel.displayName!,
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontFamily: gibsonSemiBold,
+                                      color: Colors.black),
+                                ),
+                              ),
+                              SizedBox(width: 10)
                             ]),
                             background: Container(
                               color: AppColors.redBgColor,
@@ -224,11 +241,8 @@ class Collaborators extends GetView<MemoriesController> {
                             onDismissed: (DismissDirection dismissDirection) {
                               if (dismissDirection ==
                                   DismissDirection.endToStart) {
-                                print('DismissDirection ');
                                 deleteCollaborator(index, "1");
                               }
-                              print(
-                                  'DismissDirection onDismissed $dismissDirection ');
                             },
                           ),
                           Container(
@@ -248,10 +262,9 @@ class Collaborators extends GetView<MemoriesController> {
     );
   }
 
-
   //delete collaborator
   void deleteCollaborator(int index, String type) {
-    controller.deleteCollaborator(
-        memoriesModel!.memoryId!, memoriesModel!, index, type);
+    controller.deleteCollaborator(controller.detailMemoryModel!.memoryId!,
+        controller.detailMemoryModel!, index, type);
   }
 }
